@@ -1,7 +1,7 @@
 package com.raritasolutions.mymining.extractor
 
 import com.raritasolutions.mymining.model.PairRecord
-import com.raritasolutions.mymining.utils.lineBreaksRegex
+import com.raritasolutions.mymining.utils.*
 
 /* Extending this extractor guarantees that you will extract a pair with proper name */
 abstract class ContentSafeExtractor(protected val contents: String,

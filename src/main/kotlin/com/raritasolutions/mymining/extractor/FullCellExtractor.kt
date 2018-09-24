@@ -16,7 +16,7 @@ class FullCellExtractor(contents: String,
     override fun PairRecord.extract() : String
     {
 
-            room = extractCustomRegex(roomRegex)?.replace("No", "")?.toInt()
+            room = extractCustomRegex(roomRegex)?.replace("No", "")?.replace(",",", ")
                     ?: raiseParsingException(roomRegex)
             type = when(extractCustomRegex(pairTypesRegex))
             {
@@ -24,8 +24,8 @@ class FullCellExtractor(contents: String,
                 "пр." -> "практика"
                 else -> "лекция"
             }
-            teacher = extractCustomRegex(teacherRegex)?.flavourTeacherString()
-                    ?: raiseParsingException(teacherRegex)
+            teacher = extractCustomRegexToList(teacherRegex).map { it.flavourTeacherString() }
+            if (teacher.isEmpty()) raiseParsingException(teacherRegex)
             week = when (extractCustomRegex(weeksRegex)) {
                 "I" -> 1
                 "II","ч/н" -> 2
@@ -51,7 +51,8 @@ class FullCellExtractor(contents: String,
     }
 
     private fun raiseParsingException(regex: Regex): Nothing = throw Exception("Regex $regex can't be found in $_contents")
-    // todo consider findAll()
+
+
     private fun extractCustomRegex(regex : Regex) : String?
     {
         val item = regex
@@ -59,6 +60,16 @@ class FullCellExtractor(contents: String,
                 ?.value
         item?.let { _item ->  _contents = _contents.replace(_item,"")  }
         return item
+    }
+
+    private fun extractCustomRegexToList(regex: Regex): List<String>
+    {
+        val items = regex
+                .findAll(_contents)
+                .map { it.value }
+                .toList()
+        _contents = _contents.replace(regex,"")
+        return items
     }
 
 }

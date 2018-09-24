@@ -22,8 +22,8 @@ class FullCellExtractorTest
         {
             assert(subject == "Теория принятия решений")
             assert(type == "лекция")
-            assert(room == 3424)
-            assert(teacher == "Проф. Иванова И.В.")
+            assert(room == "3424")
+            assert(teacher == listOf("Проф. Иванова И.В."))
         }
 
     }
@@ -38,8 +38,8 @@ class FullCellExtractorTest
         {
             assert(subject == "Маркшейдерские работы при открытой разработке месторождений")
             assert(type == "практика")
-            assert(teacher == "Доц. Голованов В.А.")
-            assert(room == 3411)
+            assert(teacher == listOf("Доц. Голованов В.А."))
+            assert(room == "3411")
             assert(week == 2)
         }
 
@@ -64,9 +64,41 @@ class FullCellExtractorTest
         with (extractor.result)
         {
             assert(type == "лабораторная работа")
-            assert(room == 3403)
-            assert(teacher == "Доц. Голованов В.А.")
+            assert(room == "3403")
+            assert(teacher == listOf("Доц. Голованов В.А.", "Доц. Новоженин С.Ю."))
             assert(subject == "Маркшейдерские и геодезические приборы")
+        }
+    }
+    @Test
+    fun testMultipleRooms()
+    {
+        val input = "ч/н 1/2 Финансовый менеджмент\n" +
+                "и финансовый анализ\n" +
+                "Доц. Любек Ю.В. л/р No4611,4614"
+        val extractor = FullCellExtractor(input).apply { make() }
+        with (extractor.result)
+        {
+            assert(type == "лабораторная работа")
+            assert(room == "4611, 4614")
+            assert(week == 2)
+            assert(teacher == listOf("Доц. Любек Ю.В."))
+            assert(subject == "Финансовый менеджмент и финансовый анализ")
+        }
+    }
+    @Test
+    fun testUltimate()
+    {
+        val input = "I 1/2 Финансовый менеджмент\n" +
+                "и финансовый анализ\n" +
+                "Доц. Любек Ю.В. Проф. Папанин Л.Ю. л/р No4611,4614"
+        val extractor = FullCellExtractor(input).apply { make() }
+        with (extractor.result)
+        {
+            assert(type == "лабораторная работа")
+            assert(room == "4611, 4614")
+            assert(week == 1)
+            assert(teacher == listOf("Доц. Любек Ю.В.","Проф. Папанин Л.Ю."))
+            assert(subject == "Финансовый менеджмент и финансовый анализ")
         }
     }
     @Test
