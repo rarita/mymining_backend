@@ -8,9 +8,12 @@ object SubjectQueue {
     // Map <Subject without spaces -> Extractors that are waiting for correct subject string>
     private val SUBSCRIBERS : HashMap<String,MutableList<ContentSafeExtractor>> = HashMap()
 
-    fun subscribe(subject : String, caller : ContentSafeExtractor) =
-        SUBSCRIBERS[subject.removeSpaces()]?.add(caller)
-                ?: arrayListOf(caller)
+    fun subscribe(subject : String, caller : ContentSafeExtractor) {
+        if (SUBSCRIBERS[subject] is MutableList<ContentSafeExtractor>)
+            SUBSCRIBERS[subject]!!.add(caller)
+        else
+            SUBSCRIBERS[subject] = arrayListOf(caller)
+    }
 
     fun addNewRecord(record : String)
     {

@@ -1,13 +1,15 @@
 package com.raritasolutions.mymining
 
-import com.raritasolutions.mymining.extractor.FullCellExtractor
+
+import com.raritasolutions.mymining.extractor.ComplexCellExtractor
 import com.raritasolutions.mymining.extractor.SimpleCellExtractor
+import com.raritasolutions.mymining.extractor.SubjectQueue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 import java.lang.Exception
-
-class FullCellExtractorTest
+// todo move inputs to different place (Factory tests use them too)
+class CellExtractorTest
 {
     @Rule
     @JvmField
@@ -17,7 +19,7 @@ class FullCellExtractorTest
     fun testRegular()
     {
         val input = "Теория принятия решений\n" + "Проф. Иванова И.В. No3424"
-        val extractor = FullCellExtractor(input).apply { make() }
+        val extractor = ComplexCellExtractor(input).apply { make() }
         with(extractor.result)
         {
             assert(subject == "Теория принятия решений")
@@ -33,7 +35,7 @@ class FullCellExtractorTest
         val input = "II 1/2 Маркшейдерские работы\n" +
                 "при открытой разработке месторождений\n" +
                 "Доц. Голованов В.А. пр. No3411"
-        val extractor = FullCellExtractor(input).apply { make() }
+        val extractor = ComplexCellExtractor(input).apply { make() }
         with(extractor.result)
         {
             assert(subject == "Маркшейдерские работы при открытой разработке месторождений")
@@ -51,16 +53,38 @@ class FullCellExtractorTest
         expectedEx.expectMessage("Pair is not extracted yet")
         val input = "I     Э  л   е  к т  р  о  т  е  х  н  и  к  а\n" +
                 "Доц. Яковлева Э.В. пр. No7213\n"
-        val extractor = FullCellExtractor(input).apply { make() }
+        val extractor = ComplexCellExtractor(input).apply { make() }
         // this call should result in a throw
         extractor.result
+    }
+
+    @Test
+    fun testSubjectQueueAid()
+    {
+        val input = "I     Э  л   е  к т  р  о  т  е  х  н  и  к  а\n" +
+                "Доц. Яковлева Э.В. пр. No7213\n"
+        val extractor = ComplexCellExtractor(input).apply { make() }
+        // Parsing same pair, but with regular amount of spaces
+        val inputButCorrect = "I Электротехника\n" +
+                "Доц. Яковлева Э.В. пр. No7213\n"
+        // Forcing SubjectQueue to add subject to vault using another extractor.
+        ComplexCellExtractor(inputButCorrect).apply { make() }
+        with (extractor.result)
+        {
+            assert(subject == "Электротехника")
+            assert(week == 1)
+            assert(one_half == false)
+            assert(teacher == listOf("Доц. Яковлева Э.В."))
+            assert(type == "практика")
+            assert(room == "7213")
+        }
     }
 
     @Test
     fun testMultipleTeachers()
     {
         val input = "Маркшейдерские и геодезические приборы Доц. Голованов В.А. Доц. Новоженин С.Ю. л/р No3403\n"
-        val extractor = FullCellExtractor(input).apply { make() }
+        val extractor = ComplexCellExtractor(input).apply { make() }
         with (extractor.result)
         {
             assert(type == "лабораторная работа")
@@ -75,7 +99,7 @@ class FullCellExtractorTest
         val input = "ч/н 1/2 Финансовый менеджмент\n" +
                 "и финансовый анализ\n" +
                 "Доц. Любек Ю.В. л/р No4611,4614"
-        val extractor = FullCellExtractor(input).apply { make() }
+        val extractor = ComplexCellExtractor(input).apply { make() }
         with (extractor.result)
         {
             assert(type == "лабораторная работа")
@@ -91,7 +115,7 @@ class FullCellExtractorTest
         val input = "I 1/2 Финансовый менеджмент\n" +
                 "и финансовый анализ\n" +
                 "Доц. Любек Ю.В. Проф. Папанин Л.Ю. л/р No4611,4614"
-        val extractor = FullCellExtractor(input).apply { make() }
+        val extractor = ComplexCellExtractor(input).apply { make() }
         with (extractor.result)
         {
             assert(type == "лабораторная работа")
@@ -110,4 +134,5 @@ class FullCellExtractorTest
             assert(subject == "Физическая культура")
         }
     }
+
 }

@@ -9,4 +9,7 @@ val roomRegex = "No[\\d{3,}]+".toRegex()
 val weeksRegex = "(I+|ч/н)".toRegex()
 val oneHalfRegex = "1/2".toRegex()
 val lineBreaksRegex = "(\\r\\n|\\n)".toRegex()
-val pairRegex = "I*".toRegex()
+
+
+val pairRegex = "$weeksRegex*.*$teacherRegex.*$roomRegex".toRegex()
+

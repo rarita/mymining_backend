@@ -4,27 +4,27 @@ import com.raritasolutions.mymining.model.PairRecord
 import com.raritasolutions.mymining.utils.*
 
 /* Extending this extractor guarantees that you will extract a pair with proper name */
-abstract class ContentSafeExtractor(protected val contents: String,
+abstract class ContentSafeExtractor(private val contents: String,
                                     group: String = "ААА-00",
                                     timeStarts : String = "00:00",
-                                    day : Int = 0) {
+                                    day : Int = 0) : BaseExtractor {
 
+    // Toggles when correct pair name is found
     private var extractionFinished = false
 
+    // Backing field for result
     private val pairInstance = PairRecord(group = group,
             t_start = timeStarts,
             day = day,
             duration = 90)
 
-    val result: PairRecord
+    override val result: PairRecord
         get() = if (extractionFinished) pairInstance else throw Exception("Pair is not extracted yet")
 
+    override var _contents: String = contents.removeSpecialCharacters()
 
-    // I feel like this solution is not equal to good design practices
-    // This must return subject string without spaces
-    internal abstract fun PairRecord.extract(): String
 
-    fun make()
+    override fun make()
     {
         // Applying extraction techniques to pairInstance and receiving spaceless subject
         val _subject = pairInstance.extract()
@@ -55,7 +55,7 @@ abstract class ContentSafeExtractor(protected val contents: String,
     private fun getOriginalSubjectName(subject: String): String
     {
         // Should match first letter and last letter of Subject
-        val regex = "${subject.take(1)}.+${subject.takeLast(1)}".toRegex()
+        val regex = "${subject.take(3)}.+${subject.takeLast(3)}".toRegex()
         // Replace line breaks with spaces before searching
         val contentsNoLineBreaks = contents.replace(lineBreaksRegex," ")
         return regex
