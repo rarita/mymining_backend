@@ -5,6 +5,7 @@ import com.raritasolutions.mymining.utils.raiseParsingException
 import java.lang.IllegalStateException
 
 // NOTE: Don't pass multiplePair...Regex here! It's designed for rip...Regex!
+// Todo: maybe it's worth to rewrite it to use Pair<String, String> instead of List<String>
 class ContentsSplitter(override var _contents: String,
                        private val rippingRegex: Regex) : ContentHolder {
 

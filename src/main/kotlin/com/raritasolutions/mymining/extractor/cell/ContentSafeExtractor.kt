@@ -5,11 +5,12 @@ import com.raritasolutions.mymining.utils.*
 
 /* Extending this extractor guarantees that you will extract a pair with proper name */
 abstract class ContentSafeExtractor(private val contents: String,
-                                    private val pairInstance: PairRecord) : BaseExtractor {
+                                    basePair: PairRecord) : BaseExtractor {
 
     // Toggles when correct pair name is found
     private var extractionFinished = false
-
+    // Breaking the link with parameter so one pair belongs only to one extractor.
+    private val pairInstance = basePair.copy()
 
     override val result: PairRecord
         get() = if (extractionFinished) pairInstance else throw Exception("Pair is not extracted yet")

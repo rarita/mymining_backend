@@ -12,12 +12,14 @@ val oneHalfRegex = "1/2".toRegex()
 val lineBreaksRegex = "(\\r\\n|\\n)".toRegex()
 
 /* CSV extractor resources */
-val pairRegex = "$weeksRegex*.*$teacherRegex.*$roomRegex".toRegex()
+val pairNoRoomRegex = "$weeksRegex*?.*$teacherRegex.*$pairTypesRegex.*".toRegex()
+val pairRegex = "$pairNoRoomRegex.*$roomRegex".toRegex()
 val groupRegex = "\\p{Lu}{2,}-\\d{2,}.*".toRegex()
 
 /* Raw extractor resources */
-val multiplePairRegexVanilla = "I+.+I+".toRegex()
+val multiplePairRegexVanilla = "I+.+I+.+".toRegex()
 val ripVanillaRegex = "I.+? (?=II)".toRegex()
 val multiplePairRegexOneHalf = "1/2.+1/2.+".toRegex()
 val ripOneHalfRegex = "1/2.+? (?=1/2)".toRegex()
-val multiplePairRegexOneLine = "I.*-.*No\\d{2,}.*II.*-.*No\\d{2,}".toRegex()
+val multiplePairRegexOneLine = "I.*?-.*?No\\d{2,}.*?II.*?-.*?No\\d{2,}".toRegex()
+val ripOneLineRegex = "I.+? (?=II)".toRegex()

@@ -15,3 +15,6 @@ fun String.removeCaretReturns()
 // Cast all letters to lower case and remove spaces
 fun String.shrink()
         = replace(" ","").toLowerCase()
+
+fun String.stripPrefix(prefix: String): String
+        = substringAfter(prefix)

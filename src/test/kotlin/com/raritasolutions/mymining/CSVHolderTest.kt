@@ -15,7 +15,6 @@ class CSVHolderTest{
         val source = File("C:\\Users\\rarita\\Documents\\decompose_tables\\out_v2.txt")
                 .readText()
                 .replace("\r"," ")
-                //.filter { it != '\r'}
                 .removeFirstLine()
         val sourceReader = StringReader(source)
         val rawList = getRawListFromCSV(sourceReader)

@@ -28,7 +28,7 @@ open class ComplexCellExtractor(contents: String,
         when (extractCustomRegex(weeksRegex,this)) {
             "I" -> 1
             "II", "ч/н" -> 2
-            null -> 0
+            null -> if (pairInstance.week != 0) 0 else pairInstance.week
             else -> throw Exception("Received unexpected number of weeks.")
         }
     }
