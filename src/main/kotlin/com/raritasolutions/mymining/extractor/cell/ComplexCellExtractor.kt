@@ -1,7 +1,5 @@
-package com.raritasolutions.mymining.extractor
+package com.raritasolutions.mymining.extractor.cell
 
-import com.raritasolutions.mymining.model.PairRecord
-import com.raritasolutions.mymining.utils.removeSpecialCharacters
 import com.raritasolutions.mymining.utils.*
 
 open class ComplexCellExtractor(contents: String,

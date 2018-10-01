@@ -1,4 +1,4 @@
-package com.raritasolutions.mymining.extractor
+package com.raritasolutions.mymining.extractor.cell
 
 import com.raritasolutions.mymining.model.PairRecord
 import com.raritasolutions.mymining.utils.*
@@ -37,7 +37,7 @@ abstract class ContentSafeExtractor(private val contents: String,
             SubjectQueue.addNewRecord(pairInstance.subject)
         }
         else
-            SubjectQueue.subscribe(_subject,this@ContentSafeExtractor)
+            SubjectQueue.subscribe(_subject, this@ContentSafeExtractor)
     }
 
     // Checks if ORIGINAL string has an adequate amount of spaces (not more than 20% of the whole input)

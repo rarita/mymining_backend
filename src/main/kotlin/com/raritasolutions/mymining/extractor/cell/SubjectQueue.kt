@@ -1,4 +1,4 @@
-package com.raritasolutions.mymining.extractor
+package com.raritasolutions.mymining.extractor.cell
 
 import com.raritasolutions.mymining.utils.removeSpaces
 
@@ -8,10 +8,14 @@ object SubjectQueue {
     // Map <Subject without spaces -> Extractors that are waiting for correct subject string>
     private val SUBSCRIBERS : HashMap<String,MutableList<ContentSafeExtractor>> = HashMap()
 
-    fun subscribe(subject : String, caller : ContentSafeExtractor) {
-        if (SUBSCRIBERS[subject] is MutableList<ContentSafeExtractor>)
-            SUBSCRIBERS[subject]!!.add(caller)
-        else
+    fun subscribe(subject : String, caller : ContentSafeExtractor): Unit = when {
+        (vault[subject] != null) ->
+            // skip subscription and assign pair immediately
+            caller.assignCorrectSubject(vault[subject]!!)
+        (SUBSCRIBERS[subject] is MutableList<ContentSafeExtractor>) ->
+            // omitting boolean return type
+            Unit.apply {SUBSCRIBERS[subject]!!.add(caller)}
+        else ->
             SUBSCRIBERS[subject] = arrayListOf(caller)
     }
 

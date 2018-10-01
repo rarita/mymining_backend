@@ -1,4 +1,4 @@
-package com.raritasolutions.mymining.extractor
+package com.raritasolutions.mymining.extractor.cell
 
 class SimpleCellExtractor(contents: String,
                           group: String = "ААА-00",

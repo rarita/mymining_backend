@@ -1,4 +1,4 @@
-package com.raritasolutions.mymining.extractor
+package com.raritasolutions.mymining.extractor.cell
 
 import com.raritasolutions.mymining.utils.pairRegex
 import com.raritasolutions.mymining.utils.removeSpecialCharacters

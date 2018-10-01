@@ -1,8 +1,8 @@
 package com.raritasolutions.mymining
 
-import com.raritasolutions.mymining.extractor.CellExtractorFactory
-import com.raritasolutions.mymining.extractor.ComplexCellExtractor
-import com.raritasolutions.mymining.extractor.SimpleCellExtractor
+import com.raritasolutions.mymining.extractor.cell.CellExtractorFactory
+import com.raritasolutions.mymining.extractor.cell.ComplexCellExtractor
+import com.raritasolutions.mymining.extractor.cell.SimpleCellExtractor
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException

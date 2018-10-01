@@ -12,4 +12,4 @@ val lineBreaksRegex = "(\\r\\n|\\n)".toRegex()
 
 
 val pairRegex = "$weeksRegex*.*$teacherRegex.*$roomRegex".toRegex()
-
+val groupRegex = "\\p{Lu}{2,}-\\d{2,}.*".toRegex()
