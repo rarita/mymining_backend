@@ -3,6 +3,7 @@ package com.raritasolutions.mymining
 
 import com.raritasolutions.mymining.extractor.cell.ComplexCellExtractor
 import com.raritasolutions.mymining.extractor.cell.SimpleCellExtractor
+import com.raritasolutions.mymining.model.PairRecord
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
@@ -82,12 +83,12 @@ class CellExtractorTest
     @Test
     fun testMultipleTeachers()
     {
-        val input = "Маркшейдерские и геодезические приборы Доц. Голованов В.А. Доц. Новоженин С.Ю. л/р No3403\n"
+        val input = "Маркшейдерские и геодезические приборы Доц. Голованов В.А. Доц. Новоженин С.Ю. л/р No3403а\n"
         val extractor = ComplexCellExtractor(input).apply { make() }
         with (extractor.result)
         {
             assert(type == "лабораторная работа")
-            assert(room == "3403")
+            assert(room == "3403а")
             assert(teacher == listOf("Доц. Голованов В.А.", "Доц. Новоженин С.Ю."))
             assert(subject == "Маркшейдерские и геодезические приборы")
         }
@@ -133,5 +134,18 @@ class CellExtractorTest
             assert(subject == "Физическая культура")
         }
     }
-
+    @Test
+    fun testThreePairs()
+    {
+        val input = "1/2 Физика\n" +
+                "Доц.Томаев В.В.\n" +
+                "л/р No235,236,717"
+        val extractor = ComplexCellExtractor(input).apply { make() }
+        with (extractor.result){
+            assert(subject == "Физика")
+            assert(teacher == listOf("Доц. Томаев В.В."))
+            assert(type == "лабораторная работа")
+            assert(room == "235, 236, 717")
+        }
+    }
 }

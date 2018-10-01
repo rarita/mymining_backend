@@ -1,12 +1,12 @@
 package com.raritasolutions.mymining.extractor.cell
 
+import com.raritasolutions.mymining.extractor.ContentHolder
 import com.raritasolutions.mymining.model.PairRecord
 
 
-interface BaseExtractor {
+interface BaseExtractor: ContentHolder {
 
     // Necessary fields for every extractor
-    val _contents: String
     val result: PairRecord
 
     // This fields have to be overridden in inheritors

@@ -5,18 +5,11 @@ import com.raritasolutions.mymining.utils.*
 
 /* Extending this extractor guarantees that you will extract a pair with proper name */
 abstract class ContentSafeExtractor(private val contents: String,
-                                    group: String = "ААА-00",
-                                    timeStarts : String = "00:00",
-                                    day : Int = 0) : BaseExtractor {
+                                    private val pairInstance: PairRecord) : BaseExtractor {
 
     // Toggles when correct pair name is found
     private var extractionFinished = false
 
-    // Backing field for result
-    private val pairInstance = PairRecord(group = group,
-            t_start = timeStarts,
-            day = day,
-            duration = 90)
 
     override val result: PairRecord
         get() = if (extractionFinished) pairInstance else throw Exception("Pair is not extracted yet")
@@ -55,7 +48,7 @@ abstract class ContentSafeExtractor(private val contents: String,
     private fun getOriginalSubjectName(subject: String): String
     {
         // Should match first letter and last letter of Subject
-        val regex = "${subject.take(3)}.+${subject.takeLast(3)}".toRegex()
+        val regex = "${subject.take(2)}.+${subject.takeLast(2)}".toRegex()
         // Replace line breaks with spaces before searching
         val contentsNoLineBreaks = contents.replace(lineBreaksRegex," ")
         return regex

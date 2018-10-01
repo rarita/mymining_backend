@@ -1,9 +1,9 @@
 package com.raritasolutions.mymining.extractor.cell
 
+import com.raritasolutions.mymining.model.PairRecord
+
 class SimpleCellExtractor(contents: String,
-                          group: String = "ААА-00",
-                          timeStarts : String = "00:00",
-                          day : Int = 0) : ContentSafeExtractor(contents, group, timeStarts, day)
+                          pairInstance: PairRecord = PairRecord()) : ContentSafeExtractor(contents,pairInstance)
 {
 
     override val extractRoom: () -> String = {"Спортзал"}

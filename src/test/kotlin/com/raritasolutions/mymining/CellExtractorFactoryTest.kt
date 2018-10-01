@@ -3,6 +3,7 @@ package com.raritasolutions.mymining
 import com.raritasolutions.mymining.extractor.cell.CellExtractorFactory
 import com.raritasolutions.mymining.extractor.cell.ComplexCellExtractor
 import com.raritasolutions.mymining.extractor.cell.SimpleCellExtractor
+import com.raritasolutions.mymining.model.PairRecord
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
