@@ -34,7 +34,7 @@ fun getRawListFromCSV(source: Reader): List<RawPairRecord>{
             if (it[dayKey].isNotBlank())
                 currentDay = it[dayKey].shrink()
 
-            if (it[dayKey] == "П Я Т Н И Ц А") {
+            if (currentDay == "пятница") {
                 timeKey = dayKey!!
                 dayKey = null
             }

@@ -110,6 +110,23 @@ class CellExtractorTest
         }
     }
     @Test
+    fun testMultipleTeachersAndRooms()
+    {
+        val input = "Иностранный язык " +
+                "Доц. Герасимова И.Г. пр. No838 " +
+                "Доц. Гончарова М.В. пр. No228 " +
+                "(немецкий язык)"
+        val extractor = ComplexCellExtractor(input).apply { make() }
+        with (extractor.result)
+        {
+            assert(type == "практика")
+            assert(room == "838, 228(немецкийязык)")
+            assert(week == 0)
+            assert(teacher == listOf("Доц. Герасимова И.Г.","Доц. Гончарова М.В."))
+            assert(subject == "Иностранный язык")
+        }
+    }
+    @Test
     fun testUltimate()
     {
         val input = "I 1/2 Финансовый менеджмент\n" +

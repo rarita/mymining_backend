@@ -6,24 +6,34 @@ import com.raritasolutions.mymining.utils.*
 open class ComplexCellExtractor(contents: String,
                                 pairInstance: PairRecord = PairRecord()) : ContentSafeExtractor(contents, pairInstance)
 {
-    override var extractRoom: () -> String = {extractCustomRegex(roomRegex,this)?.replace("No", "")?.replace(",",", ")
-            ?: raiseParsingException(roomRegex,this)}
+    override val extractRoom
+        get() = {
+            // add ending character
+            _contents += "No" // todo review asap (find better regex for rooms)
+            val _result = extractCustomRegexToList(roomRegex,this)
+                    .map { it.replace("No","") }
+                    .map { it.replace(",",", ") }
+                    .joinToString(separator = ", ")
+            extractCustomRegex("No".toRegex(),this)
+            if (_result.isNotBlank()) _result
+                else raiseParsingException(roomRegex, this)
+        }
 
-    override var extractType: () -> String = {
+    override val extractType: () -> String = {
         when (extractCustomRegex(pairTypesRegex,this)) {
             "л/р" -> "лабораторная работа"
             "пр." -> "практика"
             else -> "лекция"
         }
     }
-    override var extractTeacher:() -> List<String> =
+    override val extractTeacher:() -> List<String> =
         {
             val teacherList = extractCustomRegexToList(teacherRegex,this).map { it.flavourTeacherString() }
             if (teacherList.isEmpty()) raiseParsingException(teacherRegex,this)
             teacherList
         }
 
-    override var extractWeek: () -> Int =
+    override val extractWeek: () -> Int =
     {
         when (extractCustomRegex(weeksRegex,this)) {
             "I" -> 1
@@ -32,7 +42,7 @@ open class ComplexCellExtractor(contents: String,
             else -> throw Exception("Received unexpected number of weeks.")
         }
     }
-    override var extractOneHalf: () -> Boolean = { extractCustomRegex(oneHalfRegex,this) != null }
+    override val extractOneHalf: () -> Boolean = { extractCustomRegex(oneHalfRegex,this) != null }
 
     // adds required spaces to teacher string
     // probably shouldn't be an extension
@@ -46,7 +56,4 @@ open class ComplexCellExtractor(contents: String,
                 .insert(second_space," ")
                 .toString()
     }
-
-
-
 }

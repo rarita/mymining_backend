@@ -13,7 +13,7 @@ abstract class ContentSafeExtractor(private val contents: String,
     private val pairInstance = basePair.copy()
 
     override val result: PairRecord
-        get() = if (extractionFinished) pairInstance else throw Exception("Pair is not extracted yet")
+        get() = if (extractionFinished) pairInstance else throw Exception("Pair is not extracted yet: $_contents,")
 
     override var _contents: String = contents.removeSpecialCharacters()
 
@@ -46,14 +46,27 @@ abstract class ContentSafeExtractor(private val contents: String,
         pairInstance.subject = subject
         extractionFinished = true
     }
+    /* NOTE: never take less or more than 2 symbols:
+    - it often grabs wrong bracket if you take one
+    - it fails on "Химия" when you grab 3
+    2 is perfect
+     */
     private fun getOriginalSubjectName(subject: String): String
     {
+        val greed = 2
         // Should match first letter and last letter of Subject
-        val regex = "${subject.take(2)}.+${subject.takeLast(2)}".toRegex()
+        val prefix = subject.take(greed)
+                                    .shieldSymbol('(')
+                                    .mayContainSpaces()
+        val postfix = subject.takeLast(greed)
+                                    .shieldSymbol(')')
+                                    .mayContainSpaces()
+
+        val regex = "$prefix.*?$postfix".toRegex() // NOTE it was made NOT GREEDY for data between keys
         // Replace line breaks with spaces before searching
         val contentsNoLineBreaks = contents.replace(lineBreaksRegex," ")
         return regex
-                .find(contentsNoLineBreaks)?.value
+                .find(contentsNoLineBreaks)?.value?.trim()
                 ?: throw Exception("Original subject can't be extracted. Subject is $subject and contents is $contents")
     }
 

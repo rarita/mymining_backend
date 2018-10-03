@@ -1,5 +1,7 @@
 package com.raritasolutions.mymining.utils
 
+import java.lang.StringBuilder
+
 fun String.removeSpecialCharacters()
         = replace("( |\\r\\n|\\n)".toRegex(),"")
 
@@ -18,3 +20,13 @@ fun String.shrink()
 
 fun String.stripPrefix(prefix: String): String
         = substringAfter(prefix)
+
+fun String.shieldSymbol(symbol: Char)
+        = replace(symbol.toString(),"[$symbol]")
+
+fun String.mayContainSpaces(): String{
+    val sb = StringBuilder()
+    this.forEach { sb.append("$it\\s*") }
+    return sb.toString().trim()
+}
+

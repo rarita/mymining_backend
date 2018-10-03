@@ -14,14 +14,14 @@ class CellExtractorFactory(private val contents: String,
     private val contentsNoSpaces = contents.removeSpecialCharacters()
 
     fun produce() = when {
-        pairRegex.matches(contentsNoSpaces) ->
+        pairRegex.containsMatchIn(contentsNoSpaces) -> // todo review containsMatchIn vs matches
             ComplexCellExtractor(contents,pairInstance)
-            pairNoRoomRegex.matches(contentsNoSpaces) ->
+        pairNoRoomRegex.matches(contentsNoSpaces) ->
                 object : ComplexCellExtractor (contents, pairInstance) {
-                    override var extractRoom: () -> String = { pairInstance.room }
-                    override var extractWeek: () -> Int = { pairInstance.week}
+                    override val extractRoom: () -> String = { pairInstance.room }
+                    override val extractWeek: () -> Int = { pairInstance.week}
                 }
-            else ->
+        else ->
                 SimpleCellExtractor(contents, pairInstance)
         }
     }
