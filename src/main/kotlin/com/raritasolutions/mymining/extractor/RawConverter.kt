@@ -34,7 +34,7 @@ class RawConverter(private val rawList: List<RawPairRecord>){
     {
         val daysOfTheWeek = mapOf("понедельник" to 1, "вторник" to 2, "среда" to 3, "четверг" to 4,"пятница" to 5)
         return PairRecord(day = daysOfTheWeek[this.day] ?: throw IllegalStateException("Day of the week ${this.day} is illegal"),
-                          timespan = this.timeSpan,
+                          timeSpan = this.timeSpan,
                           group = this.group)
     }
 

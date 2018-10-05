@@ -49,6 +49,7 @@ dependencies {
     compile("org.jetbrains.kotlin:kotlin-reflect")
     runtime('org.springframework.boot:spring-boot-devtools')
     compile 'mysql:mysql-connector-java'
+    compile("com.h2database:h2")
     compile "org.apache.commons:commons-csv:1.5"
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }

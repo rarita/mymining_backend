@@ -25,7 +25,7 @@ class CellExtractorTest
             assert(subject == "Теория принятия решений")
             assert(type == "лекция")
             assert(room == "3424")
-            assert(teacher == listOf("Проф. Иванова И.В."))
+            assert(teacher == "Проф. Иванова И.В.")
         }
 
     }
@@ -40,7 +40,7 @@ class CellExtractorTest
         {
             assert(subject == "Маркшейдерские работы при открытой разработке месторождений")
             assert(type == "практика")
-            assert(teacher == listOf("Доц. Голованов В.А."))
+            assert(teacher == "Доц. Голованов В.А.")
             assert(room == "3411")
             assert(week == 2)
         }
@@ -74,7 +74,7 @@ class CellExtractorTest
             assert(subject == "Электротехника")
             assert(week == 1)
             assert(one_half == false)
-            assert(teacher == listOf("Доц. Яковлева Э.В."))
+            assert(teacher == "Доц. Яковлева Э.В.")
             assert(type == "практика")
             assert(room == "7213")
         }
@@ -89,7 +89,7 @@ class CellExtractorTest
         {
             assert(type == "лабораторная работа")
             assert(room == "3403а")
-            assert(teacher == listOf("Доц. Голованов В.А.", "Доц. Новоженин С.Ю."))
+            assert(teacher == "Доц. Голованов В.А., Доц. Новоженин С.Ю.")
             assert(subject == "Маркшейдерские и геодезические приборы")
         }
     }
@@ -105,7 +105,7 @@ class CellExtractorTest
             assert(type == "лабораторная работа")
             assert(room == "4611, 4614")
             assert(week == 2)
-            assert(teacher == listOf("Доц. Любек Ю.В."))
+            assert(teacher == "Доц. Любек Ю.В.")
             assert(subject == "Финансовый менеджмент и финансовый анализ")
         }
     }
@@ -122,7 +122,7 @@ class CellExtractorTest
             assert(type == "практика")
             assert(room == "838, 228(немецкийязык)")
             assert(week == 0)
-            assert(teacher == listOf("Доц. Герасимова И.Г.","Доц. Гончарова М.В."))
+            assert(teacher == "Доц. Герасимова И.Г., Доц. Гончарова М.В.")
             assert(subject == "Иностранный язык")
         }
     }
@@ -138,7 +138,7 @@ class CellExtractorTest
             assert(type == "лабораторная работа")
             assert(room == "4611, 4614")
             assert(week == 1)
-            assert(teacher == listOf("Доц. Любек Ю.В.","Проф. Папанин Л.Ю."))
+            assert(teacher == "Доц. Любек Ю.В., Проф. Папанин Л.Ю.")
             assert(subject == "Финансовый менеджмент и финансовый анализ")
         }
     }
@@ -160,7 +160,7 @@ class CellExtractorTest
         val extractor = ComplexCellExtractor(input).apply { make() }
         with (extractor.result){
             assert(subject == "Физика")
-            assert(teacher == listOf("Доц. Томаев В.В."))
+            assert(teacher == "Доц. Томаев В.В.")
             assert(type == "лабораторная работа")
             assert(room == "235, 236, 717")
         }

@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Schedule</title>
+    <style>
+        td, th {
+            border: 1px solid #999;
+            padding: 0.5rem;
+        }
+    </style>
 </head>
 <body>
 <table>
@@ -11,8 +17,7 @@
         <th>Group</th>
         <th>Subject</th>
         <th>Teacher</th>
-        <th>Time Starts</th>
-        <th>Duration</th>
+        <th>Time Span</th>
         <th>Week</th>
         <th>Day</th>
         <th>Room</th>
@@ -24,8 +29,7 @@
         <td>{{group}}</td>
         <td>{{subject}}</td>
         <td>{{teacher}}</td>
-        <td>{{t_start}}</td>
-        <td>{{duration}}</td>
+        <td>{{timeSpan}}</td>
         <td>{{week}}</td>
         <td>{{day}}</td>
         <td>{{room}}</td>

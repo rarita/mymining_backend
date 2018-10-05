@@ -1,12 +1,11 @@
 package com.raritasolutions.mymining
 
 import com.raritasolutions.mymining.extractor.getRawListFromCSV
+import com.raritasolutions.mymining.fetcher.removeFirstLine
 import com.raritasolutions.mymining.model.RawPairRecord
 import org.junit.Test
 import java.io.File
 import java.io.StringReader
-
-fun String.removeFirstLine() = this.substringAfter("\n")
 
 class CSVHolderTest{
     @Test

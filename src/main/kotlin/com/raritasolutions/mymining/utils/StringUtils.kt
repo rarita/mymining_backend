@@ -29,4 +29,3 @@ fun String.mayContainSpaces(): String{
     this.forEach { sb.append("$it\\s*") }
     return sb.toString().trim()
 }
-

@@ -32,7 +32,7 @@ class TestExtractorFactoryEerieCases {
             assert(subject == "Общая геология")
             assert(week == 1)
             assert(one_half == true)
-            assert(teacher == listOf("Асс. Илалова Р.К."))
+            assert(teacher == "Асс. Илалова Р.К.")
             assert(room == "550")
             assert(type == "лабораторная работа")
         }
