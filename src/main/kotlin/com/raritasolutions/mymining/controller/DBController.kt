@@ -20,7 +20,7 @@ class DBController @Autowired constructor(val pairRepo: PairRepository){
     fun process(): ModelAndView
     {
         val pairsList
-                = txtToPairRecordList("C:\\Users\\rarita\\Documents\\decompose_tables\\out_v2.txt")
+                = txtToPairRecordList("parsed.txt")
         pairRepo.saveAll(pairsList)
         return ModelAndView("job_result", mapOf("caller" to "TXT2DB Pair Fetcher",
                                                     "message" to "Job Done, ${pairsList.size} lessons extracted and saved to repository."))
@@ -35,6 +35,7 @@ class DBController @Autowired constructor(val pairRepo: PairRepository){
             pairRepo.findAll()
         return ModelAndView("pair_list",model)
     }
+
     @GetMapping("/list_json")
     @ResponseBody
     fun getAllPairs() = pairRepo.findAll()
