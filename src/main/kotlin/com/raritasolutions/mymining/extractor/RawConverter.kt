@@ -9,7 +9,7 @@ import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
 
 
-class RawConverter(private val rawList: List<RawPairRecord>){
+class RawConverter(private val rawList: List<RawPairRecord>, private val buildingID: Int = 3){
 
     private val _extractorList = arrayListOf<ContentSafeExtractor>()
     val extractorList: ArrayList<ContentSafeExtractor>
@@ -19,7 +19,7 @@ class RawConverter(private val rawList: List<RawPairRecord>){
             return _extractorList
         }
 
-    private fun RawPairRecord.split(){
+    private fun RawPairRecord.split() {
         val _contents = contents.replace("_","")
         when {
             multiplePairRegexVanilla.matches(_contents)

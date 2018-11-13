@@ -2,6 +2,7 @@ package com.raritasolutions.mymining.extractor.cell
 
 import com.raritasolutions.mymining.utils.removeSpaces
 
+
 object SubjectQueue {
     // Map <Subject without spaces -> Subject with correct spaces>
     private val vault : HashMap<String,String> = HashMap()

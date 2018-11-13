@@ -3,12 +3,10 @@ package com.raritasolutions.mymining.controller
 import com.raritasolutions.mymining.fetcher.txtToPairRecordList
 import com.raritasolutions.mymining.model.PairRecord
 import com.raritasolutions.mymining.repo.PairRepository
+import com.raritasolutions.mymining.utils.toPropertyMap
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
 
 
@@ -40,4 +38,13 @@ class DBController @Autowired constructor(val pairRepo: PairRepository){
     @ResponseBody
     fun getAllPairs() = pairRepo.findAll()
 
+
+    @GetMapping("/edit")
+    fun editEntry(@RequestParam(value = "id",required = true) entryId: Int): ModelAndView{
+        if (!pairRepo.findById(entryId).isPresent)
+            return ModelAndView("job_failed", mapOf("error" to "Record with id $entryId could not be found"))
+        val recipient = pairRepo.findById(entryId).get()
+        val model = recipient.toPropertyMap()
+        return ModelAndView("pair_editor", model)
+    }
 }

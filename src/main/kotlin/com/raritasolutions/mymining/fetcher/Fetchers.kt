@@ -3,6 +3,7 @@ package com.raritasolutions.mymining.fetcher
 import com.raritasolutions.mymining.extractor.RawConverter
 import com.raritasolutions.mymining.extractor.getRawListFromCSV
 import com.raritasolutions.mymining.model.PairRecord
+import org.springframework.core.io.ClassPathResource
 import java.io.File
 import java.io.StringReader
 import java.lang.IllegalStateException
@@ -12,7 +13,8 @@ fun String.removeFirstLine()
 
 fun txtToPairRecordList(filename: String): List<PairRecord>
 {
-    val source = File(filename)
+    val parsedTXT = ClassPathResource("/textdata/parsed.txt").file
+    val source = parsedTXT
             .readText()
             .replace("\r"," ")
             .removeFirstLine()
@@ -21,5 +23,6 @@ fun txtToPairRecordList(filename: String): List<PairRecord>
     val extractorList = RawConverter(rawList).extractorList
     extractorList.forEach { it.make() }
     if (extractorList.isEmpty()) throw IllegalStateException("Nothing was extracted from the given file")
-    return extractorList.map { it.result }
+    // Watch out! Temporary solution to assign 3rd building to all the pairs by default, as it seems to be default for first courses.
+    return extractorList.map { it.result.apply { buildingID = 3 } }
 }

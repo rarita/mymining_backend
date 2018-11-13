@@ -16,4 +16,5 @@ data class PairRecord(@Id @GeneratedValue var id: Int = 0,
                       @Column(name = "_subject") var subject: String = "Default",
                       @Column(name = "_room") var room: String = "0",
                       @Column(name = "_type") var type: String = "Default",
-                      @Column(name = "_one_half") var one_half: Boolean = false)
+                      @Column(name = "_one_half") var one_half: Boolean = false,
+                      @Column(name = "_buildingID") var buildingID: Int = 0)
