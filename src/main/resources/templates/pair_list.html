@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Schedule</title>
@@ -11,6 +11,7 @@
     </style>
 </head>
 <body>
+<div class="container">
 <table>
     <tr>
         <th>Id</th>
@@ -23,19 +24,18 @@
         <th>Room</th>
         <th>Type</th>
     </tr>
-    {{#data}}
-    <tr>
-        <td>{{id}}</td>
-        <td>{{group}}</td>
-        <td>{{subject}}</td>
-        <td>{{teacher}}</td>
-        <td>{{timeSpan}}</td>
-        <td>{{week}}</td>
-        <td>{{day}}</td>
-        <td>{{room}}</td>
-        <td>{{type}}</td>
+    <tr th:each="pair : ${data}">
+        <td th:text="${pair.id}"></td>
+        <td th:text="${pair.group}"></td>
+        <td th:text="${pair.subject}"></td>
+        <td th:text="${pair.teacher}"></td>
+        <td th:text="${pair.timeSpan}"></td>
+        <td th:text="${pair.week}"></td>
+        <td th:text="${pair.day}"></td>
+        <td th:text="${pair.room}"></td>
+        <td th:text="${pair.type}"></td>
     </tr>
-    {{/data}}
 </table>
+</div>
 </body>
 </html>

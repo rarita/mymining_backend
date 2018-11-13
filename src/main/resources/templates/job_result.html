@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Message from {{caller}}</title>
+    <title>Message from ${caller}</title>
 </head>
 <body>
-{{message}}
+<strong th:text="${message}"> Result is: </strong>
 </body>
 </html>
