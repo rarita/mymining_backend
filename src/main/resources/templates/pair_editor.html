@@ -5,6 +5,20 @@
     <title>Edit Record</title>
 </head>
 <body>
-[[${subject}]]
+<h1>Class Editor</h1>
+<form action="#" th:action="@{/db/edit}" th:object="${pair}" method="post">
+    <p>Id: <input type="text" th:field="*{id}" th:readonly="true"/></p>
+    <p>Group: <input type="text" th:field="*{group}" /></p>
+    <p>Teacher: <input type="text" th:field="*{teacher}" /></p>
+    <p>Week: <input type="text" th:field="*{week}" /></p>
+    <p>Day: <input type="text" th:field="*{day}" /></p>
+    <p>Subject: <input type="text" th:field="*{subject}" /></p>
+    <p>TimeSpan: <input type="text" th:field="*{timeSpan}" /></p>
+    <p>Room: <input type="text" th:field="*{room}" /></p>
+    <p>Type: <input type="text" th:field="*{type}" /></p>
+    <p>One half: <input type="text" th:field="*{one_half}" /></p>
+    <p>Building: <input type="text" th:field="*{buildingID}" /></p>
+    <p><input type="submit" value="Submit" /></p>
+</form>
 </body>
 </html>

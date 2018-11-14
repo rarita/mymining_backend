@@ -3,11 +3,11 @@ package com.raritasolutions.mymining.controller
 import com.raritasolutions.mymining.fetcher.txtToPairRecordList
 import com.raritasolutions.mymining.model.PairRecord
 import com.raritasolutions.mymining.repo.PairRepository
-import com.raritasolutions.mymining.utils.toPropertyMap
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
+import org.springframework.web.servlet.view.RedirectView
 
 
 @Controller
@@ -44,7 +44,17 @@ class DBController @Autowired constructor(val pairRepo: PairRepository){
         if (!pairRepo.findById(entryId).isPresent)
             return ModelAndView("job_failed", mapOf("error" to "Record with id $entryId could not be found"))
         val recipient = pairRepo.findById(entryId).get()
-        val model = recipient.toPropertyMap()
+        val model = mapOf("pair" to recipient)
         return ModelAndView("pair_editor", model)
+    }
+
+    @PostMapping("/edit")
+    fun updateEntry(@ModelAttribute pair: PairRecord): RedirectView {
+        pairRepo.save(pair)
+        val model = mapOf(
+                "caller" to "Editor: Update",
+                "message" to "Updated a record @ id ${pair.id}")
+        // todo might want to pass some params with it
+        return RedirectView("/db/list")
     }
 }

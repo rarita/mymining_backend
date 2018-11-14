@@ -23,6 +23,7 @@
         <th>Day</th>
         <th>Room</th>
         <th>Type</th>
+        <th>Building</th>
     </tr>
     <tr th:each="pair : ${data}">
         <td th:text="${pair.id}"></td>
@@ -34,6 +35,8 @@
         <td th:text="${pair.day}"></td>
         <td th:text="${pair.room}"></td>
         <td th:text="${pair.type}"></td>
+        <td th:text="${pair.buildingID}"></td>
+        <td><a th:href="@{/db/edit(id=${pair.id})}" class="button" th:text="Edit"></a></td>
     </tr>
 </table>
 </div>

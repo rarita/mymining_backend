@@ -1,6 +1,5 @@
 package com.raritasolutions.mymining.utils
 
-import com.raritasolutions.mymining.model.PairRecord
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
 
