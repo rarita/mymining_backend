@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Schedule</title>
+    <style>
+        td, th {
+            border: 1px solid #999;
+            padding: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+<table>
+    <tr>
+        <div th:each="column : ${columns}">
+            <th th:text="${column}"></th>
+        </div>
+    </tr>
+    <tr th:each="items : ${data}">
+        <div th:each="item : ${items}">
+            <td style="white-space: pre;" th:text="${item}"></td>
+        </div>
+    </tr>
+</table>
+</div>
+</body>
+</html>

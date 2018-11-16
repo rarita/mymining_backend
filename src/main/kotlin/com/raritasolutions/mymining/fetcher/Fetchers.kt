@@ -13,8 +13,9 @@ fun String.removeFirstLine()
 
 fun txtToPairRecordList(filename: String): List<PairRecord>
 {
-    val parsedTXT = ClassPathResource("/textdata/parsed.txt").file
+    val parsedTXT = ClassPathResource("/textdata/parsed.txt").inputStream
     val source = parsedTXT
+            .bufferedReader()
             .readText()
             .replace("\r"," ")
             .removeFirstLine()
