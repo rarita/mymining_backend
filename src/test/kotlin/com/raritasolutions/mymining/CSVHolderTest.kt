@@ -4,6 +4,7 @@ import com.raritasolutions.mymining.extractor.getRawListFromCSV
 import com.raritasolutions.mymining.fetcher.removeFirstLine
 import com.raritasolutions.mymining.model.RawPairRecord
 import org.junit.Test
+import org.springframework.core.io.ClassPathResource
 import java.io.File
 import java.io.StringReader
 
@@ -11,7 +12,9 @@ class CSVHolderTest{
     @Test
     fun testRealCSVOutputNoMilitaryClass()
     {
-        val source = File("C:\\Users\\rarita\\Documents\\decompose_tables\\out_v2.txt")
+        val parsedTXT = ClassPathResource("/textdata/parsed.txt").inputStream
+        val source = parsedTXT
+                .bufferedReader()
                 .readText()
                 .replace("\r"," ")
                 .removeFirstLine()
