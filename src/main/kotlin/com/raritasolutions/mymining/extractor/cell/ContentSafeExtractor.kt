@@ -66,7 +66,9 @@ abstract class ContentSafeExtractor(private val contents: String,
         // Replace line breaks with spaces before searching
         val contentsNoLineBreaks = contents.replace(lineBreaksRegex," ")
         return regex
-                .find(contentsNoLineBreaks)?.value?.trim()
+                .find(contentsNoLineBreaks)?.value
+                ?.trim()
+                ?.replace("\\s+".toRegex(), " ") // Replace duplicating whitespaces if present
                 ?: throw Exception("Original subject can't be extracted. Subject is $subject and contents is $contents")
     }
 

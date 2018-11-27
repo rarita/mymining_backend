@@ -2,6 +2,7 @@ package com.raritasolutions.mymining.composer
 
 import com.raritasolutions.mymining.model.GroupFoldingSet
 import com.raritasolutions.mymining.model.PairRecord
+import com.raritasolutions.mymining.model.normalizeGroups
 import com.raritasolutions.mymining.repo.PairRepository
 import com.raritasolutions.mymining.utils.DAYS_MAP
 import com.raritasolutions.mymining.utils.EMPTY
@@ -36,6 +37,7 @@ class DayTimeScheduleComposer @Autowired constructor(val pairRepo: PairRepositor
                         if (pairsAtGivenDay.isNotEmpty())
                             GroupFoldingSet(pairsAtGivenDay.toSet())
                                     .sortedBy { it.week }
+                                    .map { it.apply { normalizeGroups() } }
                                     .joinToString(separator = "\n", transform = stringRepresentation)
                         else
                             String.EMPTY

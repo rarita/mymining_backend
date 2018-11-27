@@ -14,12 +14,17 @@ class UtilsTest {
         val pair = PairRecord()
         val result = pair.toPropertyMap()
         result.forEach { println("${it.key} ${it.value}")}
+        assert("id" in result.keys)
+        assert("DEFAULT" in result.values)
     }
 
     @Test
     fun testListOfProperties()
     {
-        println(PairRecord().listOfProperties())
+        val properties = PairRecord().listOfProperties()
+        assert("buildingID 0" in properties)
+        assert("id 0" in properties)
+        assert("needsRevision false" in properties)
     }
 
     @Test
@@ -29,6 +34,7 @@ class UtilsTest {
             week = 1
             one_half = true
         }
-        println(pair.toString("id","room","subject", "teacher","week","one_half"))
+        assert(pair.toString("id","room","subject", "teacher","week","one_half") ==
+                "0, 0, Default, DEFAULT, I, 1/2")
     }
 }

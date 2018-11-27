@@ -18,11 +18,11 @@ class FormatterTest {
     fun testGroupFoldingSet(){
         val fSet = GroupFoldingSet(*pairs.toTypedArray())
         assert(fSet.size == 3)
-        val addedSet = fSet + PairRecord(subject="Геология", group="НГД-16-12")
+        val addedSet = fSet + PairRecord(id = 3, subject="Геология", group="НГД-16-12")
         assert(addedSet.size == 3)
-        assert(addedSet.find{it.group == "ААА-11, ВВВ-33"} != null)
-        assert(addedSet.find{it.group == "ААА-11, БББ-22, НГД-16-12"} != null)
+        assert(addedSet.find { it.group == "ААА-11, ВВВ-33" } != null)
+        assert(addedSet.find { it.group == "ААА-11, БББ-22, НГД-16-12" } != null)
         // Assert immutability of ID-s
-        assert(addedSet.map { it.id } == (0..2).toList())
+        assert(addedSet.map { it.id }.containsAll((0..2).toList()))
     }
 }

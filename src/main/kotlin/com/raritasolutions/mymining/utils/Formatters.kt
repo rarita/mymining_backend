@@ -43,7 +43,7 @@ fun PairRecord.teacherFormat()
 // Room View
 fun PairRecord.formatSoloGroup()
     =  baseFormatString() +
-       this.subject + "\n" + teacherFormat() + "\n" + this.group
+       this.subject + "\n" + teacherFormat() + this.group
 
 // Teacher View
 fun PairRecord.formatSoloRoom()

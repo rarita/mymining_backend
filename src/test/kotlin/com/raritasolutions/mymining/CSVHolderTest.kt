@@ -20,7 +20,6 @@ class CSVHolderTest{
                 .removeFirstLine()
         val sourceReader = StringReader(source)
         val rawList = getRawListFromCSV(sourceReader)
-        rawList.forEach { println(it) }
         // Test Pair Instances in table
         val pairsToTest = listOf(RawPairRecord("среда","12.35-14.05","ГНГ-18-1","Общая геология Проф. Таловина И.В. No832"),
                                  RawPairRecord("пятница", "14.15-15.45","НГД-18-10","История Асс. Подольский С.И. пр. No612"),

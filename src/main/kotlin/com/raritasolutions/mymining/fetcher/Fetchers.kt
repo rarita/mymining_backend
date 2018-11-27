@@ -4,7 +4,6 @@ import com.raritasolutions.mymining.extractor.RawConverter
 import com.raritasolutions.mymining.extractor.getRawListFromCSV
 import com.raritasolutions.mymining.model.PairRecord
 import org.springframework.core.io.ClassPathResource
-import java.io.File
 import java.io.StringReader
 import java.lang.IllegalStateException
 

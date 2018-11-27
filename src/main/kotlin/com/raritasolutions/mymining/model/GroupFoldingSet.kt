@@ -5,8 +5,10 @@ class GroupFoldingSet(private val contents: Set<PairRecord>) : Set<PairRecord> {
     constructor(vararg elements: PairRecord) : this(setOf(*elements))
 
     private val container: Set<PairRecord> by lazy {
-            contents.fold(setOf<PairRecord>()) { acc, item ->
-                val parent = acc.find { it.equalsExcluding(item,PairRecord::group) }
+            contents.sortedBy { it.group }
+                    .fold(setOf<PairRecord>()) { acc, item ->
+                val parent =
+                        acc.find { it.equalsExcluding(item,listOf(PairRecord::id, PairRecord::group)) }
                 if (parent != null) {
                     parent.group += ", ${item.group}"
                     return@fold acc

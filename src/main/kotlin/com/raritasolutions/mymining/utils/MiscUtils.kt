@@ -16,3 +16,6 @@ fun Any.toPropertyMap() : Map<String, String>{
 
 fun Any.findField(name: String)
     = this::class.declaredMemberProperties.find { it.name == name }
+
+fun <T> Iterable<T>.filterDestructuring(predicate: (T) -> Boolean)
+    = Pair(this.filter { predicate(it) }.toSet(), this.filter { !predicate(it) }.toSet())
