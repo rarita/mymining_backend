@@ -5,7 +5,12 @@ import com.raritasolutions.mymining.utils.removeSpaces
 
 object SubjectQueue {
     // Map <Subject without spaces -> Subject with correct spaces>
-    private val vault : HashMap<String,String> = HashMap()
+    private val vault : HashMap<String,String> = hashMapOf(
+            "Общаяинеорган.химия" to "Общая и неорганическая химия",
+            "Введениевнаправление" to "Введение в направление",
+            "ФизическаякультураЭлективныедисциплиныпофизическойкультуреиспорту" to "Физическая культура",
+            "Историяиосновысистемногоанализаиуправления" to "История и основы системного анализа и управления")
+
     // Map <Subject without spaces -> Extractors that are waiting for correct subject string>
     private val SUBSCRIBERS : HashMap<String,MutableList<ContentSafeExtractor>> = HashMap()
 

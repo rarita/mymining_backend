@@ -2,9 +2,9 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Message from ${caller}</title>
+    <title th:text="${caller}"></title>
 </head>
 <body>
-<strong th:text="${message}"> Result is: </strong>
+<strong style="white-space: pre;" th:text="${message}"> Result is: </strong>
 </body>
 </html>

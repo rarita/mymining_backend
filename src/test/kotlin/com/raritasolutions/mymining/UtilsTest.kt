@@ -22,9 +22,9 @@ class UtilsTest {
     fun testListOfProperties()
     {
         val properties = PairRecord().listOfProperties()
-        assert("buildingID 0" in properties)
-        assert("id 0" in properties)
-        assert("needsRevision false" in properties)
+        assert("buildingID" in properties)
+        assert("id" in properties)
+        assert("needsRevision" in properties)
     }
 
     @Test

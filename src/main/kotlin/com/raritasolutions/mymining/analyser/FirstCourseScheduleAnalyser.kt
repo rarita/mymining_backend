@@ -2,13 +2,16 @@ package com.raritasolutions.mymining.analyser
 
 import org.apache.commons.io.IOUtils
 import org.jsoup.Jsoup
+import org.springframework.stereotype.Component
 import java.net.URL
 import java.net.URLDecoder
 import java.nio.charset.Charset
 
 // Returns links to PDF-s with corresponding faculties
 // todo move parameter to spring properties
-class FirstCourseScheduleAnalyser(private val baseURL : URL = URL("http://spmi.ru/node/7085/")): BaseWebAnalyser {
+@Component("firstcourseweb")
+class FirstCourseScheduleAnalyser: BaseWebAnalyser {
+    private val baseURL : URL = URL("http://spmi.ru/node/7085/")
 
     override fun analyse(): Map<String, URL> {
         // Get page and set UTF-8 Encoding

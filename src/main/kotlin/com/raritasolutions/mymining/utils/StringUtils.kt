@@ -5,6 +5,12 @@ import java.lang.StringBuilder
 val String.Companion.EMPTY: String
     get() = ""
 
+fun String.removeContentInBraces()
+    = replace(contentInBracesRegex, "")
+
+fun String.removeRedundantCharacters()
+    = replace(redundantSymbolsRegex, "")
+
 fun String.removeSpecialCharacters()
         = replace("( |\\r\\n|\\n)".toRegex(),"")
 

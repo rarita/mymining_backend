@@ -37,4 +37,16 @@ class TestExtractorFactoryEerieCases {
             assert(type == "лабораторная работа")
         }
     }
+
+    @Test
+    fun testPhysicsEerieCase()
+    {
+        val input = " II  Физика Доц.Фицак В.В., Асс. Страхова А.А. л/р No235,236,713"
+        val extractor = CellExtractorFactory(input).produce()
+        val result = extractor.apply { make() }.result
+        with (result) {
+            assert(subject == "Физика")
+            assert(teacher == "Доц. Фицак В.В., Асс. Страхова А.А.")
+        }
+    }
 }

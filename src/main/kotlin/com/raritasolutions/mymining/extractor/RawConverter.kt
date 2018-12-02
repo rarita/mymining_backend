@@ -2,14 +2,16 @@ package com.raritasolutions.mymining.extractor
 
 import com.raritasolutions.mymining.extractor.cell.CellExtractorFactory
 import com.raritasolutions.mymining.extractor.cell.ContentSafeExtractor
+import com.raritasolutions.mymining.model.ExtractionReport
 import com.raritasolutions.mymining.model.PairRecord
 import com.raritasolutions.mymining.model.RawPairRecord
 import com.raritasolutions.mymining.utils.*
 import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
 
-
-class RawConverter(private val rawList: List<RawPairRecord>, private val buildingID: Int = 3){
+// todo make component
+class RawConverter(private val rawList: List<RawPairRecord>,
+                   private val report: ExtractionReport) {
 
     private val _extractorList = arrayListOf<ContentSafeExtractor>()
     val extractorList: ArrayList<ContentSafeExtractor>
@@ -21,18 +23,21 @@ class RawConverter(private val rawList: List<RawPairRecord>, private val buildin
 
     private fun RawPairRecord.split() {
         val _contents = contents.replace("_","")
-        when {
-            multiplePairRegexVanilla.matches(_contents)
-                    -> addContents(this.toPairRecord(),ContentsSplitter(_contents, ripVanillaRegex).result)
-            multiplePairRegexOneHalf.matches(_contents)
-                    -> addContents(this.toPairRecord(),ContentsSplitter(_contents, ripOneHalfRegex).result)
-            else -> addContents(this.toPairRecord(),listOf(_contents))
+        try {
+            when {
+                multiplePairRegexVanilla.matches(_contents)
+                -> addContents(this.toPairRecord(), ContentsSplitter(_contents, ripVanillaRegex).result)
+                multiplePairRegexOneHalf.matches(_contents)
+                -> addContents(this.toPairRecord(), ContentsSplitter(_contents, ripOneHalfRegex).result)
+                else -> addContents(this.toPairRecord(), listOf(_contents))
+            }
         }
+        catch (e: Exception){ report.addReport(e, this) }
     }
     // this method shouldn't be that condensed
     private fun RawPairRecord.toPairRecord(): PairRecord
     {
-        val daysOfTheWeek = mapOf("понедельник" to 1, "вторник" to 2, "среда" to 3, "четверг" to 4,"пятница" to 5)
+        val daysOfTheWeek = mapOf("ПОНЕДЕЛЬНИК" to 1, "ВТОРНИК" to 2, "СРЕДА" to 3, "ЧЕТВЕРГ" to 4, "ПЯТНИЦА" to 5)
         return PairRecord(day = daysOfTheWeek[this.day] ?: throw IllegalStateException("Day of the week ${this.day} is illegal"),
                           timeSpan = this.timeSpan,
                           group = this.group)

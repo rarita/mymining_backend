@@ -1,7 +1,9 @@
 package com.raritasolutions.mymining.analyser
 
+import org.springframework.stereotype.Component
 import java.net.URL
 
+@Component("mocked")
 class MockedAnalyser: BaseWebAnalyser {
     override fun analyse(): Map<String, URL>
         =   mapOf(

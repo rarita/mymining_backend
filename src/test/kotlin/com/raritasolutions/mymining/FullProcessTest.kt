@@ -1,15 +1,15 @@
 package com.raritasolutions.mymining
 
-import com.raritasolutions.mymining.fetcher.txtToPairRecordList
+import com.raritasolutions.mymining.converter.LegacyCSVConverter
 import org.junit.Test
+import org.springframework.core.io.ClassPathResource
 
 class FullProcessTest {
     @Test
     fun testWholeProcessWithSimpleInput()
     {
-        val pairsList =
-                txtToPairRecordList("C:\\Users\\rarita\\Documents\\decompose_tables\\out_v2.txt")
-        val testValues = pairsList.filter { it.group == "ГНГ-18-1" && it.day == 4 }
+        val pairsList = LegacyCSVConverter().convert(ClassPathResource("textdata/parsed.txt").file)
+        val testValues = pairsList.filter { it.group == "ГНГ-18-1" && it.day == "ЧЕТВЕРГ" }
         assert(testValues.size == 6)
     }
 }

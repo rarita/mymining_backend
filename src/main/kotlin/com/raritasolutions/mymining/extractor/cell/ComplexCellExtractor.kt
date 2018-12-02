@@ -30,7 +30,7 @@ open class ComplexCellExtractor(contents: String,
         {
             val teacherList = extractCustomRegexToList(teacherRegex,this).map { it.flavourTeacherString() }
             if (teacherList.isEmpty()) raiseParsingException(teacherRegex,this)
-            teacherList.joinToString(separator = ", ")
+            teacherList.joinToString(separator = ", ") { it.replace(",","") }
         }
 
     override val extractWeek: () -> Int =

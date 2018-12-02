@@ -1,11 +1,16 @@
 package com.raritasolutions.mymining.controller
 
 import com.raritasolutions.mymining.composer.DayTimeScheduleComposer
-import com.raritasolutions.mymining.fetcher.txtToPairRecordList
+import com.raritasolutions.mymining.converter.BaseConverter
+import com.raritasolutions.mymining.model.ExtractionReport
 import com.raritasolutions.mymining.model.PairRecord
+import com.raritasolutions.mymining.model.isCorrect
 import com.raritasolutions.mymining.repo.PairRepository
+import com.raritasolutions.mymining.service.LegacyUpdateService
+import com.raritasolutions.mymining.service.WebUpdateService
 import com.raritasolutions.mymining.utils.*
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
@@ -14,17 +19,36 @@ import org.springframework.web.servlet.view.RedirectView
 @Controller
 @RequestMapping("/db")
 class DBController @Autowired constructor(private val pairRepo: PairRepository,
-                                          private val dtsc : DayTimeScheduleComposer) {
+                                          private val dtsc : DayTimeScheduleComposer,
+                                          private val updateService: WebUpdateService,
+                                          private val legacyUpdateService : LegacyUpdateService) {
 
-    @GetMapping("/extract_local_txt")
+    @GetMapping("/extract_legacy")
     fun process(): ModelAndView
     {
-        val pairsList
-                = txtToPairRecordList("parsed.txt")
-        pairRepo.saveAll(pairsList)
+        legacyUpdateService.update()
         return ModelAndView("job_result", mapOf("caller" to "TXT2DB Pair Fetcher",
-                                                    "message" to "Job Done, ${pairsList.size} lessons extracted and saved to repository."))
+                "message" to "List of errors occurred while extracting\n" + legacyUpdateService.report.toString()))
     }
+
+    @GetMapping("/extract_remote")
+    fun extract(): ModelAndView {
+        updateService.update()
+        return ModelAndView("job_result", mapOf(
+                "caller" to "Remote Extractor",
+                "message" to "List of errors occurred while extracting\n" + updateService.report.toString()))
+    }
+
+    @GetMapping("/check")
+    fun checkCorrectness(): ModelAndView {
+        val errors = pairRepo
+                .findAll()
+                .filterNot { it.isCorrect() }
+                .joinToString(separator = "\n") { "$it might be faulty" }
+        return ModelAndView("job_result", mapOf("caller" to "Error Checker",
+                "message" to "List of extraction errors found in DB\n$errors"))
+    }
+
     @GetMapping("list")
     fun getListInTable(@RequestParam(value = "group",required = false,defaultValue = "") group: String,
                        @RequestParam(value = "day", required = false, defaultValue = "0") day: Int): ModelAndView {

@@ -7,7 +7,7 @@ import org.apache.commons.csv.CSVFormat
 import java.io.Reader
 
 // Note that source MUST BE in UTF-8 charset.
-fun getRawListFromCSV(source: Reader): List<RawPairRecord>{
+fun getRawListFromCSV(source: Reader): List<RawPairRecord> {
 
     var dayKey: String? = "День недели"
     var timeKey = "Время | Группа"
@@ -28,7 +28,7 @@ fun getRawListFromCSV(source: Reader): List<RawPairRecord>{
 
     var currentDay = "N/A"
     var currentTime: String
-    csvContents.records.forEach{
+    csvContents.records.forEach {
         currentTime = it[timeKey]
         if (dayKey != null) {
             if (it[dayKey].isNotBlank())

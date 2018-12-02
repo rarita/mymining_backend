@@ -15,13 +15,17 @@ abstract class ContentSafeExtractor(private val contents: String,
     override val result: PairRecord
         get() = if (extractionFinished) pairInstance else throw Exception("Pair is not extracted yet: $_contents,")
 
-    override var _contents: String = contents.removeSpecialCharacters()
+    override var _contents: String = contents
+            .removeSpecialCharacters()
+            .removeRedundantCharacters() // TODO BIND DASH-INCLUDING PAIRS INTO SubjectQueue
 
 
     override fun make()
     {
-        // Applying extraction techniques to pairInstance and receiving spaceless subject
-        val _subject = pairInstance.extract()
+        // Applying extraction techniques to pairInstance and receiving spaceless (and bracketless) subject
+        val _subject = pairInstance
+                .extract()
+                .removeContentInBraces()
         /* If the space amount in the string is OK finish extracting and register subject string
         found in contents to global DB. If not, wait until correct subject string is found and
         then finish the extraction  */
@@ -69,7 +73,8 @@ abstract class ContentSafeExtractor(private val contents: String,
                 .find(contentsNoLineBreaks)?.value
                 ?.trim()
                 ?.replace("\\s+".toRegex(), " ") // Replace duplicating whitespaces if present
-                ?: throw Exception("Original subject can't be extracted. Subject is $subject and contents is $contents")
+                ?: throw Exception("Original subject can't be extracted. Subject is $subject and contents is $contents" +
+                        "@ [${this.pairInstance.group},${this.pairInstance.day},${this.pairInstance.timeSpan}")
     }
 
 }

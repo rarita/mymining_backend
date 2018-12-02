@@ -1,7 +1,6 @@
 package com.raritasolutions.mymining.model
 
-import com.raritasolutions.mymining.utils.filterDestructuring
-import com.raritasolutions.mymining.utils.findField
+import com.raritasolutions.mymining.utils.*
 import java.util.*
 import javax.persistence.*
 import kotlin.reflect.KMutableProperty1
@@ -22,7 +21,7 @@ data class PairRecord(@Id @GeneratedValue var id: Int = 0,
                       var room: String = "0",
                       var type: String = "Default",
                       var one_half: Boolean = false,
-                      var buildingID: Int = 0,
+                      var buildingID: Int = 3,
                       var needsRevision: Boolean = false) {
 
     override fun equals(other: Any?): Boolean
@@ -41,6 +40,15 @@ fun PairRecord.toString(vararg fields : String)=
         fields
                 .map {this.findField(it) }
                 .joinToString { formatField(it as KProperty1<PairRecord, *>) }
+
+fun PairRecord.isCorrect()
+    = when {
+        weeksRegex.containsMatchIn(subject + room) -> false
+        oneHalfRegex.containsMatchIn(subject + room) -> false
+        teacherRank.containsMatchIn(subject + room) -> false
+        room.length > 15 && !("\\(.+?(?=\\))\\)".toRegex().containsMatchIn(room)) -> false
+        else -> true
+    }
 
 // Transforms "AAA-18, BBB-18" to "AAA,BBB-18" and "AA-18-1,AA-18-2" to "AA-18-1,2"
 // Note that this method mutates receiver
