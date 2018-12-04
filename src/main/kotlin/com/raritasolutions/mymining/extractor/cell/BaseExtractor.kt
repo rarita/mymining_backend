@@ -14,7 +14,7 @@ interface BaseExtractor: ContentHolder {
     val extractWeek: () -> Int
     val extractType: () -> String
     val extractTeacher: () -> String
-    val extractOneHalf: () -> Boolean
+    val extractOneHalf: () -> String
 
     fun PairRecord.extract(): String
     {

@@ -31,7 +31,7 @@ class TestExtractorFactoryEerieCases {
         {
             assert(subject == "Общая геология")
             assert(week == 1)
-            assert(one_half == true)
+            assert(one_half == "1/2")
             assert(teacher == "Асс. Илалова Р.К.")
             assert(room == "550")
             assert(type == "лабораторная работа")

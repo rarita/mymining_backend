@@ -32,7 +32,7 @@ class UtilsTest {
     {
         val pair = PairRecord().apply {
             week = 1
-            one_half = true
+            one_half = "1/2"
         }
         assert(pair.toString("id","room","subject", "teacher","week","one_half") ==
                 "0, 0, Default, DEFAULT, I, 1/2")

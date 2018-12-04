@@ -34,7 +34,7 @@ fun Iterable<PairRecord>.foldRecords(conds: Array<String>, target: KMutablePrope
 }
 // Embeddable views
 fun PairRecord.baseFormatString()
-    =   "${if (this.one_half) "1/2 " else ""}" +
+    =   this.one_half +
         "${(if (week > 0) "I".repeat(week) + " " else "")}"
 
 fun PairRecord.teacherFormat()

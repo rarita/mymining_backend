@@ -73,7 +73,7 @@ class CellExtractorTest
         {
             assert(subject == "Электротехника")
             assert(week == 1)
-            assert(one_half == false)
+            assert(one_half == "")
             assert(teacher == "Доц. Яковлева Э.В.")
             assert(type == "практика")
             assert(room == "7213")

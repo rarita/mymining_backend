@@ -22,24 +22,24 @@ class RawConverterTest {
                 "1/2 Химия элементов и их соединений Доц. Джевага Н.В. л/р I-No844   II-No840")
         val rpl: List<RawPairRecord> = contents.map { RawPairRecord("СРЕДА", "10:35-12:05", "АБВ-12-3", it) }
         val results = getOutput(rpl)
-        assert(PairRecord(id = 0,subject = "Информатика",teacher = "Доц. Пивоварова И.И.",timeSpan = "10:35-12:05",group = "АБВ-12-3", room = "345", type = "лабораторная работа",day = 3,week = 0,one_half = true) in results)
+        assert(PairRecord(id = 0,subject = "Информатика",teacher = "Доц. Пивоварова И.И.",timeSpan = "10:35-12:05",group = "АБВ-12-3", room = "345", type = "лабораторная работа",day = 3,week = 0,one_half = "1/2") in results)
     }
     @Test
     fun testOneLinedRooms()
     {
         val rpl = listOf(RawPairRecord("ЧЕТВЕРГ","08:50-10:20","БАД-16","1/2 Химия элементов и их соединений Доц. Джевага Н.В. л/р I-No844   II-No840"))
         val results = getOutput(rpl)
-        val expectedOutput = listOf(PairRecord(id=0, group="БАД-16", teacher="Доц. Джевага Н.В.", week=1, day=4, timeSpan="08:50-10:20", subject="Химия элементов и их соединений", room="844", type="лабораторная работа", one_half=true),
-                                    PairRecord(id=0, group="БАД-16", teacher="Доц. Джевага Н.В.", week=2, day=4, timeSpan="08:50-10:20", subject="Химия элементов и их соединений", room="840", type="лабораторная работа", one_half=true))
+        val expectedOutput = listOf(PairRecord(id=0, group="БАД-16", teacher="Доц. Джевага Н.В.", week=1, day=4, timeSpan="08:50-10:20", subject="Химия элементов и их соединений", room="844", type="лабораторная работа", one_half="1/2"),
+                                    PairRecord(id=0, group="БАД-16", teacher="Доц. Джевага Н.В.", week=2, day=4, timeSpan="08:50-10:20", subject="Химия элементов и их соединений", room="840", type="лабораторная работа", one_half="1/2"))
         assert(expectedOutput.intersect(results).size == expectedOutput.size)
     }
     @Test
     fun testMixedCause() {
         val rpl = listOf(RawPairRecord("ЧЕТВЕРГ", "08:50-10:20", "БАД-16", "1/2 Химия элементов и их соединений Доц. Джевага Н.В. л/р I-No844   II-No840 1/2 Информатика Доц. Косарев О.В. л/р No548 "))
         val results = getOutput(rpl)
-        val expectedOutput = listOf(PairRecord(id = 0, group = "БАД-16", teacher = "Доц. Джевага Н.В.", week = 1, day = 4, timeSpan = "08:50-10:20", subject = "Химия элементов и их соединений", room = "844", type = "лабораторная работа", one_half = true),
-                PairRecord(id = 0, group = "БАД-16", teacher = "Доц. Джевага Н.В.", week = 2, day = 4, timeSpan = "08:50-10:20", subject = "Химия элементов и их соединений", room = "840", type = "лабораторная работа", one_half = true),
-                PairRecord(id = 0, group = "БАД-16", teacher = "Доц. Косарев О.В.", week = 0, day = 4, timeSpan = "08:50-10:20", subject = "Информатика", room = "548", type = "лабораторная работа", one_half = true))
+        val expectedOutput = listOf(PairRecord(id = 0, group = "БАД-16", teacher = "Доц. Джевага Н.В.", week = 1, day = 4, timeSpan = "08:50-10:20", subject = "Химия элементов и их соединений", room = "844", type = "лабораторная работа", one_half = "1/2"),
+                PairRecord(id = 0, group = "БАД-16", teacher = "Доц. Джевага Н.В.", week = 2, day = 4, timeSpan = "08:50-10:20", subject = "Химия элементов и их соединений", room = "840", type = "лабораторная работа", one_half = "1/2"),
+                PairRecord(id = 0, group = "БАД-16", teacher = "Доц. Косарев О.В.", week = 0, day = 4, timeSpan = "08:50-10:20", subject = "Информатика", room = "548", type = "лабораторная работа", one_half = "1/2"))
         assert(expectedOutput.intersect(results).size == expectedOutput.size)
     }
 

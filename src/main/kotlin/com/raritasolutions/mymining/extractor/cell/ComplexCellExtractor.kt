@@ -42,7 +42,7 @@ open class ComplexCellExtractor(contents: String,
             else -> throw Exception("Received unexpected number of weeks.")
         }
     }
-    override val extractOneHalf: () -> Boolean = { extractCustomRegex(oneHalfRegex,this) != null }
+    override val extractOneHalf: () -> String = { extractCustomRegex(oneHalfRegex,this) ?: "" }
 
     // adds required spaces to teacher string
     // probably shouldn't be an extension

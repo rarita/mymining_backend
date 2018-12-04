@@ -17,13 +17,16 @@ class RawConverter(private val rawList: List<RawPairRecord>,
     val extractorList: ArrayList<ContentSafeExtractor>
         get(){
             _extractorList.clear()
-            rawList.filter { it.contents.isNotBlank() }.forEach { it.split() }
+            rawList
+                    .filter { it.contents.isNotBlank() }
+                    .forEach { it.split() }
             return _extractorList
         }
 
     private fun RawPairRecord.split() {
         val _contents = contents.replace("_","")
         try {
+            /*
             when {
                 multiplePairRegexVanilla.matches(_contents)
                 -> addContents(this.toPairRecord(), ContentsSplitter(_contents, ripVanillaRegex).result)
@@ -31,6 +34,8 @@ class RawConverter(private val rawList: List<RawPairRecord>,
                 -> addContents(this.toPairRecord(), ContentsSplitter(_contents, ripOneHalfRegex).result)
                 else -> addContents(this.toPairRecord(), listOf(_contents))
             }
+            */
+            addContents(this.toPairRecord(),PairSplitter(_contents).contents)
         }
         catch (e: Exception){ report.addReport(e, this) }
     }

@@ -20,7 +20,7 @@ data class PairRecord(@Id @GeneratedValue var id: Int = 0,
                       var subject: String = "Default",
                       var room: String = "0",
                       var type: String = "Default",
-                      var one_half: Boolean = false,
+                      var one_half: String = "1/3",
                       var buildingID: Int = 3,
                       var needsRevision: Boolean = false) {
 
@@ -102,7 +102,6 @@ fun PairRecord.equalsExcluding(other: PairRecord, fields: List<KMutableProperty1
 // todo stuff it into extractor thing
 private fun PairRecord.formatField(field: KProperty1<PairRecord,*>)
         =   when (field.name) {
-        "one_half" -> if (one_half) "1/2" else ""
         "week"     -> "I".repeat(week)
         else       -> field.get(this).toString()
     }
