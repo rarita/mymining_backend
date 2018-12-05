@@ -6,11 +6,13 @@ val redundantSymbolsRegex = "([-_])".toRegex()
 val pairTypesRegex = "(л/р|пр\\.)".toRegex()
 val teacherRank = "(Доц.|Проф.|Асс.|Асп|Ст.пр.|Преп.)".toRegex()
 val teacherInitials = "\\p{L}\\.\\p{L}\\.".toRegex()
+
 // todo build this from 2 above
 val teacherRegex = "(Доц.|Проф.|Асс.|Асп|Ст.пр.|Преп.)\\p{L}+\\.\\p{L}\\.,*".toRegex() // Careful!
 val roomRegex = "No.+?(?=(No))".toRegex()
-val weeksRegex = "(I+|ч/н)".toRegex()
+val weeksRegex = "(I+)".toRegex()
 val oneHalfRegex = "1/[23]".toRegex()
+val overWeekRegex = "ч/н".toRegex()
 val lineBreaksRegex = "(\\r\\n|\\n)".toRegex()
 val timeSpanRegex = "\\d+\\.\\d{2}-\\d+\\.\\d{2}".toRegex()
 

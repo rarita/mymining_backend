@@ -1,8 +1,6 @@
 package com.raritasolutions.mymining.extractor
 
-import com.raritasolutions.mymining.utils.multiweekRoomRegex
-import com.raritasolutions.mymining.utils.oneHalfRegex
-import com.raritasolutions.mymining.utils.weeksRegex
+import com.raritasolutions.mymining.utils.*
 
 // Just splits apart two classes in one cell
 // Only handles "doubled" contents.
@@ -10,17 +8,19 @@ class PairSplitter(private val initialContents: String) {
 
     val contents: List<String>
         get() {
+            // To avoid harming other parts of app that uses regexResources remove spaces from contents
+            val contentsSpaceless = initialContents.removeSpecialCharacters()
             val halfTokens = oneHalfRegex
-                    .findAll(initialContents)
+                    .findAll(contentsSpaceless)
                     .count()
-            val contentsNoMultiWeekRoom = initialContents
+            val contentsNoMultiWeekRoom = contentsSpaceless
                     .replace(multiweekRoomRegex, "")
             val weekTokens = weeksRegex
                     .findAll(contentsNoMultiWeekRoom)
                     .count()
             return when {
-                halfTokens == 2 -> split(".*1/\\d.*?(?=((I+|ч/н)*.1/\\d))".toRegex())
-                weekTokens == 2 -> split(".*(I+|ч/н).*?(?=(1/\\d)*.(I+|ч/н))".toRegex())
+                halfTokens == 2 -> split(".*1.*/.*\\d.*?(?=((I+|ч.*/.*н)*.1.*/.*\\d))".toRegex())
+                weekTokens == 2 -> split(".*((I.*)+|ч.*/.*н).*?(?=(1/\\d)*.((I.*)+|ч.*/.*н))".toRegex())
                 else -> listOf(initialContents)
             }
         }

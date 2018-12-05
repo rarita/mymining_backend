@@ -24,7 +24,9 @@ class RawConverter(private val rawList: List<RawPairRecord>,
         }
 
     private fun RawPairRecord.split() {
-        val _contents = contents.replace("_","")
+        val _contents = contents
+                .replace("_","")
+                .replace("\\s+".toRegex(), " ")
         try {
             /*
             when {

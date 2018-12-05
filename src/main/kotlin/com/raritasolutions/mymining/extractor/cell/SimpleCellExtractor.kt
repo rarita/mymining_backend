@@ -11,5 +11,6 @@ class SimpleCellExtractor(contents: String,
     override val extractType: () -> String = {"занятие"}
     override val extractTeacher: () -> String = { "NO_TEACHER"}
     override var extractOneHalf: () -> String = { "" }
+    override val extractOverWeek: () -> Boolean = { false }
 
 }

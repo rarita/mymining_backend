@@ -19,7 +19,7 @@ class CellExtractorFactory(private val contents: String,
         pairNoRoomRegex.matches(contentsNoSpaces) ->
                 object : ComplexCellExtractor (contents, pairInstance) {
                     override val extractRoom: () -> String = { pairInstance.room }
-                    override val extractWeek: () -> Int = { pairInstance.week}
+                    override val extractWeek: () -> Int = { pairInstance.week }
                 }
         else ->
                 SimpleCellExtractor(contents, pairInstance)

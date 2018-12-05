@@ -20,7 +20,8 @@ data class PairRecord(@Id @GeneratedValue var id: Int = 0,
                       var subject: String = "Default",
                       var room: String = "0",
                       var type: String = "Default",
-                      var one_half: String = "1/3",
+                      var one_half: String = "0/0",
+                      var over_week: Boolean = false,
                       var buildingID: Int = 3,
                       var needsRevision: Boolean = false) {
 

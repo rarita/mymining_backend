@@ -34,6 +34,7 @@ abstract class BaseUpdateService (private val pairRepo: PairRepository,
             val rawPairs = files
                     .map(converter::convert)
                     .flatten()
+            val debug = rawPairs.filter { it.day == "ЧЕТВЕРГ" && it.group == "ТХ-18-1" }
             val extractors = RawConverter(rawPairs,report).extractorList
             // Ugly workaround faulty cases
             val processedExtractors = arrayListOf<ContentSafeExtractor>()

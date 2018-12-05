@@ -4,6 +4,7 @@ import com.raritasolutions.mymining.extractor.RawConverter
 import com.raritasolutions.mymining.model.ExtractionReport
 import com.raritasolutions.mymining.model.PairRecord
 import com.raritasolutions.mymining.model.RawPairRecord
+import com.raritasolutions.mymining.model.isCorrect
 import org.junit.Test
 
 class RawConverterTest {
@@ -14,6 +15,8 @@ class RawConverterTest {
         extractors.forEach { it.make() }
         return extractors.map { it.result }
     }
+    private fun makeFromString(input: String)
+        = listOf(RawPairRecord("ПЯТНИЦА","12:35-14:05", "ЛАК-16", input))
 
     @Test
     fun testBasicCause() {
@@ -43,4 +46,17 @@ class RawConverterTest {
         assert(expectedOutput.intersect(results).size == expectedOutput.size)
     }
 
+    @Test
+    fun testOverWeekCase(){
+        val rpl = makeFromString("ч/н 1/2 Общая и неорганическая химия Доц. Лобачёва О.Л. Доц. Джевага Н.В. л/р I -  No845  II - No842")
+        val results = getOutput(rpl)
+        results.forEach { assert(it.isCorrect()) }
+    }
+
+    @Test
+    fun testOverWeekFailingCase() {
+        val rpl = makeFromString("ч  / н   1  / 2   О  б   щ   а  я  и неорган. химия Д  о  ц   .  Д  ж   е  в  а  г а   Н   . В  . Д   о  ц  .  Лобачёва О.Л. л/р No843 ч  / н    1  / 2    И   н  ф   о  р  м   а  т и   к а Доц. Ильин А.Е. л/р No336")
+        val results = getOutput(rpl)
+        results.forEach { println(it) }
+    }
 }

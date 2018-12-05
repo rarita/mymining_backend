@@ -6,7 +6,6 @@ import com.raritasolutions.mymining.utils.groupRegex
 import com.raritasolutions.mymining.utils.removeCaretReturns
 import com.raritasolutions.mymining.utils.timeSpanRegex
 import org.apache.pdfbox.pdmodel.PDDocument
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import technology.tabula.ObjectExtractor
 import technology.tabula.Table

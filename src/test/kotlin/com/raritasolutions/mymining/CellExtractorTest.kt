@@ -104,11 +104,12 @@ class CellExtractorTest
         {
             assert(type == "лабораторная работа")
             assert(room == "4611, 4614")
-            assert(week == 2)
+            assert(over_week == true)
             assert(teacher == "Доц. Любек Ю.В.")
             assert(subject == "Финансовый менеджмент и финансовый анализ")
         }
     }
+
     @Test
     fun testMultipleTeachersAndRooms()
     {
@@ -126,6 +127,7 @@ class CellExtractorTest
             assert(subject == "Иностранный язык")
         }
     }
+
     @Test
     fun testUltimate()
     {
@@ -142,6 +144,7 @@ class CellExtractorTest
             assert(subject == "Финансовый менеджмент и финансовый анализ")
         }
     }
+
     @Test
     fun testPhysEducation()
     {
@@ -151,6 +154,7 @@ class CellExtractorTest
             assert(subject == "Физическая культура")
         }
     }
+
     @Test
     fun testThreePairs()
     {
