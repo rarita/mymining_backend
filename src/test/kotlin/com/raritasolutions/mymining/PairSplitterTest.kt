@@ -48,8 +48,8 @@ class PairSplitterTest {
 
     @Test
     fun testMultilineCase() {
-        val input = "ч/н 1/2 Общая и неорганическая химия Доц. Лобачёва О.Л. Доц. Джевага Н.В. л/р I -  No845  II - No842 ч/н 1/2 Информатика Доц. Ильин А.Е. л/р No336"
-        val contents = PairSplitter(input).contents
-        contents.forEach { println(it) }
+        val pairInput = listOf("ч/н 1/2 Общая и неорганическая химия Доц. Лобачёва О.Л. Доц. Джевага Н.В. л/р I -  No845  II - No842", "ч/н 1/2 Информатика Доц. Ильин А.Е. л/р No336")
+        val contents = PairSplitter(pairInput.joinToString(separator = " ")).contents
+        assert(contents.containsAll(pairInput))
     }
 }

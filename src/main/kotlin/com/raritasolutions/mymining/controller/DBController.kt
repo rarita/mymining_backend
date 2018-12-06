@@ -44,7 +44,8 @@ class DBController @Autowired constructor(private val pairRepo: PairRepository,
         val errors = pairRepo
                 .findAll()
                 .filterNot { it.isCorrect() }
-                .joinToString(separator = "\n") { "$it might be faulty" }
+                .withIndex()
+                .joinToString(separator = "\n") { "[${it.index + 1}]: ${it.value} might be faulty." }
         return ModelAndView("job_result", mapOf("caller" to "Error Checker",
                 "message" to "List of extraction errors found in DB\n$errors"))
     }

@@ -47,7 +47,13 @@ fun PairRecord.isCorrect()
         weeksRegex.containsMatchIn(subject + room) -> false
         oneHalfRegex.containsMatchIn(subject + room) -> false
         teacherRank.containsMatchIn(subject + room) -> false
-        room.length > 15 && !("\\(.+?(?=\\))\\)".toRegex().containsMatchIn(room)) -> false
+        room
+            .replace("\\(.+?(?=\\))\\)".toRegex(),"")
+            .replace("(Горный.?музей|Спортзал)".toRegex(),"")
+            .let {
+                it.matches("(\\d{2,}a?,?.)+".toRegex()).not() && it.isNotBlank()
+            } -> false // NOT matches or empty (because museum/gym got removed)
+        //room.length > 15 && !("\\(.+?(?=\\))\\)".toRegex().containsMatchIn(room)) -> false
         else -> true
     }
 

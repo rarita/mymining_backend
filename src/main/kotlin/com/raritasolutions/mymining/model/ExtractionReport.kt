@@ -26,5 +26,7 @@ class ExtractionReport {
         = if (messages.isEmpty())
               "No errors found."
           else
-              messages.joinToString(separator = "\n")
+              messages
+                      .withIndex()
+                      .joinToString(separator = "\n") { "[${it.index + 1}]: ${it.value}" }
 }

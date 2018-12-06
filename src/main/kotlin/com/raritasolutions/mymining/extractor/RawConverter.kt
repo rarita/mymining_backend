@@ -32,6 +32,7 @@ class RawConverter(private val rawList: List<RawPairRecord>,
         }
         catch (e: Exception){ report.addReport(e, this) }
     }
+
     // this method shouldn't be that condensed
     private fun RawPairRecord.toPairRecord(): PairRecord
     {
