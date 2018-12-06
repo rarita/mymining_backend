@@ -11,6 +11,7 @@ open class ComplexCellExtractor(contents: String,
             // add ending character
             _contents += "No" // todo review asap (find better regex for rooms)
             val _result = extractCustomRegexToList(roomRegex,this)
+                    .map { it.trim(',') }
                     .map { it.replace("No","") }
                     .map { it.replace(",",", ") }
                     .joinToString(separator = ", ")

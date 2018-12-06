@@ -73,8 +73,8 @@ abstract class ContentSafeExtractor(private val contents: String,
                 .find(contentsNoLineBreaks)?.value
                 ?.trim()
                 ?.replace("\\s+".toRegex(), " ") // Replace duplicating whitespaces if present
-                ?: throw Exception("Original subject can't be extracted. Subject is $subject and contents is $contents" +
-                        "@ [${this.pairInstance.group},${this.pairInstance.day},${this.pairInstance.timeSpan}")
+                ?: throw Exception("Original subject can't be extracted. Subject is $subject and contents is $contents " +
+                        "@ [${this.pairInstance.group},${this.pairInstance.day},${this.pairInstance.timeSpan}]")
     }
 
 }

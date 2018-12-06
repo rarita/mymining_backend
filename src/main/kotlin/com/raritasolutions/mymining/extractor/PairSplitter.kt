@@ -20,7 +20,7 @@ class PairSplitter(private val initialContents: String) {
                     .count()
             return when {
                 halfTokens == 2 -> split(".*1.*/.*\\d.*?(?=((I+|ч.*/.*н)*.1.*/.*\\d))".toRegex())
-                weekTokens == 2 -> split(".*((I.*)+|ч.*/.*н).*?(?=(1/\\d)*.((I.*)+|ч.*/.*н))".toRegex())
+                weekTokens == 2 -> split(".*((I).+|ч.?/.?н).?(?=(1/\\d)*.((I)+|ч.?/.?н))".toRegex()) // .*((I.*)+|ч.*/.*н).*?(?=(1/\d)*.((I.*)+|ч.*/.*н))
                 else -> listOf(initialContents)
             }
         }

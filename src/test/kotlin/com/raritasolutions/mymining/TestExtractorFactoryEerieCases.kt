@@ -63,4 +63,14 @@ class TestExtractorFactoryEerieCases {
             assert(room == "235, 236, 623")
         }
     }
+
+    @Test
+    fun testDuplicatingCommasCause() {
+        val input = "II  Химия Доц. Джевага Н.В., Доц. Кужаева А.А. л/р No842,No843"
+        val extractor = CellExtractorFactory(input).produce()
+        val result = extractor.apply { make() }.result
+        print(result.room)
+        assert(result.room == "842, 843")
+    }
+
 }

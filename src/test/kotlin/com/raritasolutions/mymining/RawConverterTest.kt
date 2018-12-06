@@ -68,4 +68,23 @@ class RawConverterTest {
             assert(subject == "Информатика")
         }
     }
+
+    @Test
+    fun testRegexProofCase() {
+        // this case happened because of regex being too greedy for overWeek tokens
+        val rpl = makeFromString("I Химия Доц. Лобачёва О.Л. пр. No813 II Химия  Доц. Лобачёва О.Л. л/р No843 Асс. Черняев В.А. л/р No842")
+        val results = getOutput(rpl)
+        with (results[0]) {
+            assert(subject == "Химия")
+            assert(teacher == "Доц. Лобачёва О.Л.")
+            assert(room == "813")
+            assert(isCorrect())
+        }
+        with (results[1]) {
+            assert(subject == "Химия")
+            assert(teacher == "Доц. Лобачёва О.Л., Асс. Черняев В.А.")
+            assert(room == "843, 842")
+            assert(isCorrect())
+        }
+    }
 }
