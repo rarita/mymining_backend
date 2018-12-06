@@ -28,15 +28,6 @@ class RawConverter(private val rawList: List<RawPairRecord>,
                 .replace("_","")
                 .replace("\\s+".toRegex(), " ")
         try {
-            /*
-            when {
-                multiplePairRegexVanilla.matches(_contents)
-                -> addContents(this.toPairRecord(), ContentsSplitter(_contents, ripVanillaRegex).result)
-                multiplePairRegexOneHalf.matches(_contents)
-                -> addContents(this.toPairRecord(), ContentsSplitter(_contents, ripOneHalfRegex).result)
-                else -> addContents(this.toPairRecord(), listOf(_contents))
-            }
-            */
             addContents(this.toPairRecord(),PairSplitter(_contents).contents)
         }
         catch (e: Exception){ report.addReport(e, this) }

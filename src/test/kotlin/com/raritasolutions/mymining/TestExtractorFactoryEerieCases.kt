@@ -1,6 +1,7 @@
 package com.raritasolutions.mymining
 
 import com.raritasolutions.mymining.extractor.cell.CellExtractorFactory
+import com.raritasolutions.mymining.model.isCorrect
 import org.junit.Test
 
 class TestExtractorFactoryEerieCases {
@@ -47,6 +48,19 @@ class TestExtractorFactoryEerieCases {
         with (result) {
             assert(subject == "Физика")
             assert(teacher == "Доц. Фицак В.В., Асс. Страхова А.А.")
+        }
+    }
+
+    @Test
+    fun testTypeTokenWrongPosition() {
+        val input = "I  Физика л/р Асп.Клименков Б.Д. No235,236 Асс.Скалецкая А.А. No623"
+        val extractor = CellExtractorFactory(input).produce()
+        val result = extractor.apply { make() }.result
+        with (result){
+            assert(result.isCorrect())
+            assert(subject == "Физика")
+            assert(teacher == "Асп. Клименков Б.Д., Асс. Скалецкая А.А.")
+            assert(room == "235, 236, 623")
         }
     }
 }

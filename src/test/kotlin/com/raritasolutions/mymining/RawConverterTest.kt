@@ -54,9 +54,18 @@ class RawConverterTest {
     }
 
     @Test
-    fun testOverWeekFailingCase() {
+    fun testOverWeekTooMuchSpacesCase() {
         val rpl = makeFromString("ч  / н   1  / 2   О  б   щ   а  я  и неорган. химия Д  о  ц   .  Д  ж   е  в  а  г а   Н   . В  . Д   о  ц  .  Лобачёва О.Л. л/р No843 ч  / н    1  / 2    И   н  ф   о  р  м   а  т и   к а Доц. Ильин А.Е. л/р No336")
         val results = getOutput(rpl)
-        results.forEach { println(it) }
+        with (results[0]) {
+            assert(over_week)
+            assert(teacher == "Доц. Джевага Н.В., Доц. Лобачёва О.Л.")
+            assert(subject == "Общая и неорганическая химия")
+        }
+        with (results[1]) {
+            assert(over_week)
+            assert(teacher == "Доц. Ильин А.Е.")
+            assert(subject == "Информатика")
+        }
     }
 }
