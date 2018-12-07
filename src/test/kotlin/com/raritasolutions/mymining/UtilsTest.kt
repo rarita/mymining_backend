@@ -13,7 +13,6 @@ class UtilsTest {
     fun testObjectToMap(){
         val pair = PairRecord()
         val result = pair.toPropertyMap()
-        result.forEach { println("${it.key} ${it.value}")}
         assert("id" in result.keys)
         assert("DEFAULT" in result.values)
     }

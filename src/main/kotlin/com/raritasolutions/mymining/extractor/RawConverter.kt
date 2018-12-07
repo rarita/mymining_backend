@@ -44,7 +44,9 @@ class RawConverter(private val rawList: List<RawPairRecord>,
 
     private fun addContents(basePair: PairRecord, contentList : List<String>)
         = contentList.forEach {
-        if (multiplePairRegexOneLine.containsMatchIn(it))
+        // If it contains simple rooms as well as multi-rooms it should be handled by the Extractor implementation
+        if (multiplePairRegexOneLine.containsMatchIn(it)
+                && !it.replace(multiplePairRegexOneLine, "").contains("No"))
             addEnhancedContents(basePair,it,ContentsSplitter(it, ripOneLineRegex).result)
         else
             _extractorList.add(CellExtractorFactory(it,basePair).produce())

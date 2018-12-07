@@ -8,7 +8,7 @@ open class ComplexCellExtractor(contents: String,
 {
     override val extractRoom
         get() = {
-            // add ending character
+            // Adding a character for positive lookahead to stop at the last entry
             _contents += "No" // todo review asap (find better regex for rooms)
             val _result = extractCustomRegexToList(roomRegex,this)
                     .map { it.trim(',') }
@@ -52,10 +52,17 @@ open class ComplexCellExtractor(contents: String,
     private fun String.flavourTeacherString(): String
     {
         // Since we extracted teacher without any issues we can be sure we will find these regex's
-        val first_space = teacherRank.find(this)!!.range.last + 1
-        val second_space = teacherInitials.find(this)!!.range.first + 1
-        return StringBuffer(this)
-                .insert(first_space," ")
+        val normalizedRank = teacherRank
+                .find(this)!!
+                .value
+                .toLowerCase()
+                .capitalize()
+        val second_space = teacherInitials
+                .find(this)!!
+                .range
+                .first + 1
+        return StringBuffer( this.replace(teacherRank, "") )
+                .insert(0, "$normalizedRank ")
                 .insert(second_space," ")
                 .toString()
     }

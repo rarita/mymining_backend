@@ -27,6 +27,7 @@ class RawConverterTest {
         val results = getOutput(rpl)
         assert(PairRecord(id = 0,subject = "Информатика",teacher = "Доц. Пивоварова И.И.",timeSpan = "10:35-12:05",group = "АБВ-12-3", room = "345", type = "лабораторная работа",day = 3,week = 0,one_half = "1/2") in results)
     }
+
     @Test
     fun testOneLinedRooms()
     {
@@ -36,6 +37,7 @@ class RawConverterTest {
                                     PairRecord(id=0, group="БАД-16", teacher="Доц. Джевага Н.В.", week=2, day=4, timeSpan="08:50-10:20", subject="Химия элементов и их соединений", room="840", type="лабораторная работа", one_half="1/2"))
         assert(expectedOutput.intersect(results).size == expectedOutput.size)
     }
+
     @Test
     fun testMixedCause() {
         val rpl = listOf(RawPairRecord("ЧЕТВЕРГ", "08:50-10:20", "БАД-16", "1/2 Химия элементов и их соединений Доц. Джевага Н.В. л/р I-No844   II-No840 1/2 Информатика Доц. Косарев О.В. л/р No548 "))
@@ -86,5 +88,34 @@ class RawConverterTest {
             assert(room == "843, 842")
             assert(isCorrect())
         }
+    }
+
+    @Test
+    fun testAbsenceOfRoomNumberToken() {
+        val rpl = makeFromString("I Математика Доц. Керейчук М.А. пр. No718 II  Философия Доц. Рахманинова М.Д. пр. 540")
+        val results = getOutput(rpl)
+        results.forEach { assert(it.isCorrect()) }
+        assert(results[1].subject == "Философия")
+        assert(results[1].room == "540")
+    }
+
+    @Test
+    fun testUpperCaseTeacherRank() {
+        val rpl = makeFromString("Иностранный язык ДОЦ. Зибров Д.А. пр. No626 Доц. Облова И.С. No716")
+        val results = getOutput(rpl)
+        results.forEach {
+            assert(it.isCorrect())
+            assert(it.teacher == "Доц. Зибров Д.А., Доц. Облова И.С.")
+        }
+    }
+
+    @Test
+    fun testMultipleRoomTypesInSingleClass() {
+        val rpl = makeFromString("Иностранный язык Доц. Зибров Д.А. пр. No626 Доц. Облова И.С. I-No621, II- No716")
+        val results = getOutput(rpl)
+        assert(results.size == 1)
+        assert(results[0].subject == "Иностранный язык")
+        assert(results[0].room == "626, 621, 716")
+        assert(results[0].isCorrect())
     }
 }
