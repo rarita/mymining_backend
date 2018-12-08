@@ -51,14 +51,18 @@ class RawConverter(private val rawList: List<RawPairRecord>,
         else
             _extractorList.add(CellExtractorFactory(it,basePair).produce())
     }
+
     private fun addEnhancedContents(basePair: PairRecord, originalContents: String, rooms: List<String>)
     {
         if (rooms.size != 2)
             throw IllegalArgumentException("Rooms size must be exact 2 (now is ${rooms.size}")
 
         for (week in rooms.indices){
+            val prefix = if (rooms[week].contains("No")) "No" else "-"
             basePair.week = week+1
-            basePair.room = rooms[week].stripPrefix("No")
+            basePair.room = rooms[week]
+                    .stripPrefix(prefix)
+                    .trim()
             _extractorList.add(CellExtractorFactory(originalContents.replace(multiplePairRegexOneLine,""),
                                                     basePair).produce())
         }

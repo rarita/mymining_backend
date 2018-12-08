@@ -10,7 +10,7 @@ class ContentsSplitter(override var _contents: String,
                        private val rippingRegex: Regex) : ContentHolder {
 
     val result: ArrayList<String>
-        get(){
+        get() {
             val _result = arrayListOf<String>()
             _result.add(extractCustomRegex(rippingRegex,this)?.trim()
                     ?: raiseParsingException(rippingRegex,this))

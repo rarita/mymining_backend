@@ -118,4 +118,23 @@ class RawConverterTest {
         assert(results[0].room == "626, 621, 716")
         assert(results[0].isCorrect())
     }
+
+    @Test
+    fun testAbsentRoomNumberTokenAtMultiline() {
+        val rpl = makeFromString("1/2 Информационные технологии в менеджменте Доц. Косовцева Т.Р. л/р I - 551 II - No515")
+        val results = getOutput(rpl)
+        assert( results.any { it.room == "515" || it.room == "551" } )
+        results.forEach { assert(it.isCorrect()) }
+    }
+
+    @Test
+    fun testTripledCellContents() {
+        val rpl = makeFromString("I 1/2 Химия Асс. Куртенков Р.В. л/р No845 II 1/2 Физика Асс. Страхова А.А. No235,236,712 1/2 Информатика Доц. Акимова Е.В. л/р No643")
+        val results = getOutput(rpl)
+        assert(results.size == 3)
+        results.forEach { assert(it.isCorrect()) }
+        with (results[0]) { assert(subject == "Химия" && room == "845") }
+        with (results[1]) { assert(subject == "Физика" && room == "235, 236, 712") }
+        with (results[2]) { assert(subject == "Информатика" && room == "643") }
+    }
 }

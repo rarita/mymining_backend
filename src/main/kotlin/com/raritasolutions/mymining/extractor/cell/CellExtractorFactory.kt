@@ -26,7 +26,7 @@ class CellExtractorFactory(private val contents: String,
                         val roomNumberRegex = "\\d{2,}".toRegex()
                         extractCustomRegex(roomNumberRegex, this)
                             ?: raiseParsingException(roomNumberRegex, this)
-                    }
+                        }
                     }
         }
         else ->
