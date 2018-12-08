@@ -72,4 +72,11 @@ class TestExtractorFactoryEerieCases {
         assert(result.room == "842, 843")
     }
 
+    @Test
+    fun testSubjectDataLossCause() {
+        val input = "Информатика и информационнокоммуникационные технологии Доц. Кротова С.Ю. л/р No316 Асс. Кочнева А.А. л/р No315"
+        val extractor = CellExtractorFactory(input).produce()
+        val result = extractor.apply { make() }.result
+        assert(result.subject == "Информатика и информационнокоммуникационные технологии")
+    }
 }

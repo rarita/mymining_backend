@@ -12,7 +12,7 @@ val teacherInitials = "\\p{L}\\.\\p{L}\\.".toRegex()
 val teacherRegex = "$teacherRank\\p{L}+\\.\\p{L}\\.,*".toRegex() // Careful!
 val roomRegex = "No.?-?.+?(?=(No))".toRegex()
 val weeksRegex = "(I+)".toRegex()
-val oneHalfRegex = "1/[23]".toRegex()
+val oneHalfRegex = "[123]/[23]".toRegex()
 val overWeekRegex = "ч/н".toRegex()
 val lineBreaksRegex = "(\\r\\n|\\n)".toRegex()
 val timeSpanRegex = "\\d+\\.\\d{2}-\\d+\\.\\d{2}".toRegex()

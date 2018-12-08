@@ -22,6 +22,8 @@ abstract class ContentSafeExtractor(private val contents: String,
 
     override fun make()
     {
+        if (pairInstance.group == "ПМК-18" && pairInstance.day == 2)
+            println("STOP!")
         // Applying extraction techniques to pairInstance and receiving spaceless (and bracketless) subject
         val _subject = pairInstance
                 .extract()
@@ -41,23 +43,22 @@ abstract class ContentSafeExtractor(private val contents: String,
     // Checks if ORIGINAL string has an adequate amount of spaces (not more than 20% of the whole input)
     private fun hasValidSpaceAmount() : Boolean
     {
-        val spaceCount = contents.count {(it == ' ') or (it == '\n')}
+        val spaceCount = contents
+                .count {(it == ' ') or (it == '\n')}
         return spaceCount.toDouble() / contents.length <= 0.2
     }
+
     // This gets called when SubjectQueue finds adequate subject for this Extractor
     fun assignCorrectSubject(subject: String)
     {
         pairInstance.subject = subject
         extractionFinished = true
     }
-    /* NOTE: never take less or more than 2 symbols:
-    - it often grabs wrong bracket if you take one
-    - it fails on "Химия" when you grab 3
-    2 is perfect
-     */
+
+    // Count of symbols drawn now depends on subject length.
     private fun getOriginalSubjectName(subject: String): String
     {
-        val greed = 2
+        val greed = if (subject.length < 6) 2 else 3
         // Should match first letter and last letter of Subject
         val prefix = subject.take(greed)
                                     .shieldSymbol('(')
@@ -72,6 +73,7 @@ abstract class ContentSafeExtractor(private val contents: String,
         return regex
                 .find(contentsNoLineBreaks)?.value
                 ?.trim()
+                ?.removeContentInBraces()
                 ?.replace("\\s+".toRegex(), " ") // Replace duplicating whitespaces if present
                 ?: throw Exception("Original subject can't be extracted. Subject is $subject and contents is $contents " +
                         "@ [${this.pairInstance.group},${this.pairInstance.day},${this.pairInstance.timeSpan}]")

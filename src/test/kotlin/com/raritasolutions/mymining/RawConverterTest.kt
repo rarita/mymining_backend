@@ -137,4 +137,12 @@ class RawConverterTest {
         with (results[1]) { assert(subject == "Физика" && room == "235, 236, 712") }
         with (results[2]) { assert(subject == "Информатика" && room == "643") }
     }
+
+    @Test
+    fun testSpaceAmountReduction() {
+        val rpl = makeFromString("Физическая культура                                                ( 5.09 - 19.09 )                                                                                                                                                   Элективные дисциплины по                           физической культуре и спорту                                                                                                ( 19.9 - 26.12 )")
+        val rplExtended = rpl + makeFromString("Физическая культура ( 5.09 - 19.09 ) Элективные дисциплины по физической культуре и спорту ( 19.9 - 26.12 )")
+        val results = getOutput(rplExtended)
+        assert(results[0] == results[1])
+    }
 }

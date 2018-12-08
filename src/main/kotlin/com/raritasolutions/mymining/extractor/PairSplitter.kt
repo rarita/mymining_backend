@@ -2,8 +2,7 @@ package com.raritasolutions.mymining.extractor
 
 import com.raritasolutions.mymining.utils.*
 
-// Splits apart n classes in one cell
-// Now handles any amount of stacked classes in one cell.
+// Splits n class records from one cell to separate records.
 class PairSplitter(private val initialContents: String) {
 
     val contents: List<String>
@@ -11,18 +10,18 @@ class PairSplitter(private val initialContents: String) {
 
     private fun analyseAndSplit(contents: String, accumulator: List<String>): List<String> {
         // To avoid harming other parts of app that uses regexResources remove spaces from contents
-        val contentsSpaceless = contents.removeSpecialCharacters()
+        val contentsSpaceLess = contents.removeSpecialCharacters()
         val halfTokens = oneHalfRegex
-                .findAll(contentsSpaceless)
+                .findAll(contentsSpaceLess)
                 .count()
-        val contentsNoMultiWeekRoom = contentsSpaceless
+        val contentsNoMultiWeekRoom = contentsSpaceLess
                 .replace(multiplePairRegexOneLine, "")
         val weekTokens = weeksRegex
                 .findAll(contentsNoMultiWeekRoom)
                 .count()
         val splittingRegex: Regex? = when {
-            halfTokens == 2 -> ".*1.*/.*\\d.*?(?=((I+|ч.*/.*н)*.1.*/.*\\d))".toRegex()
-            weekTokens == 2 -> ".*((I).+|ч.?/.?н).?(?=(1/\\d)*.((I)+|ч.?/.?н))".toRegex() // .*((I.*)+|ч.*/.*н).*?(?=(1/\d)*.((I.*)+|ч.*/.*н))
+            halfTokens == 2 -> ".*[12].?/.?[23].*?(?=((I+|ч.?/.?н)*.[12].?/.?[23]))".toRegex()
+            weekTokens == 2 -> ".*((I).+|ч.?/.?н).?(?=([12].?/.?[23])*.((I)+|ч.?/.?н))".toRegex() // .*((I.*)+|ч.*/.*н).*?(?=(1/\d)*.((I.*)+|ч.*/.*н))
             else -> null
         }
 
