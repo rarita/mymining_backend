@@ -1,11 +1,140 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>My Mining Schedule</title>
+    <meta charset="UTF-8">
+    <title>Расписание</title>
 </head>
+<link rel="stylesheet" href="../static/css/index_style.css" th:href="@{/css/index_style.css}">
 <body>
-<div style="text-align: center;">
-<h1>Spring rolling, JVM uptime is [[${days}]] d [[${hours}]]:[[${minutes}]]:[[${seconds}]]</h1>
+<div class="group_picker">
+    <div align="center">
+        <div class="tab">
+            <button class="links" onclick="openView(event, 'group')">ГРУППА</button>
+            <button class="links" onclick="openView(event, 'teacher')">ПРЕПОДАВАТЕЛЬ</button>
+            <button class="links" onclick="openView(event, 'room')">АУДИТОРИЯ</button>
+        </div>
+        <img src= "../static/logo_new_1.png" th:src="@{logo_new_1.png}" class="logo"/>
+        <div id="group" class="form_view">
+            <form autocomplete="off" action="/db/gen_sch" class="group_form">
+                <input id="groupInput" type="text" name="group" placeholder="Введите группу"> <br>
+                <input type="submit" value="Получить расписание" class="btn-hover color-1">
+            </form>
+        </div>
+        <div id="teacher" class="form_view" style="display: none;">
+            <form autocomplete="off" action="/db/gen_sch" class="group_form">
+                <input id="teacherInput"  type="text" name="teacher" placeholder="Введите ученое звание и имя"> <br>
+                <input type="submit" value="Получить расписание" class="btn-hover color-1">
+            </form>
+        </div>
+        <div id="room" class="form_view" style="display: none;">
+            <form autocomplete="off" action="/db/gen_sch" class="group_form">
+                <input id="roomInput" type="text" name="room" placeholder="Введите аудиторию"> <br>
+                <input type="submit" value="Получить расписание" class="btn-hover color-1">
+            </form>
+        </div>
+    </div>
 </div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    function openView(evt, id) {
+        var i, views, links;
+        // Clear all inputs
+        var inputs = document.getElementsByTagName("input");
+        for (i = 0; i < inputs.length; i++) {
+            if (inputs[i].type === "text") {
+                inputs[i].value = "";
+            }
+        }
+        views = document.getElementsByClassName("form_view");
+        for (i = 0; i < views.length; i++) { views[i].style.display = "none" }
+
+        links = document.getElementsByClassName("links");
+        for (i = 0; i < links.length; i++) { links[i].className.replace(" active", "") }
+
+        document.getElementById(id).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+// Autocompletion
+    function autocomplete(inp, arr) {
+        var currentFocus;
+        inp.addEventListener("input", function(e) {
+            var a, b, i, val = this.value;
+            closeAllLists();
+            if (!val) { return false;}
+            currentFocus = -1;
+
+            a = document.createElement("DIV");
+            a.setAttribute("id", this.id + "autocomplete-list");
+            a.setAttribute("class", "autocomplete-items");
+
+
+            this.parentNode.insertBefore(a, inp.nextSibling);
+
+            for (i = 0; i < arr.length; i++) {
+                if (a.children.length > 2) break;
+                if (arr[i].substr(0, val.length).toUpperCase() === val.toUpperCase()) {
+                    b = document.createElement("DIV");
+                    b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+                    b.innerHTML += arr[i].substr(val.length);
+                    b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                    b.addEventListener("click", function(e) {
+                        inp.value = this.getElementsByTagName("input")[0].value;
+                        closeAllLists();
+                    });
+                    a.appendChild(b);
+                }
+            }
+        });
+        inp.addEventListener("keydown", function(e) {
+            var x = document.getElementById(this.id + "autocomplete-list");
+            if (x) x = x.getElementsByTagName("div");
+            if (e.keyCode === 40) {
+                currentFocus++;
+                addActive(x);
+            } else if (e.keyCode === 38) {
+                currentFocus--;
+                addActive(x);
+            } else if (e.keyCode === 13) {
+                e.preventDefault();
+                if (currentFocus > -1) {
+                    if (x) x[currentFocus].click();
+                }
+            }
+        });
+        function addActive(x) {
+            if (!x) return false;
+            removeActive(x);
+            if (currentFocus >= x.length) currentFocus = 0;
+            if (currentFocus < 0) currentFocus = (x.length - 1);
+            x[currentFocus].classList.add("autocomplete-active");
+        }
+        function removeActive(x) {
+            for (var i = 0; i < x.length; i++) {
+                x[i].classList.remove("autocomplete-active");
+            }
+        }
+        function closeAllLists(elmnt) {
+            var x = document.getElementsByClassName("autocomplete-items");
+            for (var i = 0; i < x.length; i++) {
+                if (elmnt !== x[i] && elmnt !== inp) {
+                    x[i].parentNode.removeChild(x[i]);
+                }
+            }
+        }
+        document.addEventListener("click", function (e) {
+            closeAllLists(e.target);
+        });
+    }
+
+    var groups = [[${groups}]];
+    var teachers = [[${teachers}]];
+
+    // Init
+    autocomplete(document.getElementById("groupInput"), groups);
+    autocomplete(document.getElementById("teacherInput"), teachers);
+    /*]]>*/
+</script>
+
 </body>
 </html>

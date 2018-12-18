@@ -75,7 +75,7 @@ class DBController @Autowired constructor(private val pairRepo: PairRepository,
                         @RequestParam(value="teacher",required = false) teacher: String?,
                         @RequestParam(value="group",required = false) group: String?) : ModelAndView
         =   when {
-                room != null -> dtsc.compose(PairRecord::formatSoloGroup) { it.room == room}
+                room != null -> dtsc.compose(PairRecord::formatSoloGroup) { it.room == room }
                 teacher != null -> dtsc.compose(PairRecord::formatSoloRoom) { it.teacher == teacher }
                 group != null -> dtsc.compose(PairRecord::formatSoloGeneric) { it.group == group }
                 else -> ModelAndView("job_failed", mapOf("error" to "invalid call of /gen_sch"))

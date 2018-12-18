@@ -1,5 +1,7 @@
 package com.raritasolutions.mymining.controller
 
+import com.raritasolutions.mymining.repo.PairRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.servlet.ModelAndView
@@ -8,9 +10,24 @@ import java.util.concurrent.TimeUnit
 
 
 @Controller
-class IndexController
+class IndexController @Autowired constructor(private val pairRepo: PairRepository)
 {
     @GetMapping("/") fun index(): ModelAndView {
+        val modelAndView = ModelAndView("index")
+
+        val groups = pairRepo.setOfGroups()
+        modelAndView.addObject("groups", groups)
+
+        val teachers = pairRepo
+                .setOfTeachers()
+                .map { if (it.contains(',')) it.split(", ") else listOf(it)  }
+                .flatten()
+                .toSortedSet()
+        modelAndView.addObject("teachers", teachers)
+        return modelAndView
+    }
+
+    @GetMapping("/status") fun status(): ModelAndView {
         val model = HashMap<String,String>()
         val millis = ManagementFactory.getRuntimeMXBean()?.uptime
                 ?: throw IllegalStateException("Can't get RuntimeMXBean")
@@ -20,6 +37,6 @@ class IndexController
             model["minutes"] = (toMinutes(millis) % 60).toString().padStart(2,'0')
             model["seconds"] = (toSeconds(millis) % 60).toString().padStart(2,'0')
         }
-        return ModelAndView("index",model)
+        return ModelAndView("status",model)
     }
 }
