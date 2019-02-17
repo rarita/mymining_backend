@@ -1,5 +1,6 @@
-package com.raritasolutions.mymining.extractor.cell
+package com.raritasolutions.mymining.extractor.cell.implementations
 
+import com.raritasolutions.mymining.extractor.cell.ContentSafeExtractor
 import com.raritasolutions.mymining.model.PairRecord
 import com.raritasolutions.mymining.utils.*
 
@@ -11,12 +12,13 @@ open class ComplexCellExtractor(contents: String,
             // Adding a character for positive lookahead to stop at the last entry
             _contents += "No" // todo review asap (find better regex for rooms)
             val _result = extractCustomRegexToList(roomRegex,this)
-                    .map { it.trim(',') }
-                    .map { it.replace("No","") }
-                    .map { it.replace(",",", ") }
-                    .joinToString(separator = ", ")
+                    .flatMap { it.split(',') }
+                    .map { it.replace("(No|I+|-)".toRegex(),"") }
+                    .map { it.trim() }
+                    .filter { it.isNotBlank() }
+                    .toSortedSet()
             extractCustomRegex("No".toRegex(),this)
-            if (_result.isNotBlank()) _result
+            if (_result.isNotEmpty()) _result.joinToString(separator = ", ")
                 else raiseParsingException(roomRegex, this)
         }
 
@@ -47,6 +49,10 @@ open class ComplexCellExtractor(contents: String,
 
     override val extractOverWeek: () -> Boolean = { extractCustomRegex(overWeekRegex, this) != null }
 
+    override val extractGroup: () -> String = {
+        pairInstance.group
+    }
+
     // adds required spaces to teacher string
     // probably shouldn't be an extension
     private fun String.flavourTeacherString(): String
@@ -57,13 +63,16 @@ open class ComplexCellExtractor(contents: String,
                 .value
                 .toLowerCase()
                 .capitalize()
-        val second_space = teacherInitials
-                .find(this)!!
+        val second_space = teacherInitialsNoClosingDot
+                .findAll(this)
+                .last()
                 .range
                 .first + 1
-        return StringBuffer( this.replace(teacherRank, "") )
+        val needsClosingDot = teacherInitials.find(this) == null
+        val result = StringBuffer( this.replace(teacherRank, "") )
                 .insert(0, "$normalizedRank ")
                 .insert(second_space," ")
                 .toString()
+        return result + if (needsClosingDot) "." else ""
     }
 }

@@ -22,8 +22,6 @@ abstract class ContentSafeExtractor(private val contents: String,
 
     override fun make()
     {
-        if (pairInstance.group == "ПМК-18" && pairInstance.day == 2)
-            println("STOP!")
         // Applying extraction techniques to pairInstance and receiving spaceless (and bracketless) subject
         val _subject = pairInstance
                 .extract()

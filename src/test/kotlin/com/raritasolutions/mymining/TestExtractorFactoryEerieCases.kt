@@ -17,7 +17,7 @@ class TestExtractorFactoryEerieCases {
         with (result)
         {
             assert(subject == "Иностранный язык")
-            assert(room == "838, 228(немецкийязык)")
+            assert(room == "228(немецкийязык), 838")
             assert(type == "практика")
         }
     }
@@ -69,6 +69,7 @@ class TestExtractorFactoryEerieCases {
         val input = "II  Химия Доц. Джевага Н.В., Доц. Кужаева А.А. л/р No842,No843"
         val extractor = CellExtractorFactory(input).produce()
         val result = extractor.apply { make() }.result
+        println(result)
         assert(result.room == "842, 843")
     }
 

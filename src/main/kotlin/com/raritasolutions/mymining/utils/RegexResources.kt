@@ -2,15 +2,15 @@ package com.raritasolutions.mymining.utils
 
 /* Cell extractor resources */
 val contentInBracesRegex = "\\(.+?(?=\\))\\)".toRegex()
-val redundantSymbolsRegex = "([-_])".toRegex()
+val redundantSymbolsRegex = "(_)".toRegex()
 val pairTypesRegex = "(л/р|пр\\.)".toRegex()
 val teacherRankNormalCase = "(Доц.|Проф.|Асс.|Асп.|Ст.пр.|Преп.)".toRegex()
 val teacherRank = "($teacherRankNormalCase|${teacherRankNormalCase.toString().toUpperCase()})".toRegex()
-val teacherInitials = "\\p{L}\\.\\p{L}\\.".toRegex()
+val teacherInitials = "\\p{L}\\.\\p{L}\\.".toRegex() // Note that this is only INITIALS, not whole teacher name regex.
+val teacherInitialsNoClosingDot = "\\p{L}\\.\\p{L}".toRegex()
 
-// todo build this from 2 above
-val teacherRegex = "$teacherRank\\p{L}+\\.\\p{L}\\.,*".toRegex() // Careful!
-val roomRegex = "No.?-?.+?(?=(No))".toRegex()
+val teacherRegex = "$teacherRank\\p{L}+\\.\\p{L}\\.*,*".toRegex() // Careful!
+val roomRegex = "(I-)?No-?.+?(?=(No))".toRegex() // Check for "I-" before first room token to grab it from original string/
 val weeksRegex = "(I+)".toRegex()
 val oneHalfRegex = "[123]/[23]".toRegex()
 val overWeekRegex = "ч/н".toRegex()
@@ -18,7 +18,7 @@ val lineBreaksRegex = "(\\r\\n|\\n)".toRegex()
 val timeSpanRegex = "\\d+\\.\\d{2}-\\d+\\.\\d{2}".toRegex()
 
 /* CSV extractor resources */
-val roomSearchingRegex = "No*".toRegex()
+val roomSearchingRegex = "(No)+".toRegex()
 val pairNoRoomRegex = "$weeksRegex*?.*$teacherRegex.*$pairTypesRegex*?.*".toRegex()
 val pairRegex = "$pairNoRoomRegex.*$roomSearchingRegex".toRegex()
 val groupRegex = "\\p{Lu}{2,}-\\d{2,}.*".toRegex()
