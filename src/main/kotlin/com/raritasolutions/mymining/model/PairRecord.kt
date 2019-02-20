@@ -7,6 +7,9 @@ import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
 
+const val NO_ROOM = "Нет Аудитории"
+const val NO_TEACHER = "Нет Преподавателя"
+
 // todo: add field validation
 // todo: find a way to bind Lists to fields (maybe custom deserializer)
 @Entity
@@ -51,7 +54,7 @@ fun PairRecord.isCorrect()
             .replace("\\(.+?(?=\\))\\)".toRegex(),"")
             .replace("(Горный.?музей|Спортзал)".toRegex(),"")
             .let {
-                it.matches("(\\d{2,}a?,?.)+".toRegex()).not() && it.isNotBlank()
+                it.matches("(\\d{2,}a?,?.)+".toRegex()).not() && it.isNotBlank() && it != NO_ROOM
             } -> false // NOT matches or empty (because museum/gym got removed)
         //room.length > 15 && !("\\(.+?(?=\\))\\)".toRegex().containsMatchIn(room)) -> false
         else -> true

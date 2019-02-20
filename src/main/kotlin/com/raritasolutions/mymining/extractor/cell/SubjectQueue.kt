@@ -26,6 +26,9 @@ object SubjectQueue {
             SUBSCRIBERS[subject] = arrayListOf(caller)
     }
 
+    fun getCorrectSubjectFor(spaceLessSubject: String)
+        = vault[spaceLessSubject]
+
     fun addNewRecord(record : String)
     {
         val no_spaces = record.removeSpaces()

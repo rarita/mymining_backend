@@ -5,6 +5,9 @@ import java.lang.StringBuilder
 val String.Companion.EMPTY: String
     get() = ""
 
+fun String.countRegex(regex: Regex)
+    = regex.findAll(this).count()
+
 fun String.removeContentInBraces()
     = replace(contentInBracesRegex, "")
 

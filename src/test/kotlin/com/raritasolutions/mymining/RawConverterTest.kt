@@ -135,4 +135,12 @@ class RawConverterTest {
         val results = getOutput(rplExtended)
         assert(results[0] == results[1])
     }
+
+    @Test
+    fun testSubGroupTokenSplitting() {
+        val rpl = makeFromString("I  Теория менеджмента Доц. Никулина А.Ю. пр. No611 гр. МП-18-2а II Теория менеджмента Доц. Никулина А.Ю. No820")
+        val result = getOutput(rpl)
+        assert(result.size == 2)
+        assert(result[1].group == "МП-18-2а")
+    }
 }

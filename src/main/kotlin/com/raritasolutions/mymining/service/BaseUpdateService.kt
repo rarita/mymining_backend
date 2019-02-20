@@ -34,7 +34,7 @@ abstract class BaseUpdateService (private val pairRepo: PairRepository,
             val rawPairs = files
                     .map(converter::convert)
                     .flatten()
-            val extractors = RawConverter(rawPairs,report).extractorList
+            val extractors = RawConverter(rawPairs, report).extractorList
             // Ugly workaround faulty cases
             val processedExtractors = arrayListOf<ContentSafeExtractor>()
             for (extractor in extractors){
