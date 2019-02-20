@@ -1,0 +1,143 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-size: cover;
+    background: #ffffff center;
+    font-family: sans-serif;
+}
+
+.group_picker {
+    width: 400px;
+    background: #fff;
+    color: #000;
+    top: 50%;
+    left: 50%;
+    position: fixed;
+    transform: translate(-50%, -50%);
+    box-sizing: border-box;
+    display: block;
+    overflow: auto;
+    -webkit-box-shadow: 0 5px 20px 0 rgba(0,0,0,0.3);
+    -moz-box-shadow: 0 5px 20px 0 rgba(0,0,0,0.3);
+    box-shadow: 0 5px 20px 0 rgba(0,0,0,0.3);
+}
+
+.logo {
+    margin-top: 5px;
+    width: 100px;
+    height: 100px;
+    position: center;
+    left: calc(50% - 50px);
+}
+
+.group_form {
+    margin-top: 5px;
+    position: center;
+    width: 90%;
+}
+
+.group_form input {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.group_form input[type="text"] {
+    box-sizing: border-box;
+    border: none;
+    border-bottom: 1px solid #23c15a;
+    background: #ffffff;
+    color: #000000;
+    font-size: 18px;
+    outline: none;
+    height: 40px;
+}
+
+.btn-hover:focus {
+    outline: none;
+}
+
+.buttons {
+    margin: 10%;
+    text-align: center;
+}
+
+.btn-hover {
+    width: 180px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    height: 45px;
+    text-align: center;
+    border: none;
+    background-size: 300% 100%;
+
+    moz-transition: all .4s ease-in-out;
+    -o-transition: all .4s ease-in-out;
+    -webkit-transition: all .4s ease-in-out;
+    transition: all .4s ease-in-out;
+}
+
+.btn-hover:hover {
+    background-position: 100% 0;
+    moz-transition: all .4s ease-in-out;
+    -o-transition: all .4s ease-in-out;
+    -webkit-transition: all .4s ease-in-out;
+    transition: all .4s ease-in-out;
+}
+
+.btn-hover.color-1 {
+    background-image: linear-gradient(to right, #49e0e1, #40e495, #30dd8a, #2bb673);
+    box-shadow: 0 4px 15px 0 rgba(49, 196, 190, 0.75);
+}
+
+.links {
+    margin-top: 3px;
+    width: 32%;
+    text-align: center;
+    font-size: 10pt;
+    background-color: transparent;
+    color: #23c15a;
+    border-style: none;
+    outline : none;
+    -moz-outline : none;
+}
+
+.links:hover {
+    background-color: #23c15a;
+    color: white;
+}
+
+.autocomplete {
+    position: absolute;
+}
+
+.autocomplete-items {
+    position: relative;
+    border: 1px solid #d4d4d4;
+    border-bottom: none;
+    border-top: none;
+    z-index: 1488;
+    /*position the autocomplete items to be the same width as the container:*/
+    top: 100%;
+    left: 0;
+    right: 0;
+}
+
+.autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff;
+    border-bottom: 1px solid #d4d4d4;
+}
+
+/*when hovering an item:*/
+.autocomplete-items div:hover {
+    background-color: #e9e9e9;
+}
+
+/*when navigating through the items using the arrow keys:*/
+.autocomplete-active {
+    background-color: DodgerBlue !important;
+    color: #ffffff;
+}

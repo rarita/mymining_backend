@@ -3,7 +3,7 @@ package com.raritasolutions.mymining.extractor
 import com.raritasolutions.mymining.utils.*
 
 // Splits n class records from one cell to separate records.
-class PairSplitter(private val initialContents: String) {
+class PairSplitter (private val initialContents: String) {
 
     val contents: List<String>
         get() = analyseAndSplit(initialContents, listOf())
@@ -20,8 +20,8 @@ class PairSplitter(private val initialContents: String) {
                 .findAll(contentsNoMultiWeekRoom)
                 .count()
         val splittingRegex: Regex? = when {
-            halfTokens == 2 -> ".*[12].?/.?[23].*?(?=((I+|ч.?/.?н)*.[12].?/.?[23]))".toRegex()
-            weekTokens == 2 -> ".*((I).+|ч.?/.?н).?(?=([12].?/.?[23])*.((I)+|ч.?/.?н))".toRegex() // .*((I.*)+|ч.*/.*н).*?(?=(1/\d)*.((I.*)+|ч.*/.*н))
+            halfTokens == 2 -> oneHalfTokenRegex
+            weekTokens == 2 -> weekTokenRegex
             else -> null
         }
 

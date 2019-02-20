@@ -85,7 +85,7 @@ class RawConverterTest {
         with (results[1]) {
             assert(subject == "Химия")
             assert(teacher == "Доц. Лобачёва О.Л., Асс. Черняев В.А.")
-            assert(room == "843, 842")
+            assert(room == "842, 843")
             assert(isCorrect())
         }
     }
@@ -107,16 +107,6 @@ class RawConverterTest {
             assert(it.isCorrect())
             assert(it.teacher == "Доц. Зибров Д.А., Доц. Облова И.С.")
         }
-    }
-
-    @Test
-    fun testMultipleRoomTypesInSingleClass() {
-        val rpl = makeFromString("Иностранный язык Доц. Зибров Д.А. пр. No626 Доц. Облова И.С. I-No621, II- No716")
-        val results = getOutput(rpl)
-        assert(results.size == 1)
-        assert(results[0].subject == "Иностранный язык")
-        assert(results[0].room == "626, 621, 716")
-        assert(results[0].isCorrect())
     }
 
     @Test
@@ -144,5 +134,13 @@ class RawConverterTest {
         val rplExtended = rpl + makeFromString("Физическая культура ( 5.09 - 19.09 ) Элективные дисциплины по физической культуре и спорту ( 19.9 - 26.12 )")
         val results = getOutput(rplExtended)
         assert(results[0] == results[1])
+    }
+
+    @Test
+    fun testSubGroupTokenSplitting() {
+        val rpl = makeFromString("I  Теория менеджмента Доц. Никулина А.Ю. пр. No611 гр. МП-18-2а II Теория менеджмента Доц. Никулина А.Ю. No820")
+        val result = getOutput(rpl)
+        assert(result.size == 2)
+        assert(result[1].group == "МП-18-2а")
     }
 }

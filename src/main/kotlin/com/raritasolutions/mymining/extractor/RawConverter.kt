@@ -24,8 +24,6 @@ class RawConverter(private val rawList: List<RawPairRecord>,
         }
 
     private fun RawPairRecord.split() {
-        if (this.group == "ПМК-18" && this.day == "ВТОРНИК")
-            println("STOP!")
         val _contents = contents
                 .replace("_","")
                 .replace("\\s+".toRegex(), " ")

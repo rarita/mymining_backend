@@ -12,7 +12,7 @@ class PairRecordTest {
     fun testEqualsExcluding(){
         val pair = PairRecord(id = 0, group = "AAA-18")
         val same = pair.copy(group = "BBB-18")
-        val other = pair.copy(needsRevision = true)
+        val other = pair.copy(locked = true)
         assert(pair.equalsExcluding(pair, listOf()))
         assert(pair.equalsExcluding(same, listOf(PairRecord::id,PairRecord::group)))
         assert(!pair.equalsExcluding(other,listOf(PairRecord::id,PairRecord::group)))

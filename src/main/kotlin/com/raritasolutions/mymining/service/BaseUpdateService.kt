@@ -28,14 +28,13 @@ abstract class BaseUpdateService (private val pairRepo: PairRepository,
                         .map { cacheRepo.saveFile(it.value)}
                         .any { it }
 
-        if (!needsUpdate || isColdBoot){
+        if (needsUpdate || isColdBoot) {
             // If it doesn't need to be compared and updated just load all the pairs to the DB
             val files = cacheRepo.localFiles
             val rawPairs = files
                     .map(converter::convert)
                     .flatten()
-            val debug = rawPairs.filter { it.day == "ЧЕТВЕРГ" && it.group == "ТХ-18-1" }
-            val extractors = RawConverter(rawPairs,report).extractorList
+            val extractors = RawConverter(rawPairs, report).extractorList
             // Ugly workaround faulty cases
             val processedExtractors = arrayListOf<ContentSafeExtractor>()
             for (extractor in extractors){
@@ -62,4 +61,7 @@ abstract class BaseUpdateService (private val pairRepo: PairRepository,
         }
     }
 
+    fun updateDB(updatedPairs: List<PairRecord>) {
+        val diff = updatedPairs - pairRepo.findAll()
+    }
 }

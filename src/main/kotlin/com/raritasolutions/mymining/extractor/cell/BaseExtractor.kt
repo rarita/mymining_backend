@@ -10,21 +10,32 @@ interface BaseExtractor: ContentHolder {
     val result: PairRecord
 
     // This fields have to be overridden in inheritors
+
+    // Set up and tear down
+    // It is strongly recommended to leave these fields unused.
+    val setUp: (() -> Unit)?
+    val tearDown: (() -> Unit)?
+
+    // Extraction methods
     val extractRoom: () -> String
     val extractWeek: () -> Int
     val extractType: () -> String
     val extractTeacher: () -> String
     val extractOneHalf: () -> String
     val extractOverWeek: () -> Boolean
+    val extractGroup: () -> String
 
     fun PairRecord.extract(): String
     {
+        setUp?.invoke()
         week = extractWeek()
         one_half = extractOneHalf()
         teacher = extractTeacher()
+        over_week = extractOverWeek()
         type = extractType()
         room = extractRoom()
-        over_week = extractOverWeek()
+        group = extractGroup()
+        tearDown?.invoke()
         return _contents
     }
 

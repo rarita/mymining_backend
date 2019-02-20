@@ -52,4 +52,22 @@ class PairSplitterTest {
         val contents = PairSplitter(pairInput.joinToString(separator = " ")).contents
         assert(contents.containsAll(pairInput))
     }
+
+    @Test
+    fun testSubGroupTokenLookahead() {
+        // OneHalf tokens
+        var pairInput = listOf("1/2 Теория менеджмента Доц. Никулина А.Ю. пр. No611", "гр. МП-18-2а 1/2 Теория менеджмента Доц. Никулина А.Ю. No820")
+        var contents = PairSplitter(pairInput.joinToString(" ")).contents
+        assert(contents == pairInput)
+        // For reversed list
+        contents = PairSplitter(pairInput.reversed().joinToString(" ")).contents
+        assert(contents == pairInput.reversed())
+        // Week tokens
+        pairInput = listOf("I Теория менеджмента Доц. Никулина А.Ю. пр. No611", "гр. МП-18-2а II Теория менеджмента Доц. Никулина А.Ю. No820")
+        contents = PairSplitter(pairInput.joinToString(" ")).contents
+        assert(contents == pairInput)
+        // For reversed list
+        contents = PairSplitter(pairInput.reversed().joinToString(" ")).contents
+        assert(contents == pairInput.reversed())
+    }
 }

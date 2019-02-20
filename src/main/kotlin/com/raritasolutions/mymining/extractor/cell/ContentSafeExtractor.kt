@@ -13,17 +13,15 @@ abstract class ContentSafeExtractor(private val contents: String,
     private val pairInstance = basePair.copy()
 
     override val result: PairRecord
-        get() = if (extractionFinished) pairInstance else throw Exception("Pair is not extracted yet: $_contents,")
+        get() = if (extractionFinished) pairInstance else throw Exception("Pair is not extracted yet: $_contents")
 
     override var _contents: String = contents
             .removeSpecialCharacters()
-            .removeRedundantCharacters() // TODO BIND DASH-INCLUDING PAIRS INTO SubjectQueue
+            .removeRedundantCharacters()
 
 
     override fun make()
     {
-        if (pairInstance.group == "ПМК-18" && pairInstance.day == 2)
-            println("STOP!")
         // Applying extraction techniques to pairInstance and receiving spaceless (and bracketless) subject
         val _subject = pairInstance
                 .extract()
@@ -32,9 +30,17 @@ abstract class ContentSafeExtractor(private val contents: String,
         found in contents to global DB. If not, wait until correct subject string is found and
         then finish the extraction  */
         if (hasValidSpaceAmount()) {
-            pairInstance.subject = getOriginalSubjectName(_subject)
+            // Also make sure that the smallest original subject is always selected.
+            val localSubject = getOriginalSubjectName(_subject)
+            val vaultSubject = SubjectQueue.getCorrectSubjectFor(_subject)
+
+            if (localSubject.length < vaultSubject?.length ?: Int.MAX_VALUE) {
+                pairInstance.subject = localSubject
+                SubjectQueue.addNewRecord(pairInstance.subject)
+            }
+            else
+                pairInstance.subject = vaultSubject!!
             extractionFinished = true
-            SubjectQueue.addNewRecord(pairInstance.subject)
         }
         else
             SubjectQueue.subscribe(_subject, this@ContentSafeExtractor)
@@ -55,10 +61,27 @@ abstract class ContentSafeExtractor(private val contents: String,
         extractionFinished = true
     }
 
+    // Look for minimal distinctive start-end patterns to extract subject string from original contents.
+    // Note that it ditches braces content completely. Hope to get rid of this in the future.
+    private fun findMinimalWorkingGreed(subject: String): Int {
+        val contentsFixed = contents
+                .replace(lineBreaksRegex," ")
+                .removeContentInBraces()
+        var greed = 1 // It is pointless to start @ 1 (0) b.c 90% of the time it is going to be skipped
+        var startOccurrences: Int; var endOccurrences : Int
+        do {
+            greed++
+            startOccurrences = contentsFixed.countRegex(subject.take(greed).mayContainSpaces().toRegex())
+            endOccurrences = contentsFixed.countRegex(subject.takeLast(greed).mayContainSpaces().toRegex())
+            if (greed > subject.length / 2) throw Exception("Greed is longer than the whole subject")
+        } while (startOccurrences != 1 || endOccurrences != 1)
+        return greed
+    }
+
     // Count of symbols drawn now depends on subject length.
     private fun getOriginalSubjectName(subject: String): String
     {
-        val greed = if (subject.length < 6) 2 else 3
+        val greed = findMinimalWorkingGreed(subject)
         // Should match first letter and last letter of Subject
         val prefix = subject.take(greed)
                                     .shieldSymbol('(')
@@ -67,13 +90,14 @@ abstract class ContentSafeExtractor(private val contents: String,
                                     .shieldSymbol(')')
                                     .mayContainSpaces()
 
-        val regex = "$prefix.*?$postfix".toRegex() // NOTE it was made NOT GREEDY for data between keys
-        // Replace line breaks with spaces before searching
-        val contentsNoLineBreaks = contents.replace(lineBreaksRegex," ")
-        return regex
-                .find(contentsNoLineBreaks)?.value
+        val regex = "$prefix.*$postfix".toRegex() // NOTE it was made NOT GREEDY for data between keys
+        // Replace line breaks with spaces before searching (and the braces and content in them)
+        val contentsNoLineBreaks = contents
+                .replace(lineBreaksRegex," ")
+                .removeContentInBraces()
+        return regex.find(contentsNoLineBreaks)
+                ?.value
                 ?.trim()
-                ?.removeContentInBraces()
                 ?.replace("\\s+".toRegex(), " ") // Replace duplicating whitespaces if present
                 ?: throw Exception("Original subject can't be extracted. Subject is $subject and contents is $contents " +
                         "@ [${this.pairInstance.group},${this.pairInstance.day},${this.pairInstance.timeSpan}]")

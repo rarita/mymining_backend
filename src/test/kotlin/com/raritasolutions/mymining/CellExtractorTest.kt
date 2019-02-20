@@ -1,9 +1,12 @@
 package com.raritasolutions.mymining
 
 
-import com.raritasolutions.mymining.extractor.cell.ComplexCellExtractor
-import com.raritasolutions.mymining.extractor.cell.SimpleCellExtractor
-import com.raritasolutions.mymining.model.PairRecord
+import com.raritasolutions.mymining.extractor.cell.CellExtractorFactory
+import com.raritasolutions.mymining.extractor.cell.implementations.ComplexCellExtractor
+import com.raritasolutions.mymining.extractor.cell.implementations.SimpleCellExtractor
+import com.raritasolutions.mymining.model.NO_TEACHER
+import com.raritasolutions.mymining.model.isCorrect
+import javafx.scene.control.Cell
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
@@ -121,7 +124,7 @@ class CellExtractorTest
         with (extractor.result)
         {
             assert(type == "практика")
-            assert(room == "838, 228(немецкийязык)")
+            assert(room == "228(немецкий язык), 838")
             assert(week == 0)
             assert(teacher == "Доц. Герасимова И.Г., Доц. Гончарова М.В.")
             assert(subject == "Иностранный язык")
@@ -167,6 +170,134 @@ class CellExtractorTest
             assert(teacher == "Доц. Томаев В.В.")
             assert(type == "лабораторная работа")
             assert(room == "235, 236, 717")
+        }
+    }
+
+    @Test
+    fun testNoDotAfterPatronymic(){
+        val input = "Геология\n" +
+                "Доц. Тутакова А.Я No832"
+        val extractor = ComplexCellExtractor(input).apply { make() }
+        with (extractor.result){
+            assert(subject == "Геология")
+            assert(teacher == "Доц. Тутакова А.Я.")
+            assert(type == "лекция")
+            assert(room == "832")
+        }
+    }
+
+    @Test
+    fun testMultipleRoomTypesInSingleClass() {
+        val simpleInput = "Иностранный язык Доц. Зибров Д.А. пр. No626 Доц. Облова И.С. I-No621, II- No716"
+        // Needs overridden extractWeek field in production case so consider its week to be always 0.
+        var extractor = ComplexCellExtractor(simpleInput).apply { make() }
+        with (extractor.result) {
+            assert(subject == "Иностранный язык")
+            assert(room == "621, 626, 716")
+            assert(isCorrect())
+        }
+        val insaneInput = "Физика Асс. Страхова А.А. л/р No233,235 Доц. Стоянова Т.В. л/р I - No231,236  II -No236,712"
+        extractor = ComplexCellExtractor(insaneInput).apply { make() }
+        with (extractor.result) {
+            assert(subject == "Физика")
+            assert("Доц. Стоянова Т.В." in teacher && "Асс. Страхова А.А." in teacher)
+            assert(room == "231, 233, 235, 236, 712")
+            assert(isCorrect())
+        }
+        val reversedInput = "Компьютерная графика Доц. Судариков А.Е. л/р I - No729 II - No721 Доц. Исаев А.И. л/р No726"
+        extractor = object : ComplexCellExtractor(reversedInput) {
+            override val extractWeek: () -> Int = { 0 }
+        }
+                .apply { make() }
+        with (extractor.result) {
+            assert(subject == "Компьютерная графика")
+            assert("Доц. Судариков А.Е." in teacher && "Доц. Исаев А.И." in teacher)
+            assert(room == "721, 726, 729")
+            assert(isCorrect())
+        }
+    }
+
+    @Test
+    fun testSubGroupPairExtraction() {
+        val input = "гр. НГС-18-1а II Начертательная  геометрия и инженерная графика Доц. Левашов Д.С. No724"
+        val inputExcessiveSpaces = "гр. НГС-18-1а II Н а ч е р т а т е л ь н а я  г е о м е т р и я  и инженерная графика Доц. Левашов Д.С. No724"
+        var extractor = ComplexCellExtractor(input).apply { make() }
+        val result = extractor.result
+        with (result) {
+            assert(subject == "Начертательная геометрия и инженерная графика")
+            assert(teacher == "Доц. Левашов Д.С.")
+            assert(room == "724")
+            assert(group == "НГС-18-1а")
+            assert(isCorrect())
+        }
+        // Check both inputs just in case.
+        extractor = ComplexCellExtractor(inputExcessiveSpaces).apply { make() }
+        assert(extractor.result == result)
+    }
+
+    @Test
+    fun testSubjectWithDashes() {
+        val input = "Объектно-ориентированное программирование Доц. Шумова Е.О. л/р No533"
+        val extractor = ComplexCellExtractor(input).apply { make() }
+        with (extractor.result) {
+            assert(subject == "Объектно-ориентированное программирование")
+            assert(isCorrect())
+        }
+    }
+
+    @Test
+    fun testPhysEdWithTeacher() {
+        val input = "Физическая культура Доц. Изотов И.А."
+        val extractor = CellExtractorFactory(input).produce().apply { make() }
+        with (extractor.result) {
+            assert(subject == "Физическая культура")
+            assert(teacher == "Доц. Изотов И.А.")
+            assert(isCorrect())
+        }
+    }
+
+    @Test
+    fun testIncorrectPracticeToken() {
+        val input = "II Самый важный предмет Доц. Яковлева Ю.А. пр No715"
+        val extractor = ComplexCellExtractor(input).apply { make() }
+        with (extractor.result) {
+            assert(subject == "Самый важный предмет")
+            assert(type == "практика")
+            assert(isCorrect())
+        }
+    }
+
+    @Test
+    fun testVacancyInTeacherField() {
+        val input = "Иностранный язык Вакансия"
+        val extractor = CellExtractorFactory(input).produce().apply { make() }
+        with (extractor.result) {
+            assert(subject == "Иностранный язык")
+            assert(teacher == NO_TEACHER)
+        }
+    }
+
+    @Test
+    fun testSubjectStringExtraction() {
+        val input = "I Введение в направление Доц. Спиридонов В.В. л/р No315"
+        val extractor = ComplexCellExtractor(input).apply { make() }
+        with (extractor.result) {
+            assert(subject == "Введение в направление")
+            assert(type == "лабораторная работа")
+            assert(isCorrect())
+        }
+    }
+
+    @Test
+    fun testNoTeacherButHasRoomClass() {
+        val input = "I Иностранный язык пр. No636"
+        val extractor = CellExtractorFactory(input).produce().apply { make() }
+        with (extractor.result) {
+            assert(subject == "Иностранный язык")
+            assert(type == "практика")
+            assert(week == 1)
+            assert(room == "636")
+            assert(isCorrect())
         }
     }
 }

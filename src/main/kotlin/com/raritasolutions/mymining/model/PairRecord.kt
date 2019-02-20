@@ -7,6 +7,9 @@ import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
 
+const val NO_ROOM = "Нет Аудитории"
+const val NO_TEACHER = "Нет Преподавателя"
+
 // todo: add field validation
 // todo: find a way to bind Lists to fields (maybe custom deserializer)
 @Entity
@@ -23,17 +26,17 @@ data class PairRecord(@Id @GeneratedValue var id: Int = 0,
                       var one_half: String = "0/0",
                       var over_week: Boolean = false,
                       var buildingID: Int = 3,
-                      var needsRevision: Boolean = false) {
+                      var locked: Boolean = false) {
 
     override fun equals(other: Any?): Boolean
             = when {
         this === other -> true
         other !is PairRecord -> false
-        else -> equalsExcluding(other, listOf(PairRecord::id,PairRecord::needsRevision))
+        else -> equalsExcluding(other, listOf(PairRecord::id,PairRecord::locked))
     }
 
     override fun hashCode(): Int {
-        return Objects.hash(group,teacher,week,day,timeSpan,subject,room,type,one_half,buildingID,needsRevision)
+        return Objects.hash(group,teacher,week,day,timeSpan,subject,room,type,one_half,buildingID,locked)
     }
 }
 
@@ -51,7 +54,7 @@ fun PairRecord.isCorrect()
             .replace("\\(.+?(?=\\))\\)".toRegex(),"")
             .replace("(Горный.?музей|Спортзал)".toRegex(),"")
             .let {
-                it.matches("(\\d{2,}a?,?.)+".toRegex()).not() && it.isNotBlank()
+                it.matches("(\\d{2,}a?,?.)+".toRegex()).not() && it.isNotBlank() && it != NO_ROOM
             } -> false // NOT matches or empty (because museum/gym got removed)
         //room.length > 15 && !("\\(.+?(?=\\))\\)".toRegex().containsMatchIn(room)) -> false
         else -> true

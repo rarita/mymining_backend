@@ -3,6 +3,7 @@ package com.raritasolutions.mymining.composer
 import com.raritasolutions.mymining.model.GroupFoldingSet
 import com.raritasolutions.mymining.model.PairRecord
 import com.raritasolutions.mymining.model.normalizeGroups
+import com.raritasolutions.mymining.model.toString
 import com.raritasolutions.mymining.repo.PairRepository
 import com.raritasolutions.mymining.utils.DAYS_MAP
 import com.raritasolutions.mymining.utils.EMPTY

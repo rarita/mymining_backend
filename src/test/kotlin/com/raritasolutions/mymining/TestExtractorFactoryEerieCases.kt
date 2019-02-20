@@ -17,7 +17,7 @@ class TestExtractorFactoryEerieCases {
         with (result)
         {
             assert(subject == "Иностранный язык")
-            assert(room == "838, 228(немецкийязык)")
+            assert(room == "228(немецкий язык), 838")
             assert(type == "практика")
         }
     }
