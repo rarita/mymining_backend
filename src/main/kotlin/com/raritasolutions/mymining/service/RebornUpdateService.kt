@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 
 @Service
-class LegacyUpdateService @Autowired constructor(pairRepo: PairRepository,
+class RebornUpdateService @Autowired constructor(pairRepo: PairRepository,
                                                  cacheRepo: CacheRepository,
-                                                 @Qualifier("cached_tabula") analyser: BaseWebAnalyser,
-                                                 @Qualifier("legacycsv") converter: BaseConverter,
+                                                 @Qualifier("cached_reborn") analyser: BaseWebAnalyser,
+                                                 @Qualifier("reborn") converter: BaseConverter,
                                                  report: ExtractionReport) : BaseUpdateService(pairRepo, cacheRepo, analyser, converter, report)

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Feed</title>
+</head>
+<link rel="stylesheet" href="../static/css/feed_style.css" th:href="@{/css/feed_style.css}">
+<body>
+    <div class="floating_list">
+        <h1 th:text="${header}" class="header">Расписание группы НГД-18-12</h1>
+        <div class="header_day">Понедельник, 25 Февраля</div>
+        <div>
+            <div class="pair_item_container">
+                <div class="pair_item_time_column">
+                    <div class="pair_item_time">10:35</div>
+                    <div class="pair_item_filler"></div>
+                    <div class="pair_item_time">12:05</div>
+                </div>
+                <div class="pair_item_main_column">
+                    <div class="pair_item_token_row">
+                        <div class="pair_item_token">1/2</div>
+                        <div class="pair_item_token">ч/н</div>
+                        <div class="pair_item_token">лабораторная работа</div>
+                    </div>
+                    <div class="pair_item_subject">Объектно-ориентированное программирование</div>
+                    <div class="pair_item_teacher">Ст.пр. Шумова Е.О.</div>
+                </div>
+                <div class="pair_item_room_column">315</div>
+            </div>
+        </div>
+        <hr>
+        <div>
+            <div class="pair_item_container">
+                <div class="pair_item_time_column">
+                    <div class="pair_item_time">10:35</div>
+                    <div class="pair_item_filler"></div>
+                    <div class="pair_item_time">12:05</div>
+                </div>
+                <div class="pair_item_main_column">
+                    <div class="pair_item_token_row">
+                        <div class="pair_item_token">1/2</div>
+                        <div class="pair_item_token">ч/н</div>
+                        <div class="pair_item_token">лабораторная работа</div>
+                    </div>
+                    <div class="pair_item_subject">Объектно-ориентированное программирование</div>
+                    <div class="pair_item_teacher">Ст.пр. Шумова Е.О.</div>
+                </div>
+                <div class="pair_item_room_column">
+                    315 316 317
+                </div>
+            </div>
+        </div>
+        <div class="header_day">Вторник, 26 Февраля</div>
+    </div>
+</body>
+</html>

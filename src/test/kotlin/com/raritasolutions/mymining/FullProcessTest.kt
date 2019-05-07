@@ -8,8 +8,8 @@ class FullProcessTest {
     @Test
     fun testWholeProcessWithSimpleInput()
     {
-        val pairsList = LegacyCSVConverter().convert(ClassPathResource("textdata/parsed.txt").file)
-        val testValues = pairsList.filter { it.group == "ГНГ-18-1" && it.day == "ЧЕТВЕРГ" }
+        val pairsList = LegacyCSVConverter().convert(ClassPathResource("textdata/parsed.txt").file, 3)
+        val testValues = pairsList.filter { it.group == "ГНГ-18-1" && it.day == 4 }
         assert(testValues.size == 6)
     }
 }

@@ -8,7 +8,13 @@ import java.io.File
 @Component
 interface BaseConverter {
     var report: ExtractionReport?
-    fun convert(localFile: File): List<RawPairRecord>
-    fun convertAll(localFiles : List<File>)
-        = localFiles.map { convert(it) } .flatMap { it.toList() }
+    /**
+     * Sends Converter a command to convert given input file.
+     * @param localFile target file, either pdf of xls
+     * @param defaultBuilding represents default building, where
+     * classes with white background and black text are held
+     * This parameter is only needed for converters that can
+     * work with the colors, like RebornConverter
+     */
+    fun convert(localFile : File, defaultBuilding: Int): List<RawPairRecord>
 }

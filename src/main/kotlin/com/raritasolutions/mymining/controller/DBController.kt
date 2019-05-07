@@ -1,16 +1,17 @@
 package com.raritasolutions.mymining.controller
 
 import com.raritasolutions.mymining.composer.DayTimeScheduleComposer
-import com.raritasolutions.mymining.converter.BaseConverter
-import com.raritasolutions.mymining.model.ExtractionReport
 import com.raritasolutions.mymining.model.PairRecord
 import com.raritasolutions.mymining.model.isCorrect
+import com.raritasolutions.mymining.model.toPairViewModel
+import com.raritasolutions.mymining.model.viewmodel.BaseViewModel
+import com.raritasolutions.mymining.model.viewmodel.DayHeaderModel
 import com.raritasolutions.mymining.repo.PairRepository
 import com.raritasolutions.mymining.service.LegacyUpdateService
+import com.raritasolutions.mymining.service.RebornUpdateService
 import com.raritasolutions.mymining.service.WebUpdateService
 import com.raritasolutions.mymining.utils.*
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
@@ -21,22 +22,22 @@ import org.springframework.web.servlet.view.RedirectView
 class DBController @Autowired constructor(private val pairRepo: PairRepository,
                                           private val dtsc : DayTimeScheduleComposer,
                                           private val updateService: WebUpdateService,
-                                          private val legacyUpdateService : LegacyUpdateService) {
+                                          private val legacyUpdateService : LegacyUpdateService,
+                                          private val rebornUpdateService: RebornUpdateService) {
 
-    @GetMapping("/extract_legacy")
-    fun process(): ModelAndView
-    {
-        legacyUpdateService.update()
-        return ModelAndView("job_result", mapOf("caller" to "TXT2DB Pair Fetcher",
-                "message" to "List of errors occurred while extracting\n" + legacyUpdateService.report.toString()))
-    }
-
-    @GetMapping("/extract_remote")
-    fun extract(): ModelAndView {
-        updateService.update()
+    @GetMapping("/extract")
+    fun extract(@RequestParam(value = "type",required = false, defaultValue = "tabula") type: String)
+            : ModelAndView {
+        val service = when (type) {
+            "legacy" -> legacyUpdateService
+            "tabula" -> updateService
+            "reborn" -> rebornUpdateService
+            else -> throw IllegalArgumentException("Supplied type parameter is illegal")
+        }
+        service.update()
         return ModelAndView("job_result", mapOf(
                 "caller" to "Remote Extractor",
-                "message" to "List of errors occurred while extracting\n" + updateService.report.toString()))
+                "message" to "List of errors occurred while extracting\n" + service.report.toString()))
     }
 
     @GetMapping("/check")
@@ -71,23 +72,44 @@ class DBController @Autowired constructor(private val pairRepo: PairRepository,
     }
 
     @GetMapping("gen_sch")
-    fun getRoomSchedule(@RequestParam(value="room",required = false) room: String?,
-                        @RequestParam(value="teacher",required = false) teacher: String?,
-                        @RequestParam(value="group",required = false) group: String?) : ModelAndView
+    fun getGenericSchedule(@RequestParam(value="room",required = false) room: String?,
+                           @RequestParam(value="teacher",required = false) teacher: String?,
+                           @RequestParam(value="group",required = false) group: String?,
+                           @RequestParam(value ="simplified",required = false) simplified: Boolean?) : ModelAndView
         =   when {
-                room != null -> dtsc.compose(PairRecord::formatSoloGroup) { room in it.room }
-                teacher != null -> dtsc.compose(PairRecord::formatSoloRoom) { teacher in it.teacher }
-                group != null -> dtsc.compose(PairRecord::formatSoloGeneric) { group == it.group }
+                room != null -> dtsc.compose(if (simplified == true) PairRecord::formatSimpleTeacher else PairRecord::formatSoloGroup, makeCaption(room)) { room in it.room }
+                teacher != null -> dtsc.compose(if (simplified == true) PairRecord::formatSimpleRoom else PairRecord::formatSoloRoom, makeCaption(teacher)) { teacher in it.teacher }
+                group != null -> dtsc.compose(PairRecord::formatSoloGeneric, makeCaption(group)) { it.group.matchesSubgroup(group) }
                 else -> ModelAndView("job_failed", mapOf("error" to "invalid call of /gen_sch"))
             }
 
+    /* All params are required because request is being sent via form and
+     * all of the listed params are present in any case */
+    @GetMapping("/feed")
+    fun getFeedSchedule(@RequestParam(value = "group", required = true) group: String,
+                        @RequestParam(value = "week", required = true) week: Int,
+                        @RequestParam(value = "day", required = true) day : Int) : ModelAndView{
+        val feed = arrayListOf<BaseViewModel>()
+        val days = if (day == 0) (1..5) else listOf(day)
+        for (dayIter: Int in days) {
+            feed += DayHeaderModel(DAYS_NAMES_MAP.getValue(dayIter))
+            feed += (if (group.endsWith('а'))
+                        findPairs(group.substringBeforeLast('а'), dayIter, week) + findPairs(group, dayIter, week)
+                    else
+                        findPairs(group, dayIter, week)).sortedBy { it.timeStart }
+        }
+        return ModelAndView("gen_feed", mapOf("feed" to feed))
+    }
 
-
-
-    @GetMapping("/list_json")
-    @ResponseBody
-    fun getAllPairs() = pairRepo.findAll()
-
+    private fun findPairs(group: String, day: Int, week: Int)
+        = if (week != 0)
+    /* Week = 0 -> select everything;
+       Week = 1 or 2 -> select everything but opposing week */
+        pairRepo.findByGroupAndDayAndWeekNot(group, day, if (week == 1) 2 else 1)
+                .map(PairRecord::toPairViewModel)
+    else
+        pairRepo.findByGroupAndDay(group, day)
+                .map(PairRecord::toPairViewModel)
 
     @GetMapping("/edit")
     fun editEntry(@RequestParam(value = "id",required = true) entryId: Int): ModelAndView{

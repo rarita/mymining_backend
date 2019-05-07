@@ -2,10 +2,10 @@ package com.raritasolutions.mymining.converter
 
 import com.raritasolutions.mymining.model.ExtractionReport
 import com.raritasolutions.mymining.model.RawPairRecord
+import com.raritasolutions.mymining.utils.DAYS_ORDER_MAP
 import com.raritasolutions.mymining.utils.groupRegex
 import com.raritasolutions.mymining.utils.removeCaretReturns
 import org.apache.commons.csv.CSVFormat
-import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Component
 import java.io.File
 import java.nio.charset.Charset
@@ -15,7 +15,7 @@ class LegacyCSVConverter : BaseConverter {
 
     override var report: ExtractionReport? = null
     // Accepts text-based files with parsed CSV contents.
-    override fun convert(localFile: File): List<RawPairRecord> {
+    override fun convert(localFile: File, defaultBuilding: Int): List<RawPairRecord> {
 
         var dayKey: String? = "День недели"
         var timeKey = "Время | Группа"
@@ -56,7 +56,7 @@ class LegacyCSVConverter : BaseConverter {
             // One should not use second forEach to avoid reference hell
             for (group in groupsList)
                 rawList.add(RawPairRecord(
-                        currentDay,
+                        DAYS_ORDER_MAP[currentDay]!!,
                         currentTime,
                         group,
                         it[group].replace('\r',' ')))

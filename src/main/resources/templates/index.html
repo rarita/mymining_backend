@@ -15,8 +15,21 @@
         </div>
         <img src= "../static/logo_new_1.png" th:src="@{logo_new_1.png}" class="logo"/>
         <div id="group" class="form_view">
-            <form autocomplete="off" action="/db/gen_sch" class="group_form">
+            <form autocomplete="off" action="/db/feed" class="group_form">
                 <input id="groupInput" type="text" name="group" placeholder="Введите группу"> <br>
+                <select name="week">
+                    <option value="0">Все недели</option>
+                    <option value="1">I неделя</option>
+                    <option value="2">II неделя</option>
+                </select> <br>
+                <select name="day">
+                    <option value="0">Все дни</option>
+                    <option value="1">Понедельник</option>
+                    <option value="2">Вторник</option>
+                    <option value="3">Среда</option>
+                    <option value="4">Четверг</option>
+                    <option value="5">Пятница</option>
+                </select> <br>
                 <input type="submit" value="Получить расписание" class="btn-hover color-1">
             </form>
         </div>

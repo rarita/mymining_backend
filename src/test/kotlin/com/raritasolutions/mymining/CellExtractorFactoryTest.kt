@@ -25,8 +25,11 @@ class CellExtractorFactoryTest {
     @Test
     fun testSimplePairFactory()
     {
-        val input = "Физическая культура"
-        val extractor = CellExtractorFactory(input).produce()
+        var input = "Физическая культура"
+        var extractor = CellExtractorFactory(input).produce()
+        assert(extractor is SimpleCellExtractor)
+        input = "ВОЕННАЯ ПОДГОТОВКА"
+        extractor = CellExtractorFactory(input).produce()
         assert(extractor is SimpleCellExtractor)
     }
 

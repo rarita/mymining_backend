@@ -1,7 +1,5 @@
 package com.raritasolutions.mymining.utils
 
-import java.lang.StringBuilder
-
 val String.Companion.EMPTY: String
     get() = ""
 
@@ -14,11 +12,12 @@ fun String.removeContentInBraces()
 fun String.removeRedundantCharacters()
     = replace(redundantSymbolsRegex, "")
 
+// Now with new (unicode 160) space flavour!
 fun String.removeSpecialCharacters()
-        = replace("( |\\r\\n|\\n)".toRegex(),"")
+        = replace("(\\040|\\r|\\n|\\0240)".toRegex(),"")
 
 fun String.removeSpaces()
-        = replace(" ","")
+        = replace("(\\040|\\0240)".toRegex(),"")
 
 fun String.removeLineBreaks()
         = replace(lineBreaksRegex,"")
@@ -41,3 +40,6 @@ fun String.mayContainSpaces(): String{
     this.forEach { sb.append("$it\\s*") }
     return sb.toString().trim()
 }
+
+fun String.matchesSubgroup(group: String)
+    = this == group.substringBeforeLast('а') || this == group

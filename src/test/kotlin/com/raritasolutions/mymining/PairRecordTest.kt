@@ -1,9 +1,6 @@
 package com.raritasolutions.mymining
 
-import com.raritasolutions.mymining.model.PairRecord
-import com.raritasolutions.mymining.model.equalsExcluding
-import com.raritasolutions.mymining.model.isCorrect
-import com.raritasolutions.mymining.model.normalizeGroups
+import com.raritasolutions.mymining.model.*
 import org.junit.Test
 
 class PairRecordTest {
@@ -37,4 +34,23 @@ class PairRecordTest {
         val museumRoom = PairRecord(room = "Горный музей")
         assert(museumRoom.isCorrect())
     }
+
+    // Building Data / Formatting tests
+    @Test
+    fun formattingSliceTest() {
+        val formatting = listOf(
+                BuildingData(0, 1),
+                BuildingData(5, 3),
+                BuildingData(15, 1))
+        val slicedFull = formatting.slice(0, 20)
+        assert(slicedFull == formatting)
+        val sliced = formatting.slice(3, 10)
+        val slicedExpectedResult = listOf(
+                BuildingData(3, 1),
+                BuildingData(5, 3))
+        assert(sliced == slicedExpectedResult)
+        val slicedFarRight = formatting.slice(20, 40)
+        assert(slicedFarRight == listOf(BuildingData(15, 1)))
+    }
+
 }

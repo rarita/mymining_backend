@@ -39,20 +39,33 @@ fun PairRecord.baseFormatString()
         "${(if (week > 0) "I".repeat(week) + " " else "")}"
 
 fun PairRecord.teacherFormat()
-    = if (this.teacher != "NO_TEACHER") this.teacher + "\n" else ""
+    = if (this.teacher != "NO_TEACHER") this.teacher + "<br>" else ""
 
 // Room View
 fun PairRecord.formatSoloGroup()
     =  baseFormatString() +
-       this.subject + "\n" + teacherFormat() + this.group
+       this.subject + "<br>" + teacherFormat() + this.group + "<br>"
 
 // Teacher View
 fun PairRecord.formatSoloRoom()
         =   baseFormatString() +
-        this.subject + "\n" + this.group + "\n" + "в ауд. " + this.room
+        this.subject + "<br>" + this.group + "<br>" + "в ауд. " + this.room  + "<br>"
 
 // Group View
 fun PairRecord.formatSoloGeneric()
         =  baseFormatString() +
-        this.subject + "\n" +  teacherFormat() +
-        this.type + " в ауд." + this.room
+        this.subject + "<br>" +  teacherFormat() +
+        this.type + " в ауд. " + this.room + "<br>"
+
+// Room view simplified
+fun PairRecord.formatSimpleTeacher()
+    = this.group + "<br>" + this.teacher.replace(teacherRank, "").trim() + "<br>"
+
+// Teacher view simplified
+fun PairRecord.formatSimpleRoom()
+    = this.group + "<br>" + "№ " + this.room + "<br>"
+
+fun makeCaption(request: String) = "Учебная нагрузка " + when {
+    groupRegex.matches(request) -> "группы"
+    teacherRegex.matches(request.removeSpaces()) -> "преподавателя"
+    else -> "аудитории №" } + " $request на весенний семестр 2018/2019 учебного года"

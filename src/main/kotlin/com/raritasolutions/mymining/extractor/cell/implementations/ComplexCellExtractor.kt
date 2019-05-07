@@ -21,11 +21,11 @@ open class ComplexCellExtractor(contents: String,
             _contents += "No" // todo review asap (find better regex for rooms)
             val _result = extractCustomRegexToList(roomRegex,this)
                     .flatMap { it.split(',') }
-                    .map { it.replace("(No|I+|-)".toRegex(),"") }
+                    .map { it.replace("(No|№|I+|-)".toRegex(),"") }
                     .map { it.trim() }
                     .filter { it.isNotBlank() }
                     .toSortedSet()
-            extractCustomRegex("No".toRegex(),this)
+            extractCustomRegex("(No|№)".toRegex(),this)
             if (_result.isNotEmpty()) _result.joinToString(separator = ", ") { it.flavourRoomString() }
                 else raiseParsingException(roomRegex, this)
         }
@@ -41,7 +41,11 @@ open class ComplexCellExtractor(contents: String,
                 if ("\\sпр\\s".toRegex() in contents)
                     "практика"
                 else
-                    "лекция"
+                    /* If the subject is either PE or FL set type as "class" */
+                    if ("Физическаякультура" in _contents || "Иностранныйязык" in _contents)
+                        "занятие"
+                    else
+                        "лекция"
             }
         }
     }

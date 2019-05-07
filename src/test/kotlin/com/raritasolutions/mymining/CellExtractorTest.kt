@@ -6,11 +6,10 @@ import com.raritasolutions.mymining.extractor.cell.implementations.ComplexCellEx
 import com.raritasolutions.mymining.extractor.cell.implementations.SimpleCellExtractor
 import com.raritasolutions.mymining.model.NO_TEACHER
 import com.raritasolutions.mymining.model.isCorrect
-import javafx.scene.control.Cell
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
-import java.lang.Exception
+
 // todo move inputs to different place (Factory tests use them too)
 class CellExtractorTest
 {
@@ -30,8 +29,22 @@ class CellExtractorTest
             assert(room == "3424")
             assert(teacher == "Проф. Иванова И.В.")
         }
-
     }
+
+    @Test
+    fun testRegularWithUTFRoomToken()
+    {
+        val input = "Теория принятия решений\n" + "Проф. Иванова И.В. №3424"
+        val extractor = ComplexCellExtractor(input).apply { make() }
+        with(extractor.result)
+        {
+            assert(subject == "Теория принятия решений")
+            assert(type == "лекция")
+            assert(room == "3424")
+            assert(teacher == "Проф. Иванова И.В.")
+        }
+    }
+
     @Test
     fun testFullStuffed()
     {
@@ -298,6 +311,15 @@ class CellExtractorTest
             assert(week == 1)
             assert(room == "636")
             assert(isCorrect())
+        }
+    }
+
+    @Test
+    fun testPEAndFLCorrectType() {
+        val inputs = listOf("I Иностранный язык No836", "Физическая культура Доц. Изотов И.А.")
+        for (input in inputs){
+            val extractor = CellExtractorFactory(input).produce().apply { make() }
+            assert(extractor.result.type == "занятие")
         }
     }
 }

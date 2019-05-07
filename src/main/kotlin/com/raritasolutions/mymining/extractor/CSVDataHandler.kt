@@ -1,6 +1,7 @@
 package com.raritasolutions.mymining.extractor
 
 import com.raritasolutions.mymining.model.RawPairRecord
+import com.raritasolutions.mymining.utils.DAYS_ORDER_MAP
 import com.raritasolutions.mymining.utils.groupRegex
 import com.raritasolutions.mymining.utils.shrink
 import org.apache.commons.csv.CSVFormat
@@ -42,7 +43,7 @@ fun getRawListFromCSV(source: Reader): List<RawPairRecord> {
         // One should not use second forEach to avoid reference hell
             for (group in groupsList)
                 rawList.add(RawPairRecord(
-                        currentDay,
+                        DAYS_ORDER_MAP[currentDay]!!,
                         currentTime,
                         group,
                         it[group]))

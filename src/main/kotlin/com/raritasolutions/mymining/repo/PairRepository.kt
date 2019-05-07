@@ -7,7 +7,10 @@ import java.util.*
 
 interface PairRepository: CrudRepository<PairRecord,Int> {
     fun findByGroupAndDay(group: String, day: Int): List<PairRecord>
-    fun findByRoom(room: String): List<PairRecord>
+    fun findByGroupAndDayAndWeekNot(group: String, day: Int, week: Int) : List<PairRecord>
+    fun findByRoomContaining(room: String): List<PairRecord>
+    fun findByGroup(group: String) : List<PairRecord>
+    fun findByTeacherContaining(teacher: String) : List<PairRecord>
 
     @Query(value = "select _group from schedule_table", nativeQuery = true)
     fun setOfGroups(): SortedSet<String>

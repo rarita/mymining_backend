@@ -1,5 +1,6 @@
 package com.raritasolutions.mymining.model
 
+import com.raritasolutions.mymining.model.viewmodel.PairViewModel
 import com.raritasolutions.mymining.utils.*
 import java.util.*
 import javax.persistence.*
@@ -45,6 +46,21 @@ fun PairRecord.toString(vararg fields : String)=
                 .map {this.findField(it) }
                 .joinToString { formatField(it as KProperty1<PairRecord, *>) }
 
+fun PairRecord.toPairViewModel() : PairViewModel {
+    val (timeStart, timeEnd) = this.timeSpan
+                                                .split("-")
+                                                .map { if (it.length < 5) "0$it" else it }
+    val tokens = listOf("I".repeat(this.week),
+                                   this.one_half,
+                                   if (this.over_week) "ч/н" else "",
+                                   this.type)
+                                   .filter(String::isNotBlank)
+    val rooms = this.room
+                           .split(',')
+                           .filter {it.isNotBlank() && it != NO_ROOM}
+    return PairViewModel(timeStart, timeEnd, tokens, subject, teacher, rooms)
+}
+
 fun PairRecord.isCorrect()
     = when {
         weeksRegex.containsMatchIn(subject + room) -> false
@@ -86,13 +102,16 @@ private fun normalizeSimpleGroups(set: Set<String>): String
 // Maybe it is worth to rewrite GroupFoldingSet as Generic class
 private fun normalizeComplexGroups(set: Set<String>): String {
     val namesOnly = set
-            .map { it.substringBeforeLast('-') }
+            .map { it.substringBeforeLast('-') } // Remove subgroups
             .toSet()
-            .associateBy( { it }, { sortedSetOf<Int>() })
-    for (entry in set){
+            .associateBy( { it }, { sortedSetOf<Int>() } )
+    for (entry in set) {
         val groupName = entry.substringBeforeLast('-')
         if (groupName in namesOnly.keys)
-            namesOnly[groupName]!! += entry.substringAfterLast('-').toInt()
+            namesOnly[groupName]!! += entry
+                    .substringAfterLast('-')
+                    .replace("а", "")
+                    .toInt()
     }
     return namesOnly.keys.joinToString(separator = "; ")
         { it + '-' + namesOnly[it]!!.joinToString(separator = ",") }
