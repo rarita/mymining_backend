@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Feed</title>
+</head>
+<link rel="stylesheet" href="../static/css/feed_style.css" th:href="@{/css/feed_style.css}">
+<body>
+<div class="floating_list">
+    <div class="item" th:each="item,iterStat : ${feed}">
+        <div th:switch="${item.class.name}">
+            <div class="header_day" th:case="'com.raritasolutions.mymining.model.viewmodel.DayHeaderModel'" th:text="${item.text}"></div>
+            <div class="pair_item" th:case="'com.raritasolutions.mymining.model.viewmodel.PairViewModel'">
+                <div class="pair_item_container">
+                    <div class="pair_item_time_column">
+                        <div class="pair_item_time" th:text="${item.timeStart}"></div>
+                        <div class="pair_item_filler"></div>
+                        <div class="pair_item_time" th:text="${item.timeEnd}"></div>
+                    </div>
+                    <div class="pair_item_main_column">
+                        <div class="pair_item_token_row">
+                            <div class="pair_item_token" th:each="token : ${item.tokens}" th:text="${token}"></div>
+                        </div>
+                        <div class="pair_item_subject" th:text="${item.subject}"></div>
+                        <div class="pair_item_teacher" th:text="${item.teacher}"></div>
+                    </div>
+                    <div class="pair_item_room_column">
+                        <span th:each="room : ${item.rooms}" th:text="${room}"></span>
+                    </div>
+                </div>
+                <hr th:if="${!iterStat.last}">
+            </div>
+
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

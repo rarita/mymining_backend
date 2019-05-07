@@ -1,10 +1,7 @@
 package com.raritasolutions.mymining
 
 import com.raritasolutions.mymining.extractor.RawConverter
-import com.raritasolutions.mymining.model.ExtractionReport
-import com.raritasolutions.mymining.model.PairRecord
-import com.raritasolutions.mymining.model.RawPairRecord
-import com.raritasolutions.mymining.model.isCorrect
+import com.raritasolutions.mymining.model.*
 import org.junit.Test
 
 class RawConverterTest {
@@ -15,15 +12,15 @@ class RawConverterTest {
         extractors.forEach { it.make() }
         return extractors.map { it.result }
     }
-    private fun makeFromString(input: String)
-        = listOf(RawPairRecord("ПЯТНИЦА","12:35-14:05", "ЛАК-16", input))
+    private fun makeFromString(input: String, formatting: List<BuildingData>? = null)
+        = listOf(RawPairRecord(5,"12:35-14:05", "ТЕС-16", input, formatting))
 
     @Test
     fun testBasicCause() {
         val contents = listOf("I  Культурология Доц. Науменко Н.В. пр. No610 II Минерально-сырьевая база Российской Федерации Проф. Евдокимов А.Н. пр. No528",
                 "1/2 Информатика Доц. Пивоварова И.И. л/р No345 1/2 Общая геология Асс. Илалова Р.К. л/р No550",
                 "1/2 Химия элементов и их соединений Доц. Джевага Н.В. л/р I-No844   II-No840")
-        val rpl: List<RawPairRecord> = contents.map { RawPairRecord("СРЕДА", "10:35-12:05", "АБВ-12-3", it) }
+        val rpl: List<RawPairRecord> = contents.map { RawPairRecord(3, "10:35-12:05", "АБВ-12-3", it) }
         val results = getOutput(rpl)
         assert(PairRecord(id = 0,subject = "Информатика",teacher = "Доц. Пивоварова И.И.",timeSpan = "10:35-12:05",group = "АБВ-12-3", room = "345", type = "лабораторная работа",day = 3,week = 0,one_half = "1/2") in results)
     }
@@ -31,7 +28,7 @@ class RawConverterTest {
     @Test
     fun testOneLinedRooms()
     {
-        val rpl = listOf(RawPairRecord("ЧЕТВЕРГ","08:50-10:20","БАД-16","1/2 Химия элементов и их соединений Доц. Джевага Н.В. л/р I-No844   II-No840"))
+        val rpl = listOf(RawPairRecord(4,"08:50-10:20","БАД-16","1/2 Химия элементов и их соединений Доц. Джевага Н.В. л/р I-No844   II-No840"))
         val results = getOutput(rpl)
         val expectedOutput = listOf(PairRecord(id=0, group="БАД-16", teacher="Доц. Джевага Н.В.", week=1, day=4, timeSpan="08:50-10:20", subject="Химия элементов и их соединений", room="844", type="лабораторная работа", one_half="1/2"),
                                     PairRecord(id=0, group="БАД-16", teacher="Доц. Джевага Н.В.", week=2, day=4, timeSpan="08:50-10:20", subject="Химия элементов и их соединений", room="840", type="лабораторная работа", one_half="1/2"))
@@ -40,7 +37,7 @@ class RawConverterTest {
 
     @Test
     fun testMixedCause() {
-        val rpl = listOf(RawPairRecord("ЧЕТВЕРГ", "08:50-10:20", "БАД-16", "1/2 Химия элементов и их соединений Доц. Джевага Н.В. л/р I-No844   II-No840 1/2 Информатика Доц. Косарев О.В. л/р No548 "))
+        val rpl = listOf(RawPairRecord(4, "08:50-10:20", "БАД-16", "1/2 Химия элементов и их соединений Доц. Джевага Н.В. л/р I-No844   II-No840 1/2 Информатика Доц. Косарев О.В. л/р No548 "))
         val results = getOutput(rpl)
         val expectedOutput = listOf(PairRecord(id = 0, group = "БАД-16", teacher = "Доц. Джевага Н.В.", week = 1, day = 4, timeSpan = "08:50-10:20", subject = "Химия элементов и их соединений", room = "844", type = "лабораторная работа", one_half = "1/2"),
                 PairRecord(id = 0, group = "БАД-16", teacher = "Доц. Джевага Н.В.", week = 2, day = 4, timeSpan = "08:50-10:20", subject = "Химия элементов и их соединений", room = "840", type = "лабораторная работа", one_half = "1/2"),
@@ -143,4 +140,29 @@ class RawConverterTest {
         assert(result.size == 2)
         assert(result[1].group == "МП-18-2а")
     }
+
+    @Test
+    fun testSingleColoredContents() {
+        val singleColoredContents = makeFromString(
+                input = "Термодинамика и кинетика Доц. Жадовский И.Т. л/р No3533",
+                formatting = listOf(BuildingData(0, 1)))
+        val converter = RawConverter(singleColoredContents, ExtractionReport(), 3)
+        val result = converter.extractorList.map { it.apply { it.make() } }
+        assert(result.size == 1)
+        assert(result.first().result.buildingID == 1)
+    }
+
+    @Test
+    fun testMultipleColoredContents() {
+        val multiColorContents = makeFromString(input = "ч/н 1/2 Операционные системы Доц. Спиридонов В.В. л/р No3524 " +
+                "ч/н 1/2 Маршрутизация и коммутация компьютерных сетей " +
+                "Ст.пр. Жуковский В.Е. пр. No345",
+                formatting = listOf(BuildingData(0, 1), BuildingData(60, 3)))
+        val converter = RawConverter(multiColorContents, ExtractionReport(), 1)
+        val result = converter.extractorList.map { it.apply { it.make() } }
+        assert(result.size == 2)
+        assert(result.first().result.buildingID == 1)
+        assert(result.last().result.buildingID == 3)
+    }
+
 }

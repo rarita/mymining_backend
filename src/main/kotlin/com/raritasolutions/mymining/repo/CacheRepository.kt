@@ -6,21 +6,14 @@ import org.apache.commons.io.FilenameUtils
 import org.springframework.stereotype.Repository
 import org.springframework.util.DigestUtils
 import java.io.File
-import java.io.InputStream
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.security.DigestInputStream
-import java.security.MessageDigest
-import java.util.*
 
 
 @Repository
-class CacheRepository
+class CacheRepository(private val path: String = "cached")
 {
-    // where my files at todo move it to spring properties
-    private val path = "cached"
-
     val localFiles
         get() = File(path)
                 .listFiles()

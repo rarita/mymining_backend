@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Schedule</title>
+    <link rel="stylesheet" href="../static/css/table_style.css" th:href="@{/css/table_style.css}">
+</head>
+<body>
+<div class="container">
+    <table>
+        <caption th:text="${caption}"></caption>
+        <col width="5%" />
+        <col width="5%" />
+        <col width="18%" />
+        <col width="18%" />
+        <col width="18%" />
+        <col width="18%" />
+        <col width="18%" />
+        <tr>
+            <th rowspan="2">№ Пары</th>
+            <th rowspan="2">Время</th>
+            <th colspan="5">Дни недели</th>
+        </tr>
+        <tr>
+            <th>Понедельник</th>
+            <th>Вторник</th>
+            <th>Среда</th>
+            <th>Четверг</th>
+            <th>Пятница</th>
+        </tr>
+        <tr th:each="items : ${data}">
+                <td th:each="item,iterStat : ${items}" th:utext="${item}"></td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

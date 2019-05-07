@@ -19,3 +19,6 @@ fun Any.findField(name: String)
 
 fun <T> Iterable<T>.filterDestructuring(predicate: (T) -> Boolean)
     = Pair(this.filter { predicate(it) }.toSet(), this.filter { !predicate(it) }.toSet())
+
+fun <T> Iterable<T>.withFirst(element: T): Iterable<T>
+    = listOf(element) + this.drop(1)

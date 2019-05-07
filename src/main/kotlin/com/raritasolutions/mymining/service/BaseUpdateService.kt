@@ -8,7 +8,6 @@ import com.raritasolutions.mymining.model.ExtractionReport
 import com.raritasolutions.mymining.model.PairRecord
 import com.raritasolutions.mymining.repo.CacheRepository
 import com.raritasolutions.mymining.repo.PairRepository
-import java.lang.Exception
 
 abstract class BaseUpdateService (private val pairRepo: PairRepository,
                          private val cacheRepo: CacheRepository,
@@ -20,21 +19,26 @@ abstract class BaseUpdateService (private val pairRepo: PairRepository,
         converter.report = report
     }
 
+    fun findDefaultBuilding(fileName: String)
+        = if (!fileName.contains("км") && fileName[0].toInt() in 1..2) 3
+          else 1
+
+
     fun update() {
         val isColdBoot = (cacheRepo.localFiles.isEmpty() || pairRepo.count() == 0L)
         val linksToLoad = analyser.analyse()
         // True if any of the files were overwritten
         val needsUpdate = linksToLoad
-                        .map { cacheRepo.saveFile(it.value)}
+                        .map { cacheRepo.saveFile(it.value) }
                         .any { it }
 
         if (needsUpdate || isColdBoot) {
             // If it doesn't need to be compared and updated just load all the pairs to the DB
             val files = cacheRepo.localFiles
             val rawPairs = files
-                    .map(converter::convert)
+                    .map { converter.convert(it, findDefaultBuilding(it.nameWithoutExtension)) }
                     .flatten()
-            val extractors = RawConverter(rawPairs, report).extractorList
+            val extractors = RawConverter(rawPairs, report, 1).extractorList
             // Ugly workaround faulty cases
             val processedExtractors = arrayListOf<ContentSafeExtractor>()
             for (extractor in extractors){
@@ -43,11 +47,13 @@ abstract class BaseUpdateService (private val pairRepo: PairRepository,
                     processedExtractors += extractor
                 }
                 catch (e: Exception){
-                    report.addReport(e,extractor)
+                    report.addReport(e, extractor)
                 }
             }
 
-            if (processedExtractors.isEmpty()) throw Exception("Nothing was extracted from the $files")
+            if (processedExtractors.isEmpty())
+                report.addMessage("Nothing was extracted from the $files")
+
             val results = arrayListOf<PairRecord>()
             for (pe in processedExtractors) {
                 try {

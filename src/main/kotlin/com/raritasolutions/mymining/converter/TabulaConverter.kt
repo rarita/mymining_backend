@@ -2,6 +2,7 @@ package com.raritasolutions.mymining.converter
 
 import com.raritasolutions.mymining.model.ExtractionReport
 import com.raritasolutions.mymining.model.RawPairRecord
+import com.raritasolutions.mymining.utils.DAYS_ORDER_MAP
 import com.raritasolutions.mymining.utils.groupRegex
 import com.raritasolutions.mymining.utils.removeCaretReturns
 import com.raritasolutions.mymining.utils.timeSpanRegex
@@ -11,7 +12,6 @@ import technology.tabula.ObjectExtractor
 import technology.tabula.Table
 import technology.tabula.extractors.SpreadsheetExtractionAlgorithm
 import java.io.File
-import java.lang.IllegalStateException
 
 @Component("tabula")
 class TabulaConverter : BaseConverter {
@@ -19,7 +19,7 @@ class TabulaConverter : BaseConverter {
     override var report: ExtractionReport? = null
 
     // Accepts PDF files
-    override fun convert(localFile: File): List<RawPairRecord> {
+    override fun convert(localFile: File, defaultBuilding: Int): List<RawPairRecord> {
         val table = getTabulaTable(localFile)
         return decompose(table)
     }
@@ -68,7 +68,7 @@ class TabulaConverter : BaseConverter {
                 .drop(redundantRows)
                 .zip(groupsList)
                 .forEach { rawList.add(RawPairRecord(
-                        currentDay,
+                        DAYS_ORDER_MAP[currentDay]!!,
                         currentTime,
                         it.second,
                         it.first.text.replace('\r',' ')

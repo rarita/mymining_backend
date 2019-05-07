@@ -5,8 +5,20 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.net.URL
 
-@Component("cached")
-class CacheAnalyser @Autowired constructor(val cacheRepo: CacheRepository) : BaseWebAnalyser {
+@Component("cached_tabula")
+class CacheTabulaAnalyser @Autowired constructor(val cacheRepo: CacheRepository) : BaseWebAnalyser {
     override fun analyse(): Map<String, URL>
-        = cacheRepo.localFiles.associateBy({ it.name }, { it.toURI().toURL() })
+        = cacheRepo
+            .localFiles
+            .filter { it.extension == "pdf" }
+            .associateBy({ it.name }, { it.toURI().toURL() })
+}
+
+@Component("cached_reborn")
+class CacheRebornAnalyser @Autowired constructor(val cacheRepo: CacheRepository) : BaseWebAnalyser {
+    override fun analyse(): Map<String, URL>
+            = cacheRepo
+                .localFiles
+                .filter { it.extension == "xlsx" }
+                .associateBy({ it.name }, { it.toURI().toURL() })
 }
