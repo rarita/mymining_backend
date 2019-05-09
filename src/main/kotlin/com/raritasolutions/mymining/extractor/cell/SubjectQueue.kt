@@ -11,7 +11,8 @@ object SubjectQueue {
             "Историяиосновысистемногоанализаиуправления" to "История и основы системного анализа и управления",
             "Информатика" to "Информатика",
             "Химия" to "Химия",
-            "ВОЕННАЯПОДГОТОВКА" to "Военная подготовка") // This is for the test to run
+            "ВОЕННАЯПОДГОТОВКА" to "Военная подготовка",
+            "ВОННАЯПОДГОТОВКА" to "Военная подготовка") // This is for the test to run
 
     // Map <Subject without spaces -> Extractors that are waiting for correct subject string>
     private val SUBSCRIBERS : HashMap<String,MutableList<ContentSafeExtractor>> = HashMap()

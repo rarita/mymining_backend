@@ -21,7 +21,7 @@ class FirstCourseScheduleAnalyser: BaseWebAnalyser {
         val links = webPage.select("a[href]")
         return links
                 .filter { "1 курс" in URLDecoder.decode(it.attr("href"),"UTF-8") }
-                .associateBy ({ " 1 курс (${it.text()})"}, { URL(baseURL, it.attr("href")) } )
+                .associateBy ({ "1 курс (${it.text()})"}, { URL(baseURL, it.attr("href")) } )
     }
 
 }

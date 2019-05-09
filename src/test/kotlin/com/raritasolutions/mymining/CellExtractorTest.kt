@@ -5,6 +5,7 @@ import com.raritasolutions.mymining.extractor.cell.CellExtractorFactory
 import com.raritasolutions.mymining.extractor.cell.implementations.ComplexCellExtractor
 import com.raritasolutions.mymining.extractor.cell.implementations.SimpleCellExtractor
 import com.raritasolutions.mymining.model.NO_TEACHER
+import com.raritasolutions.mymining.model.PairRecord
 import com.raritasolutions.mymining.model.isCorrect
 import org.junit.Rule
 import org.junit.Test
@@ -322,4 +323,89 @@ class CellExtractorTest
             assert(extractor.result.type == "занятие")
         }
     }
+
+    @Test
+    fun testShortenedSubject() {
+        val input = "1/2 Обогащение полезных ископ.\nДоц. Николаева Н.В. л/р\n№3121,3123,3125"
+        val extractor = CellExtractorFactory(input).produce().apply { make() }
+        assert(extractor.result.isCorrect())
+    }
+
+    @Test
+    fun testShortSubgroup() {
+        val input = "ТОА-16а\n" +
+                "II Экономика и управление\n" +
+                "машиностроительным производством Асс. Головина Е.И. пр. №4509"
+        val extractor = ComplexCellExtractor(input).apply { make() }
+        with (extractor.result) {
+            assert(group == "ТОА-16а")
+            assert(isCorrect())
+        }
+    }
+
+    @Test
+    fun testAbbreviatedSubjectExtraction() {
+        val input = "II ГМ и оборудование Доц. Лавренко С.А. пр. №5406"
+        val extractor = ComplexCellExtractor(input).apply { make() }
+        with (extractor.result) {
+            assert(subject == "ГМ и оборудование")
+            assert(isCorrect())
+        }
+    }
+
+    @Test
+    fun testSameSubjectAndTeacherGreed() {
+        val input = "I Петрография Доц. Петров Д.А. л/р №4307  Проф. Сироткин А.Н. л/р №4303\n"
+        val extractor = ComplexCellExtractor(input).apply { make() }
+        assert(extractor.result.isCorrect())
+    }
+
+    @Test
+    fun testTeacherNoRankCustomExtractor() {
+        val input = "I 1/2 Лабор. методы изучения " +
+                "минералов, пород и руд, ч. 2 " +
+                "Доц. Симаков А.П. л/р №4315 " +
+                ".Проф. Гульбин Ю.Л. л/р №4313 " +
+                "Проф. Войтеховский Ю.Л. №4309 " +
+                " Ларгузова А.В. л/р №3313 " +
+                "Асс. Кургузова А.В. л/р №3313 " +
+                "Доц. Васильев Е.А. л/р №3312 " +
+                "Асс. Гембицкая И.М. л/р №3310"
+        val extractor = CellExtractorFactory(input).produce().apply { make() }
+        assert(extractor.result.isCorrect())
+        assert(!extractor.result.room.contains("[^\\dа,-]+".toRegex()))
+    }
+
+    @Test
+    fun testMultiplePairTypes() {
+        val input = listOf("Автоматизированное проектирование средств и систем управления Доц. Румянцев В.В. лк.,пр. №3502",
+                "Методы принятия инженерных решений Доц. Гусаров И.Е. лк, пр. №1320")
+        val extractor = input.map { CellExtractorFactory(it).produce().apply { make() }.result }
+        with (extractor) {
+            assert(all { it.type == "занятие" } )
+            assert(all(PairRecord::isCorrect))
+        }
+    }
+
+    @Test
+    fun testTeacherVacancyWithSpecifiedRoom() {
+        val input = "Иностранный язык Доц. Филясова Ю.А. пр. №905 Вакансия пр. №623"
+        val extractor = CellExtractorFactory(input).produce().apply { make() }
+        with (extractor.result) {
+            assert(isCorrect())
+            assert(room == "623, 905")
+            assert(teacher == "Доц. Филясова Ю.А., Нет Преподавателя")
+        }
+    }
+
+    @Test
+    fun testTeacherRankWithNoTrailingDot() {
+        val input = "Иностранный язык Преп. Никифоровская Е.О. пр. №903 Доц Горохова Н.Э. пр. №803"
+        val extractor = CellExtractorFactory(input).produce().apply { make() }
+        with (extractor.result) {
+            assert(isCorrect())
+            assert(teacher == "Преп. Никифоровская Е.О., Доц. Горохова Н.Э.")
+        }
+    }
+
 }

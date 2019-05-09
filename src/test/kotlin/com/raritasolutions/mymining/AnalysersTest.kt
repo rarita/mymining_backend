@@ -9,7 +9,7 @@ class AnalysersTest {
         val fca = FirstCourseScheduleAnalyser()
         val links = fca.analyse()
         assert(links.size == 4)
-        assert("Строительный факультет, Экономический факультет" in links.keys)
+        assert("1 курс (Факультет переработки минерального сырья, Горный факультет)" in links.keys)
         assert( true.apply { links.values.random().openConnection() } )
     }
 }

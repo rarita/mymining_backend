@@ -2,10 +2,12 @@ package com.raritasolutions.mymining.extractor
 
 import com.raritasolutions.mymining.extractor.cell.CellExtractorFactory
 import com.raritasolutions.mymining.extractor.cell.ContentSafeExtractor
+import com.raritasolutions.mymining.extractor.splitter.RebornSplitter
 import com.raritasolutions.mymining.model.*
 import com.raritasolutions.mymining.utils.multiplePairRegexOneLine
 import com.raritasolutions.mymining.utils.ripOneLineRegex
-import com.raritasolutions.mymining.utils.stripPrefix
+import com.raritasolutions.mymining.utils.roomNumberTokenRegex
+import com.raritasolutions.mymining.utils.substringAfterRegex
 import kotlin.collections.set
 
 // todo make component
@@ -71,13 +73,13 @@ class RawConverter(private val rawList: List<RawPairRecord>,
             when {
                 this.formatting == null -> {
                     basePairRecord.buildingID = defaultBuilding
-                    addContents(basePairRecord,PairSplitter(_contents).contents, _contents)
+                    addContents(basePairRecord, RebornSplitter(_contents).separatedContents, _contents)
                 }
                 this.formatting.size == 1 -> {
                     basePairRecord.buildingID = this.formatting.first().buildingId
-                    addContents(basePairRecord,PairSplitter(_contents).contents, _contents)
+                    addContents(basePairRecord, RebornSplitter(_contents).separatedContents, _contents)
                 }
-                else -> addContents(basePairRecord,PairSplitter(_contents).contents, _contents, formatting)
+                else -> addContents(basePairRecord, RebornSplitter(_contents).separatedContents, _contents, formatting)
             }
         }
         catch (e: Exception){ report.addReport(e, this) }
@@ -114,10 +116,11 @@ class RawConverter(private val rawList: List<RawPairRecord>,
             throw IllegalArgumentException("Rooms size must be exact 2 (now is ${rooms.size}")
 
         for (week in rooms.indices){
-            val prefix = if (rooms[week].contains("No")) "No" else "-"
+            val prefix = if (rooms[week].contains(roomNumberTokenRegex)) roomNumberTokenRegex else "-".toRegex()
             basePair.week = week+1
             basePair.room = rooms[week]
-                    .stripPrefix(prefix)
+                    .substringAfterRegex(prefix)
+                    .replace(roomNumberTokenRegex, "")
                     .trim()
             _extractorList.add(CellExtractorFactory(originalContents.replace(multiplePairRegexOneLine,""),
                                                     basePair).produce())

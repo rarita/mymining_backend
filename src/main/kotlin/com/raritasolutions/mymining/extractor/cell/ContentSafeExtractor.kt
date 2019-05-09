@@ -68,13 +68,15 @@ abstract class ContentSafeExtractor(private val contents: String,
                 .replace(lineBreaksRegex," ")
                 .removeContentInBraces()
         var greed = 1 // It is pointless to start @ 1 (0) b.c 90% of the time it is going to be skipped
-        var startOccurrences: Int; var endOccurrences : Int
+        var endOccurrences : Int
         do {
             greed++
-            startOccurrences = contentsFixed.countRegex(subject.take(greed).mayContainSpaces().toRegex())
+            // Start occurrences doesn't really matter since there is nothing in string
+            // Before the subject itself that can be treated as the part of the subject
             endOccurrences = contentsFixed.countRegex(subject.takeLast(greed).mayContainSpaces().toRegex())
-            if (greed > subject.length / 2) throw Exception("Greed is longer than the whole subject")
-        } while (startOccurrences != 1 || endOccurrences != 1)
+            if (greed > subject.length / 2)
+                throw Exception("Greed is longer than the whole subject")
+        } while (endOccurrences != 1)
         return greed
     }
 
@@ -102,5 +104,4 @@ abstract class ContentSafeExtractor(private val contents: String,
                 ?: throw Exception("Original subject can't be extracted. Subject is $subject and contents is $contents " +
                         "@ [${this.pairInstance.group},${this.pairInstance.day},${this.pairInstance.timeSpan}]")
     }
-
 }

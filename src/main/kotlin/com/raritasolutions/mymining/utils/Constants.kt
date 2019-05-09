@@ -49,13 +49,14 @@ val FIRST_TEN_ROMANS = listOf(
 // Color constants
 // TODO Hook it to the config file or something. These may change in the future
 val BUILDINGS_CELL_COLOR = mapOf(
-        1 to RGBColor(220, 230, 240),
-        2 to RGBColor(255, 255, 204),
-        3 to RGBColor(215, 227, 187)
+        RGBColor(197, 217, 240) to 1,
+        RGBColor(220, 230, 240) to 1,
+        RGBColor(255, 255, 204) to 2,
+        RGBColor(215, 227, 187) to 3
 )
 
 val BUILDINGS_TEXT_COLOR = mapOf(
-        1 to RGBColor(51, 51, 153),
-        2 to RGBColor(255, 204, 0),
-        3 to RGBColor(51, 153, 102)
+        RGBColor(51, 51, 153) to 1,
+        RGBColor(255, 204, 0) to 2,
+        RGBColor(51, 153, 102) to 3
 )

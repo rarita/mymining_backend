@@ -100,8 +100,8 @@ class RebornConverter : BaseConverter {
         return pseudoMerged
     }
 
-    private fun RGBColor.findBuildingId(buildingColors: Map<Int, RGBColor>)
-            = buildingColors.entries.firstOrNull { this == it.value }?.key
+    private fun RGBColor.findBuildingId(buildingColors: Map<RGBColor, Int>)
+            = buildingColors.entries.firstOrNull { this == it.key }?.value
 
     private fun XSSFRichTextString.toBuildingData(defaultBuilding: Int): List<BuildingData>? {
         val formatting = mutableListOf<BuildingData>()
@@ -128,7 +128,7 @@ class RebornConverter : BaseConverter {
 
             fontStartIndex += this.getLengthOfFormattingRun(runIndex)
         }
-        return if (formatting.size >= 2)
+        return if ((formatting.size > 1) && formatting.first().buildingId != defaultBuilding)
             formatting
         else
             null
@@ -171,7 +171,8 @@ class RebornConverter : BaseConverter {
                         val buildingData =
                             if (cell.cellStyle.fillForegroundXSSFColor != null && !cell.cellStyle.fillForegroundXSSFColor.isAuto) {
                                 val cellColor = RGBColor(cell.cellStyle.fillForegroundXSSFColor.rgb)
-                                listOf(BuildingData(0, cellColor.findBuildingId(BUILDINGS_CELL_COLOR)!!))
+                                listOf(BuildingData(0, cellColor.findBuildingId(BUILDINGS_CELL_COLOR)
+                                        ?: throw IllegalStateException("Color $this is not present in $BUILDINGS_CELL_COLOR")))
                             }
                             else
                                 cell.richStringCellValue.toBuildingData(defaultBuilding)

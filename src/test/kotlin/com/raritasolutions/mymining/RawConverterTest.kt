@@ -12,6 +12,7 @@ class RawConverterTest {
         extractors.forEach { it.make() }
         return extractors.map { it.result }
     }
+
     private fun makeFromString(input: String, formatting: List<BuildingData>? = null)
         = listOf(RawPairRecord(5,"12:35-14:05", "ТЕС-16", input, formatting))
 
@@ -165,4 +166,37 @@ class RawConverterTest {
         assert(result.last().result.buildingID == 3)
     }
 
+    @Test
+    fun testHalfCorrectRoomNumberToken() {
+        val seriously = makeFromString(
+                input = "ч/н 1/2 Технология и безопасность взрывных работ Доц. Хохлов С.В. л/р I - №1205-1 II - 1208")
+        val converter = RawConverter(seriously, ExtractionReport(), 3)
+        val result = converter.extractorList.map { it.apply { it.make() } }
+        assert(result.size == 2)
+        assert(result.map { it.result.isCorrect() }.all { it })
+    }
+
+    @Test
+    fun testMultiweekRoomSpecialTokens() {
+        val input = makeFromString("1/2 Материаловедение Доц. Трушко О.В. л/р I - №3104-1  II - №3104а") +
+                makeFromString("1/2 Физика Доц. Пушко О.В. л/р I - №3104а  II - №3104-1")
+        val result = getOutput(input)
+        with (result) {
+            assert(all(PairRecord::isCorrect))
+            assert(get(0).room == "3104-1" && get(3).room == "3104-1")
+            assert(get(1).room == "3104а" && get(2).room == "3104а")
+        }
+    }
+
+    @Test
+    fun testMultiweekManyRoomsExtraction() {
+        val input = makeFromString("1/2 ГИС в экологии и природопользовании Доц. Стриженок А.В. л/р №1307 1/2 Инженерная геология и гидрогеология Доц. Норова Л.П. л/р I - №3205 II - №3203, 3205")
+        val result = getOutput(input)
+        with (result) {
+            assert(all(PairRecord::isCorrect))
+            assert(get(0).room == "1307")
+            assert(get(1).room == "3205")
+            assert(get(2).room == "3203, 3205")
+        }
+    }
 }

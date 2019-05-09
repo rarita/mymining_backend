@@ -1,11 +1,15 @@
-package com.raritasolutions.mymining.extractor
+package com.raritasolutions.mymining.extractor.splitter
 
 import com.raritasolutions.mymining.utils.*
 
-// Splits n class records from one cell to separate records.
-class PairSplitter (private val initialContents: String) {
+/**
+ *  An old implementation of pair splitter that worked with the leading tokens
+ *  Splits n class records from one cell to separate records.
+ *  To be removed in the future releases
+ */
+class PairSplitter (override val initialContents: String): BaseSplitter {
 
-    val contents: List<String>
+    override val separatedContents: List<String>
         get() = analyseAndSplit(initialContents, listOf())
 
     private fun analyseAndSplit(contents: String, accumulator: List<String>): List<String> {

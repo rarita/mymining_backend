@@ -14,10 +14,10 @@ fun String.removeRedundantCharacters()
 
 // Now with new (unicode 160) space flavour!
 fun String.removeSpecialCharacters()
-        = replace("(\\040|\\r|\\n|\\0240)".toRegex(),"")
+        = replace("[\\040\\r\\n\\0240]".toRegex(),"")
 
 fun String.removeSpaces()
-        = replace("(\\040|\\0240)".toRegex(),"")
+        = replace("[\\040\\0240]".toRegex(),"")
 
 fun String.removeLineBreaks()
         = replace(lineBreaksRegex,"")
@@ -29,8 +29,8 @@ fun String.removeCaretReturns()
 fun String.shrink()
         = replace(" ","").toLowerCase()
 
-fun String.stripPrefix(prefix: String): String
-        = substringAfter(prefix)
+fun String.substringAfterRegex(regex: Regex): String
+        = slice((regex.find(this)?.range?.endInclusive?.plus(1) ?: 0) until this.length)
 
 fun String.shieldSymbol(symbol: Char)
         = replace(symbol.toString(),"[$symbol]")

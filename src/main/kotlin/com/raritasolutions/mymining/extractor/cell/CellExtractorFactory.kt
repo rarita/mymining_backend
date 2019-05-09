@@ -20,6 +20,21 @@ class CellExtractorFactory(private val contents: String,
             object : ComplexCellExtractor(contents, pairInstance) {
                 override val extractWeek: () -> Int = { 0 }
             }
+        // If the record has a teacher without a rank
+        (teacherRegex.findAll(contentsNoSpaces).count() !=
+                "($teacherNoRankRegex|Вакансия)".toRegex().findAll(contentsNoSpaces).count()) ->
+            object : ComplexCellExtractor(contents, pairInstance) {
+                override val extractTeacher: () -> String
+                get() = {
+                    val correctTeachers = super.extractTeacher()
+                    val noRankTeachers = extractCustomRegexToList(teacherNoRankRegex, this)
+                    correctTeachers + ", " + noRankTeachers.joinToString { it.flavourTeacherString() }
+                }
+                // Remove possible garbage symbols just in case
+                // Maybe this should be included into the base class implementation
+                override val extractRoom: () -> String
+                    get() = { super.extractRoom().replace("[^\\dа,-]+".toRegex(), "") }
+            }
         // Regular case.
         pairRegex.containsMatchIn(contentsNoSpaces) -> // todo review containsMatchIn vs matches
             ComplexCellExtractor(contents, pairInstance)

@@ -70,7 +70,7 @@ fun PairRecord.isCorrect()
             .replace("\\(.+?(?=\\))\\)".toRegex(),"")
             .replace("(Горный.?музей|Спортзал)".toRegex(),"")
             .let {
-                it.matches("(\\d{2,}a?,?.)+".toRegex()).not() && it.isNotBlank() && it != NO_ROOM
+                it.matches("(\\d{2,}(-\\d|а)?,?.?)+".toRegex()).not() && it.isNotBlank() && it != NO_ROOM
             } -> false // NOT matches or empty (because museum/gym got removed)
         //room.length > 15 && !("\\(.+?(?=\\))\\)".toRegex().containsMatchIn(room)) -> false
         else -> true

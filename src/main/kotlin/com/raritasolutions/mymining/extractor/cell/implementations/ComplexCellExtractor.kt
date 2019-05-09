@@ -30,18 +30,24 @@ open class ComplexCellExtractor(contents: String,
                 else raiseParsingException(roomRegex, this)
         }
 
-    override val extractType: () -> String = {
-        when (extractCustomRegex(pairTypesRegex,this)) {
-            "л/р" -> "лабораторная работа"
+    override val extractType: () -> String = lambda@ {
+        val pairType = extractCustomRegexToList(multiplePairTypesRegex,this)
+                .map { it.replace("(,\\s|,)".toRegex(), "") }
+                .distinct()
+        if (pairType.size > 1)
+            return@lambda "занятие"
+        when (pairType.firstOrNull()) {
+            "лк." -> "лекция"
             "пр." -> "практика"
+            "л/р" -> "лабораторная работа"
             else -> {
-                 /* Check for standalone "пр" in original string
-                 in case these dumb ducks forgot to place a dot after it.
-                 I'm not proud of this solution. */
+                /* Check for standalone "пр" in original string
+             in case these dumb ducks forgot to place a dot after it.
+             I'm not proud of this solution. */
                 if ("\\sпр\\s".toRegex() in contents)
                     "практика"
                 else
-                    /* If the subject is either PE or FL set type as "class" */
+                /* If the subject is either PE or FL set type as "class" */
                     if ("Физическаякультура" in _contents || "Иностранныйязык" in _contents)
                         "занятие"
                     else
@@ -49,6 +55,7 @@ open class ComplexCellExtractor(contents: String,
             }
         }
     }
+
     override val extractTeacher:() -> String =
         {
             val teacherList
@@ -86,23 +93,28 @@ open class ComplexCellExtractor(contents: String,
 
     // adds required spaces to teacher string
     // probably shouldn't be an extension
-    private fun String.flavourTeacherString(): String
+    protected fun String.flavourTeacherString(): String
     {
         // Since we extracted teacher without any issues we can be sure we will find these regex's
-        val normalizedRank = teacherRank
-                .find(this)!!
-                .value
-                .toLowerCase()
-                .capitalize()
+        val originalRank = teacherRank
+                .find(this)
+                ?.value
+        // If rank was not found
+        val rankNeedsDot = originalRank?.endsWith('.')?.not() ?: false
+        val normalizedRank = originalRank
+                ?.toLowerCase()
+                ?.capitalize()
+                ?.let { if (rankNeedsDot) "$it." else it } ?: ""
         val second_space = teacherInitialsNoClosingDot
                 .findAll(this)
                 .last()
                 .range
-                .first + 1
+                .first + if (rankNeedsDot) 2 else 1
         val needsClosingDot = teacherInitials.find(this) == null
         val result = StringBuffer( this.replace(teacherRank, "") )
                 .insert(0, "$normalizedRank ")
                 .insert(second_space," ")
+                .trim()
                 .toString()
         return result + if (needsClosingDot) "." else ""
     }
