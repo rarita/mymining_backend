@@ -55,7 +55,7 @@ class RawConverterTest {
 
     @Test
     fun testOverWeekTooMuchSpacesCase() {
-        val rpl = makeFromString("ч  / н   1  / 2   О  б   щ   а  я  и неорган. химия Д  о  ц   .  Д  ж   е  в  а  г а   Н   . В  . Д   о  ц  .  Лобачёва О.Л. л/р No843 ч  / н    1  / 2    И   н  ф   о  р  м   а  т и   к а Доц. Ильин А.Е. л/р No336")
+        val rpl = makeFromString("ч/н   1/2   О  б   щ   а  я  и неорган. химия Д  о  ц   .  Д  ж   е  в  а  г а   Н   . В  . Д   о  ц  .  Лобачёва О.Л. л/р No843 ч/н    1/2    И   н  ф   о  р  м   а  т и   к а Доц. Ильин А.Е. л/р No336")
         val results = getOutput(rpl)
         with (results[0]) {
             assert(over_week)
@@ -189,7 +189,7 @@ class RawConverterTest {
     }
 
     @Test
-    fun testMultiweekManyRoomsExtraction() {
+    fun testMultiWeekManyRoomsExtraction() {
         val input = makeFromString("1/2 ГИС в экологии и природопользовании Доц. Стриженок А.В. л/р №1307 1/2 Инженерная геология и гидрогеология Доц. Норова Л.П. л/р I - №3205 II - №3203, 3205")
         val result = getOutput(input)
         with (result) {
@@ -197,6 +197,19 @@ class RawConverterTest {
             assert(get(0).room == "1307")
             assert(get(1).room == "3205")
             assert(get(2).room == "3203, 3205")
+        }
+    }
+
+    @Test
+    fun testBrokenMultiWeekToken() {
+        val input = makeFromString("ч/н 1/2 Гидравлика Асс. Мерзляков М.Ю. л/р I №7206 II -№7301")
+        val result = getOutput(input)
+        with (result) {
+            assert(all(PairRecord::isCorrect))
+            assert(size == 2)
+            assert(first().room == "7206")
+            assert(last().room == "7301")
+            assert(first().equalsExcluding(last(), listOf(PairRecord::week, PairRecord::room)))
         }
     }
 }

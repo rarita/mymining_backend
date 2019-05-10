@@ -68,7 +68,7 @@ fun PairRecord.isCorrect()
         teacherRank.containsMatchIn(subject + room) -> false
         room
             .replace("\\(.+?(?=\\))\\)".toRegex(),"")
-            .replace("(Горный.?музей|Спортзал)".toRegex(),"")
+            .replace("(Спортзал|Горный музей(, Зал \\d{2,})?)".toRegex(),"")
             .let {
                 it.matches("(\\d{2,}(-\\d|а)?,?.?)+".toRegex()).not() && it.isNotBlank() && it != NO_ROOM
             } -> false // NOT matches or empty (because museum/gym got removed)

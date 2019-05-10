@@ -22,7 +22,7 @@ class CellExtractorFactory(private val contents: String,
             }
         // If the record has a teacher without a rank
         (teacherRegex.findAll(contentsNoSpaces).count() !=
-                "($teacherNoRankRegex|Вакансия)".toRegex().findAll(contentsNoSpaces).count()) ->
+                "$teacherNoRankRegex".toRegex().findAll(contentsNoSpaces).count()) ->
             object : ComplexCellExtractor(contents, pairInstance) {
                 override val extractTeacher: () -> String
                 get() = {
@@ -33,7 +33,17 @@ class CellExtractorFactory(private val contents: String,
                 // Remove possible garbage symbols just in case
                 // Maybe this should be included into the base class implementation
                 override val extractRoom: () -> String
-                    get() = { super.extractRoom().replace("[^\\dа,-]+".toRegex(), "") }
+                    get() = { super.extractRoom()
+                            .replace(unwantedRoomSymbolsRegex, "") }
+            }
+        // If the room located in the Mining Museum override extractRoom()
+        roomMiningMuseumRegex.containsMatchIn(contentsNoSpaces) ->
+            object : ComplexCellExtractor(contents, pairInstance) {
+                override val extractRoom: () -> String
+                get() = {
+                    val roomWithText = extractCustomRegex(roomMiningMuseumRegex, this)!!
+                    "Горный музей, Зал ${roomWithText.substringAfterRegex(roomSearchingRegex)}"
+                }
             }
         // Regular case.
         pairRegex.containsMatchIn(contentsNoSpaces) -> // todo review containsMatchIn vs matches

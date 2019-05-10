@@ -21,7 +21,7 @@ open class ComplexCellExtractor(contents: String,
             _contents += "No" // todo review asap (find better regex for rooms)
             val _result = extractCustomRegexToList(roomRegex,this)
                     .flatMap { it.split(',') }
-                    .map { it.replace("(No|№|I+|-)".toRegex(),"") }
+                    .map { it.replace("(No|№|I+)".toRegex(),"") }
                     .map { it.trim() }
                     .filter { it.isNotBlank() }
                     .toSortedSet()
@@ -66,9 +66,11 @@ open class ComplexCellExtractor(contents: String,
                     .joinToString(separator = ", ") { it.replace(",","") }
         }
 
-    override val extractWeek: () -> Int =
-    {
-        when (extractCustomRegex(weeksRegex,this)) {
+    override val extractWeek: () -> Int = lambda@ {
+        val pairWeeks = extractCustomRegexToList(weeksRegex, this)
+        if (pairWeeks.size > 1)
+            return@lambda 0
+        when (pairWeeks.firstOrNull()?.replace("-", "")) {
             "I" -> 1
             "II" -> 2
             null -> if (pairInstance.week != 0) 0 else pairInstance.week

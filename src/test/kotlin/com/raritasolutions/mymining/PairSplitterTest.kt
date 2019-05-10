@@ -137,4 +137,34 @@ class PairSplitterTest {
             assert(containsAll(input))
         }
     }
+
+    @Test
+    fun testSubgroupAtTheBeginning() {
+        val input = listOf("гр. ЭРБ-17-а Электрические машины Доц. Ковальчук М.С. №418",
+                "Электрические машины Доц. Каган А.В. №416")
+        val contentsSplit = RebornSplitter(input.joinToString(separator = " ")).separatedContents
+        with (contentsSplit) {
+            assert(size == 2)
+            assert(containsAll(input))
+        }
+    }
+
+    @Test
+    fun testMeaningfulTokensSearch() {
+        val input = "I 1/2 Механика грунтов Асс. Алексеев И.В. л/р №3205 " +
+                "1/2 Физическая культура Доц. Михайловский С.П. " +
+                "II 1/2 Химия, часть 2 Доц. Жадовский И.Т. л/р №342"
+        var splitter = RebornSplitter(input)
+        with (splitter) {
+            assert(findTrailingTokens().size == 2)
+            assert(findLeadingTokens().size == 3)
+        }
+       val input2 = "ч/н 1/2 Гидравлика Асс. Пшенин В.В. л/р I - №7301 II - №7206 " +
+               "ч/н 1/2 Физическая культура Доц. Михайловский С.П."
+        splitter = RebornSplitter(input2)
+        with (splitter) {
+            assert(findTrailingTokens().size == 1)
+            assert(findLeadingTokens().size == 2)
+        }
+    }
 }

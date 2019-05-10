@@ -7,6 +7,7 @@ import com.raritasolutions.mymining.extractor.cell.implementations.SimpleCellExt
 import com.raritasolutions.mymining.model.NO_TEACHER
 import com.raritasolutions.mymining.model.PairRecord
 import com.raritasolutions.mymining.model.isCorrect
+import com.raritasolutions.mymining.utils.unwantedRoomSymbolsRegex
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
@@ -219,10 +220,7 @@ class CellExtractorTest
             assert(isCorrect())
         }
         val reversedInput = "Компьютерная графика Доц. Судариков А.Е. л/р I - No729 II - No721 Доц. Исаев А.И. л/р No726"
-        extractor = object : ComplexCellExtractor(reversedInput) {
-            override val extractWeek: () -> Int = { 0 }
-        }
-                .apply { make() }
+        extractor = ComplexCellExtractor(reversedInput).apply { make() }
         with (extractor.result) {
             assert(subject == "Компьютерная графика")
             assert("Доц. Судариков А.Е." in teacher && "Доц. Исаев А.И." in teacher)
@@ -332,6 +330,16 @@ class CellExtractorTest
     }
 
     @Test
+    fun testSpecialSymbolsInRooms() {
+        val input = "1/2 Обогащение полезных ископ. Доц. Николаева Н.В. л/р №3121-1,3123а"
+        val extractor = CellExtractorFactory(input).produce().apply { make() }
+        with (extractor.result) {
+            assert(isCorrect())
+            assert(room == "3121-1, 3123а")
+        }
+    }
+
+    @Test
     fun testShortSubgroup() {
         val input = "ТОА-16а\n" +
                 "II Экономика и управление\n" +
@@ -372,8 +380,11 @@ class CellExtractorTest
                 "Доц. Васильев Е.А. л/р №3312 " +
                 "Асс. Гембицкая И.М. л/р №3310"
         val extractor = CellExtractorFactory(input).produce().apply { make() }
-        assert(extractor.result.isCorrect())
-        assert(!extractor.result.room.contains("[^\\dа,-]+".toRegex()))
+        with (extractor.result) {
+            assert(isCorrect())
+            assert("4309, 4313, 4315" in room) // Test correct spacing
+            assert(!room.contains(unwantedRoomSymbolsRegex))
+        }
     }
 
     @Test
@@ -405,6 +416,17 @@ class CellExtractorTest
         with (extractor.result) {
             assert(isCorrect())
             assert(teacher == "Преп. Никифоровская Е.О., Доц. Горохова Н.Э.")
+        }
+    }
+
+    @Test
+    fun testRoomInMiningMuseumExtraction() {
+        val input = "ч/н 1/2 Ювелирные, поделочные и облицовочные камни Доц. Боровкова Н.В. л/р Горн. музей зал №16"
+        val extractor = CellExtractorFactory(input).produce().apply { make() }
+        with (extractor.result) {
+            assert(isCorrect())
+            assert(subject == "Ювелирные, поделочные и облицовочные камни")
+            assert(room == "Горный музей, Зал 16")
         }
     }
 
