@@ -4,10 +4,7 @@ import com.raritasolutions.mymining.extractor.cell.CellExtractorFactory
 import com.raritasolutions.mymining.extractor.cell.ContentSafeExtractor
 import com.raritasolutions.mymining.extractor.splitter.RebornSplitter
 import com.raritasolutions.mymining.model.*
-import com.raritasolutions.mymining.utils.multiplePairRegexOneLine
-import com.raritasolutions.mymining.utils.ripOneLineRegex
-import com.raritasolutions.mymining.utils.roomNumberTokenRegex
-import com.raritasolutions.mymining.utils.substringAfterRegex
+import com.raritasolutions.mymining.utils.*
 import kotlin.collections.set
 
 // todo make component
@@ -65,7 +62,7 @@ class RawConverter(private val rawList: List<RawPairRecord>,
         // That's why building data should not be recalculated afterwards
         val _contents = contents
                 .replace("_","")
-                .replace("\\s+".toRegex(), " ")
+                .replace("$whiteSpaceRegex+".toRegex(), " ")
         try {
             val basePairRecord = this.toPairRecord()
             // If RawPairRecord has single or none records of buildingData assign building immediately

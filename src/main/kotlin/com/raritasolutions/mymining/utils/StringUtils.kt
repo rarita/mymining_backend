@@ -17,7 +17,7 @@ fun String.removeSpecialCharacters()
         = replace("[\\040\\r\\n\\0240]".toRegex(),"")
 
 fun String.removeSpaces()
-        = replace("[\\040\\0240]".toRegex(),"")
+        = replace(whiteSpaceRegex,"")
 
 fun String.removeLineBreaks()
         = replace(lineBreaksRegex,"")
@@ -34,6 +34,13 @@ fun String.substringAfterRegex(regex: Regex): String
 
 fun String.shieldSymbol(symbol: Char)
         = replace(symbol.toString(),"[$symbol]")
+
+fun String.shieldSymbols(vararg symbols: Char): String {
+    var result: String = this
+    for (symbol in symbols)
+        result = result.shieldSymbol(symbol)
+    return result
+}
 
 fun String.mayContainSpaces(): String{
     val sb = StringBuilder()

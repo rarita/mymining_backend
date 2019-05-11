@@ -9,8 +9,8 @@ class SimpleCellExtractor(contents: String,
                           pairInstance: PairRecord = PairRecord()) : ContentSafeExtractor(contents,pairInstance)
 {
 
-    override val setUp = {}
-    override val tearDown = {}
+    override val setUp: Nothing? = null
+    override val tearDown: Nothing? = null
 
     override val extractRoom: () -> String = { NO_ROOM }
     override val extractWeek: () -> Int = { 0 }

@@ -8,7 +8,28 @@ import com.raritasolutions.mymining.utils.*
 open class ComplexCellExtractor(contents: String,
                                 pairInstance: PairRecord = PairRecord()) : ContentSafeExtractor(contents, pairInstance)
 {
-    override val setUp = {}
+    /**
+     *  Since the first grade classes have a lot of AA.BB - XX.YY stuff
+     *  And i don't have time to make it work properly
+     *  I'll just clean it out at this stage and hope nobody notices
+     *  Till the best times come
+     */
+    override val setUp = {
+        // Extract the day ranges that might be present in the string
+        // First, search for it in the original string to avoid mixing numbers with rooms
+        val dayRangesMatched = dayRangeRegex
+                .findAll(contents)
+        if (dayRangesMatched.count() == 0)
+            Unit
+        // Then, remove all found occurrences in the space-less string
+        val foundDayRangesRegex = dayRangesMatched
+                .joinToString(separator = "|", prefix = "(", postfix = ")")
+                    { it.value.removeSpaces().shieldSymbols('(', ')') }
+                .toRegex()
+        extractCustomRegexToList(foundDayRangesRegex, this)
+        Unit
+    }
+
     override val tearDown: (() -> Unit)? = {
         // Get rid of incorrect practice token if present.
         if (endsWithPracticeRegex.find(_contents) != null)
@@ -36,7 +57,7 @@ open class ComplexCellExtractor(contents: String,
                 .distinct()
         if (pairType.size > 1)
             return@lambda "занятие"
-        when (pairType.firstOrNull()) {
+        when (pairType.firstOrNull()?.toLowerCase()) {
             "лк." -> "лекция"
             "пр." -> "практика"
             "л/р" -> "лабораторная работа"
@@ -77,7 +98,12 @@ open class ComplexCellExtractor(contents: String,
             else -> throw Exception("Received unexpected number of weeks.")
         }
     }
-    override val extractOneHalf: () -> String = { extractCustomRegex(oneHalfRegex,this) ?: "" }
+
+    override val extractOneHalf: () -> String = {
+        extractCustomRegex(oneHalfRegex,this)
+                ?.replace("-", "")
+                ?: ""
+    }
 
     override val extractOverWeek: () -> Boolean = { extractCustomRegex(overWeekRegex, this) != null }
 

@@ -430,4 +430,53 @@ class CellExtractorTest
         }
     }
 
+    @Test
+    fun testIgnoringBraces() {
+        val input = "Прикладное программирование Доц. Бойков А.В. пр. №3303 ( 2.04 )"
+        val extractor = CellExtractorFactory(input).produce().apply { make() }
+        with (extractor.result) {
+            assert(isCorrect())
+            assert(room == "3303")
+        }
+    }
+
+    @Test
+    fun testIgnoringTimeRanges() {
+        val input = "I Интегрированные системы проектирования и управления ААП Доц. Никитина Л.Н. лк. №3416а 13.02 - 10.04 пр. №3307 24.04 - 22.05"
+        val inputVerboseTimeRange = "II 1/2 Начертательная геометрия и инж. компьютерная графика Доц. Чупин С.А.  пр. №710 с 1.04 по 3.06"
+        var extractor = CellExtractorFactory(input).produce().apply { make() }
+        assert(extractor.result.isCorrect())
+        extractor = CellExtractorFactory(inputVerboseTimeRange).produce().apply { make() }
+        assert(extractor.result.isCorrect())
+    }
+
+    @Test
+    fun testHighlyAbbreviatedSubject() {
+        val input = "НОП, Э и Р металл. машин и оборудования Проф. Болобов В.И. №6208 I - лк. II - пр."
+        val extractor = CellExtractorFactory(input).produce().apply { make() }
+        println(extractor.result)
+    }
+
+    @Test
+    fun testCapitalizedTypeToken() {
+        val input = "Прикладное программирование Доц. Бойков А.В. Пр. №3303"
+        val extractor = CellExtractorFactory(input).produce().apply { make() }
+        with (extractor.result) {
+            assert(isCorrect())
+            assert(type == "практика")
+        }
+    }
+
+    @Test
+    fun testMultiHalfOneLineTokenHandling() {
+        val input = "II Основы инженерного проектирования систем ЭП Доц. Кравцов А.Г. пр. №1232 4.02 - 18.02 Доц. Кравцов А.Г. л/р №1238 1/2 - 4.03 - 18.03 1/2 - 1.04 - 15.04"
+        val extractor = CellExtractorFactory(input).produce().apply { make() }
+        with (extractor.result) {
+            assert(isCorrect())
+            assert(subject == "Основы инженерного проектирования систем ЭП")
+            assert(room == "1232, 1238")
+            assert(type == "занятие")
+            assert(one_half == "1/2")
+        }
+    }
 }

@@ -2,15 +2,19 @@ package com.raritasolutions.mymining.utils
 
 /* Cell extractor resources */
 val contentInBracesRegex = "\\(.+?(?=\\))\\)".toRegex()
-val redundantSymbolsRegex = "(_)".toRegex()
-val singlePairTypeRegex = "(л/р|пр\\.|лк\\.?)".toRegex() // At first they took away teacher rank dots. Then this. What's next?
-val multiplePairTypesRegex = "$singlePairTypeRegex(,\\s?)?".toRegex()
+val redundantSymbolsRegex = "_".toRegex()
+val singlePairTypeRegex = "(л/р|пр\\.|лк\\.?)".toRegex(RegexOption.IGNORE_CASE) // At first they took away teacher rank dots. Then this. What's next?
+val multiplePairTypesRegex = "$singlePairTypeRegex(,\\s?)?".toRegex(RegexOption.IGNORE_CASE)
 val endsWithPracticeRegex = ".*п.?р.?\\.?\$".toRegex() // For the tear down stage.
 val unwantedRoomSymbolsRegex = "[^\\dа,\\s-]+".toRegex()
-val teacherRankNormalCase = "(Доц\\.?|Проф\\.?|Асс\\.?|Асп\\.?|Ст\\.?пр\\.?|Преп\\.?)".toRegex() // I almost 100% sure i will regret making the dots optional
+val teacherRankNormalCase = "(Доц\\.?|Проф\\.|Асс\\.?|Асп\\.?|Ст\\.?пр\\.?|Преп\\.?)".toRegex() // I almost 100% sure i will regret making the dots optional. (I had already, see @testTeacherRankTokenInSubject)
+// Do not! "optimize" this with IGNORE_CASE flag.
 val teacherRank = "($teacherRankNormalCase|${teacherRankNormalCase.toString().toUpperCase()})".toRegex() // In the future
 val teacherInitials = "\\p{L}\\.\\p{L}\\.".toRegex() // Note that this is only INITIALS, not whole teacher name regex.
 val teacherInitialsNoClosingDot = "\\p{L}\\.\\p{L}".toRegex()
+
+/* Special regex */
+val whiteSpaceRegex = "[\\040\\0240]".toRegex()
 
 val subGroupRegex = "(гр\\.)?[А-Я]{2,}-\\d{2}.*?(?=а)а".toRegex() // todo consider improving this
 /* Check case if beautiful people of the planet Earth who make this schedule
@@ -19,9 +23,10 @@ val teacherRegex = "($teacherRank\\p{L}+\\.\\p{L}\\.*,*|Вакансия)".toReg
 val roomRegex = "(I-)?(No|№)-?.+?(?=(No|№))".toRegex() // Check for "I-" before first room token to grab it from original string/
 val roomMiningMuseumRegex = "Горн.*муз.*зал.*\\d{2,}".toRegex()
 val weeksRegex = "(I+-?)".toRegex()
-val oneHalfRegex = "[1-4]/[2-5]".toRegex()
+val oneHalfRegex = "[1-4]/[2-5]-?".toRegex()
 val overWeekRegex = "ч/н".toRegex()
 val lineBreaksRegex = "(\\r\\n|\\n)".toRegex()
+val dayRangeRegex = "\\(?$whiteSpaceRegex?с?$whiteSpaceRegex?\\d{1,2}\\.\\d{2}($whiteSpaceRegex?(-|по)$whiteSpaceRegex?)?(\\d{1,2}\\.\\d{2})?$whiteSpaceRegex?\\)?".toRegex() // That's hell of a very slippery regex. Might cause some errors!
 val timeSpanRegex = "\\d+\\.\\d{2}-\\d+\\.\\d{2}".toRegex()
 
 /* CSV extractor resources */

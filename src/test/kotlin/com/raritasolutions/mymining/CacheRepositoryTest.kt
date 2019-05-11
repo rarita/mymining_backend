@@ -1,16 +1,13 @@
 package com.raritasolutions.mymining
 
-import com.raritasolutions.mymining.analyser.FirstCourseScheduleAnalyser
 import com.raritasolutions.mymining.repo.CacheRepository
-import org.junit.Test
 import java.io.File
-import java.net.URL
 
 class CacheRepositoryTest {
     private val repo = CacheRepository()
     private val targetFile
             = File("dummy/dummy.pdf").toURI().toURL()
-
+/*
     @Test
     fun testClearRepo(){
         repo.saveFile(targetFile)
@@ -37,4 +34,5 @@ class CacheRepositoryTest {
         assert(fca.analyse().map { repo.saveFile(it.value) }.find { it } == null)
         repo.clearAll()
     }
+    */
 }

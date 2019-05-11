@@ -32,10 +32,10 @@ class RebornSplitter(override val initialContents: String) : BaseSplitter {
                 val substringInBetween = initialContents.slice(endOfLast + 1 until startOfCurrent)
                 val possiblePairData = substringInBetween
                         .removeSpaces()
-                        .replace("($leadingTokenRegex|$teacherNoRankRegex|$teacherRank|$singlePairTypeRegex|No|№|\\d+)".toRegex(), "")
+                        .replace("($leadingTokenRegex|$teacherNoRankRegex|$teacherRank|$singlePairTypeRegex|No|№|\\d+)".toRegex(RegexOption.IGNORE_CASE), "")
                         .trim()
                 // Make some room for possible input data errors
-                if (possiblePairData.isNotEmpty() && possiblePairData.any(Char::isCyrillicLetter))
+                if (possiblePairData.length > 3 && possiblePairData.any(Char::isCyrillicLetter))
                 // If subject string found in between tokens add token to whitelist
                     filteredTokens += tokenPositions[tokenIndex]
             }
@@ -58,9 +58,9 @@ class RebornSplitter(override val initialContents: String) : BaseSplitter {
                 val substringInBetween = initialContents.slice(endOfCurrent + 1 until startOfLast)
                 val possiblePairData = substringInBetween
                         .removeSpaces()
-                        .replace("($teacherNoRankRegex|$teacherRank|$singlePairTypeRegex|No|№|\\d+)".toRegex(), "")
+                        .replace("($teacherNoRankRegex|$teacherRank|$singlePairTypeRegex|No|№|\\d+)".toRegex(RegexOption.IGNORE_CASE), "")
                         .trim()
-                if (possiblePairData.isNotEmpty() && possiblePairData.any(Char::isCyrillicLetter))
+                if (possiblePairData.length > 3 && possiblePairData.any(Char::isCyrillicLetter))
                     filteredTokens += tokenPositions[tokenIndex]
             }
         }
@@ -85,7 +85,16 @@ class RebornSplitter(override val initialContents: String) : BaseSplitter {
             contents.apply { reverse() }
         }
         else {
-            contents += initialContents.slice(tokenList.last().range.start..initialContents.lastIndex)
+            // Check if the last part of initial contents actually belongs to previous separated pair
+            val lastContentsPart = initialContents.slice(tokenList.last().range.start..initialContents.lastIndex)
+            val possibleAdditionalData = lastContentsPart
+                    .removeSpaces()
+                    .replace("($leadingTokenRegex|$teacherNoRankRegex|$teacherRank|$singlePairTypeRegex|No|№|\\d+)".toRegex(RegexOption.IGNORE_CASE), "")
+                    .trim()
+            if (possibleAdditionalData.any(Char::isCyrillicLetter))
+                contents += initialContents.slice(tokenList.last().range.start..initialContents.lastIndex)
+            else
+                contents[contents.lastIndex] += " $lastContentsPart"
             contents
         }
     }

@@ -20,7 +20,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
 group = 'com.raritasolutions'
-version = '0.5.3-passing'
+version = '0.7-passing'
 
 sourceCompatibility = 1.8
 compileKotlin {

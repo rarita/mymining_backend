@@ -212,4 +212,26 @@ class RawConverterTest {
             assert(first().equalsExcluding(last(), listOf(PairRecord::week, PairRecord::room)))
         }
     }
+
+    @Test
+    fun testTeacherRankTokenInSubject() {
+        val input = makeFromString("I  Профессиональная архитектурная практика\n" +
+                "Доц. Гайкович С.В. пр. №3519\n" +
+                "II Профессиональная архитектурная практика Доц. Гайкович С.В. №3519")
+        val result = getOutput(input)
+        result.forEach(::println)
+    }
+
+    @Test
+    fun testIncompleteDayRangeWithRoom() {
+        val input = makeFromString("Моделирование физических процессов в горном деле " +
+                "Доц. Карасёв М.А. пр. №4401 с 16.04 - №3527")
+        val result = getOutput(input)
+        assert(result.size == 1)
+        with (result.first()) {
+            assert(isCorrect())
+            assert(subject == "Моделирование физических процессов в горном деле")
+            assert(room == "3527, 4401")
+        }
+    }
 }
