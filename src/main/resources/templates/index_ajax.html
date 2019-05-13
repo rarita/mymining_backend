@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Расписание</title>
+</head>
+<script
+        src="http://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/easy-autocomplete/1.3.5/jquery.easy-autocomplete.min.js"
+        integrity="sha256-aS5HnZXPFUnMTBhNEiZ+fKMsekyUqwm30faj/Qh/gIA="
+        crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/easy-autocomplete/1.3.5/easy-autocomplete.min.css"
+      integrity="sha256-fARYVJfhP7LIqNnfUtpnbujW34NsfC4OJbtc37rK2rs="
+      crossorigin="anonymous" />
+<link rel="stylesheet" href="../static/css/index_style.css">
+<body>
+<div class="group_picker">
+    <div align="center">
+        <div class="tab">
+            <button class="links" id="b_group">ГРУППА</button>
+            <button class="links" id="b_teacher">ПРЕПОДАВАТЕЛЬ</button>
+            <button class="links" id="b_room">АУДИТОРИЯ</button>
+        </div>
+        <img src= "../static/logo_new_1.png" class="logo"/>
+        <div id="v_group" class="form_view">
+            <form autocomplete="off" action="" class="group_form" id="f_group">
+                <input id="i_group" type="text" name="group" placeholder="Введите группу">
+                <div class="hor-list">
+                    <select name="week">
+                        <option value="0">Все недели</option>
+                        <option value="1">I неделя</option>
+                        <option value="2">II неделя</option>
+                    </select>
+                    <select name="day">
+                        <option value="0">Все дни</option>
+                        <option value="1">Понедельник</option>
+                        <option value="2">Вторник</option>
+                        <option value="3">Среда</option>
+                        <option value="4">Четверг</option>
+                        <option value="5">Пятница</option>
+                    </select>
+                </div>
+                <input type="submit" value="Получить расписание" class="btn-hover color-1">
+            </form>
+        </div>
+        <div id="v_teacher" class="form_view">
+            <form autocomplete="off" action="/db/gen_sch" class="group_form" id="f_teacher">
+                <input id="i_teacher"  type="text" name="teacher" placeholder="Введите преподавателя">
+                <div class="hor-list">
+                    <select name="week">
+                        <option value="0">Все недели</option>
+                        <option value="1">I неделя</option>
+                        <option value="2">II неделя</option>
+                    </select>
+                    <select name="day">
+                        <option value="0">Все дни</option>
+                        <option value="1">Понедельник</option>
+                        <option value="2">Вторник</option>
+                        <option value="3">Среда</option>
+                        <option value="4">Четверг</option>
+                        <option value="5">Пятница</option>
+                    </select>
+                </div>
+                <input type="submit" value="Получить расписание" class="btn-hover color-1">
+            </form>
+        </div>
+        <div id="v_room" class="form_view">
+            <form autocomplete="off" action="/db/gen_sch" class="group_form" id="f_room">
+                <input id="i_room" type="text" name="room" placeholder="Введите аудиторию"> <br>
+                <div class="hor-list">
+                    <select name="week">
+                        <option value="0">Все недели</option>
+                        <option value="1">I неделя</option>
+                        <option value="2">II неделя</option>
+                    </select>
+                    <select name="day">
+                        <option value="0">Все дни</option>
+                        <option value="1">Понедельник</option>
+                        <option value="2">Вторник</option>
+                        <option value="3">Среда</option>
+                        <option value="4">Четверг</option>
+                        <option value="5">Пятница</option>
+                    </select>
+                </div>
+                <input type="submit" value="Получить расписание" class="btn-hover color-1">
+            </form>
+        </div>
+    </div>
+</div>
+<div class="div-container">
+        <div class="floating_list">
+            <h1>Пока что здесь ничего нет</h1>
+        </div>
+</div>
+<script>
+
+    $(document).ready(function () {
+        $("#v_room, #v_teacher").hide();
+        // Query selection buttons
+        $("#b_group").click(function () {
+            $("#f_group").trigger('reset');
+            $("#v_group").show();
+            $("#v_room, #v_teacher").hide();
+        });
+        $("#b_teacher").click(function () {
+            $("#f_teacher").trigger('reset');
+            $("#v_teacher").show();
+            $("#v_room, #v_group").hide();
+        });
+        $("#b_room").click(function () {
+            $("#f_room").trigger('reset');
+            $("#v_room").show();
+            $("#v_group, #v_teacher").hide();
+        });
+        // Input autocompletion initialisation
+        assign_autocompletion("group", function (value) {
+            return value.toUpperCase();
+        });
+        assign_autocompletion("teacher", function (value) {
+            return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+        });
+        // Reassign form submission actions
+        $("form").submit(function(e){
+            var form = $(this);
+            $.ajax({
+                url   : "http://localhost:8080/api/schedule",
+                type  : "GET",
+                data  : form.serialize(),
+                success: fill_schedule
+            });
+            return false;
+        });
+    });
+
+    // Utility functions
+    const groupBy = key => array =>
+        array.reduce((objectsByKeyValue, obj) => {
+            const value = obj[key];
+            objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj);
+            return objectsByKeyValue;
+        }, {});
+
+    const groupByDay = groupBy('day');
+
+    const dayStrings = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
+
+    function fill_schedule(response) {
+        // Clear existing contents
+        $(".floating_list").empty();
+        // Group response by day
+        var classes = Array.from(response.values());
+        var classesWithDays = groupByDay(classes);
+        $.each(classesWithDays, function(key, value) {
+            // Add day header first
+            $(".floating_list")
+                .append(jQuery('<div/>', {"class": 'header_day', "text": dayStrings[parseInt(key) - 1]}));
+            $.each(value, function (index, item) {
+                $(".floating_list").append(make_record(item));
+            });
+        });
+    }
+
+    function make_record(record) {
+        var main_holder = jQuery('<div/>', {"class": 'pair_item'});
+        var container = jQuery('<div/>', {"class": "pair_item_container"});
+        // Time column
+        var time = record['timeSpan'].split('-');
+        var time_holder = jQuery('<div/>', {"class": 'pair_item_time_column'});
+        var time_start = jQuery('<div/>', {"class": 'pair_item_time', 'text': time[0]});
+        var time_filler = jQuery('<div/>', {"class": 'pair_item_filler'});
+        var time_end = jQuery('<div/>', {"class": 'pair_item_time', 'text': time[1]});
+        time_holder.append(time_start, time_filler, time_end);
+        container.append(time_holder);
+        // Main column
+        var main_column_holder = jQuery('<div/>', {"class": 'pair_item_main_column'});
+        // --- Token row
+        var token_row = jQuery('<div/>', {"class": 'pair_item_token_row'});
+        [record['one_half'], record['week'], ((record['over_week']) ? "ч/н" : ""), record['type']]
+            .filter(function (item) { return item; })
+            .forEach(function (token) {
+                var value = (isNaN(token)) ? token : "I".repeat(token);
+                token_row.append(jQuery('<div/>', {"class": 'pair_item_token', 'text': value}))
+            });
+        // --- Subject and teacher
+        var subject = jQuery('<div/>', {"class": 'pair_item_subject', 'text': record['subject']});
+        var teacher = jQuery('<div/>', {"class": 'pair_item_teacher', 'text': record['teacher']});
+        main_column_holder.append(token_row, subject, teacher);
+        container.append(main_column_holder);
+        // Room column
+        var room_holder = jQuery('<div/>', {"class": 'pair_item_room_column'});
+        record['room']
+            .split(", ")
+            .filter(function (item) { return (item != "Нет Аудитории") })
+            .forEach(function (item) {
+               room_holder.append(jQuery('<span/>', {'text': item}));
+               room_holder.append(jQuery('<br/>'));
+            });
+        container.append(room_holder);
+        main_holder.append(container);
+        main_holder.append(jQuery('<hr/>'));
+        return main_holder;
+    }
+
+    function assign_autocompletion(target, transformation) {
+        var auto_options = {
+            url : null,
+            getValue: null,
+            maxNumberOfElements: 3,
+            requestDelay: 100,
+            adjustWidth: false,
+            cssClasses : ".group_form"
+        };
+        auto_options.url = function(value) {
+            return "http://localhost:8080/api/autocomplete?type=" + target + "&value=" + transformation(value);
+        };
+        auto_options.getValue = target;
+        $("#i_" + target).easyAutocomplete(auto_options);
+    }
+
+</script>
+</body>
+</html>

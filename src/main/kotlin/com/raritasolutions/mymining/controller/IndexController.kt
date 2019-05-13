@@ -4,10 +4,8 @@ import com.raritasolutions.mymining.repo.PairRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.servlet.ModelAndView
 import java.lang.management.ManagementFactory
-import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
@@ -47,6 +45,6 @@ class IndexController @Autowired constructor(private val pairRepo: PairRepositor
             model["minutes"] = (toMinutes(millis) % 60).toString().padStart(2,'0')
             model["seconds"] = (toSeconds(millis) % 60).toString().padStart(2,'0')
         }
-        return ModelAndView("status",model)
+        return ModelAndView("status", model)
     }
 }
