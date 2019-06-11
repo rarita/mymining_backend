@@ -1,9 +1,7 @@
 package com.raritasolutions.mymining.repo
 
 import com.raritasolutions.mymining.model.PairRecord
-import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
-import java.util.*
 
 interface GroupName { var group: String }
 interface Teacher {var teacher: String }
@@ -18,11 +16,5 @@ interface PairRepository: CrudRepository<PairRecord,Int> {
     fun findDistinctFirst3ByGroupStartingWithOrderByGroup(value: String): List<GroupName>
 
     fun findDistinctFirst3ByTeacherContainingAndTeacherNotContainingOrderByTeacher(value: String, notContaining: Char = ',') : List<Teacher>
-
-    @Query(value = "select distinct _group from schedule_table", nativeQuery = true)
-    fun setOfGroups(): SortedSet<String>
-
-    @Query(value = "select teacher from schedule_table", nativeQuery = true)
-    fun setOfTeachers(): SortedSet<String>
 
 }

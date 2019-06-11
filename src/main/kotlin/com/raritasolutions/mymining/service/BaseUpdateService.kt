@@ -20,7 +20,7 @@ abstract class BaseUpdateService (private val pairRepo: PairRepository,
     }
 
     fun findDefaultBuilding(fileName: String)
-        = if (!fileName.contains("км") && fileName[0].toInt() in 1..2) 3
+        = if (!fileName.contains("mag") && fileName[0] in '1'..'2') 3
           else 1
 
 
@@ -35,10 +35,14 @@ abstract class BaseUpdateService (private val pairRepo: PairRepository,
         if (needsUpdate || isColdBoot) {
             // If it doesn't need to be compared and updated just load all the pairs to the DB
             val files = cacheRepo.localFiles
-            val rawPairs = files
-                    .map { converter.convert(it, findDefaultBuilding(it.nameWithoutExtension)) }
+            val extractors = files
+                    .map {
+                        val building = findDefaultBuilding(it.nameWithoutExtension)
+                        Pair(building, converter.convert(it, building))
+                    }
+                    .map { RawConverter(it.second, report, it.first).extractorList }
                     .flatten()
-            val extractors = RawConverter(rawPairs, report, 1).extractorList
+            // val extractors = RawConverter(rawPairs, report, 1).extractorList
             // Ugly workaround faulty cases
             val processedExtractors = arrayListOf<ContentSafeExtractor>()
             for (extractor in extractors){

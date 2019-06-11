@@ -1,10 +1,15 @@
 package com.raritasolutions.mymining.controller
 
+import com.raritasolutions.mymining.model.GroupFoldingSet
 import com.raritasolutions.mymining.repo.PairRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.Month
+import java.time.temporal.ChronoUnit
 
 @Controller
 @CrossOrigin
@@ -20,7 +25,10 @@ class RESTController @Autowired constructor(private val pairRepo: PairRepository
                      @RequestParam(value="week", required = false) week: Int = 0): Any {
         val pairList = when {
             room != null -> pairRepo.findByRoomContaining(room)
-            teacher != null -> pairRepo.findByTeacherContaining(teacher)
+            teacher != null -> {
+                val pairs = pairRepo.findByTeacherContaining(teacher)
+                GroupFoldingSet(pairs.toSet())
+            }
             group != null -> if (group.endsWith('а'))
                 pairRepo.findByGroup(group.substringBeforeLast('а')) + pairRepo.findByGroup(group)
             else
@@ -47,4 +55,33 @@ class RESTController @Autowired constructor(private val pairRepo: PairRepository
         "teacher" -> pairRepo.findDistinctFirst3ByTeacherContainingAndTeacherNotContainingOrderByTeacher(value)
         else -> ResponseEntity.badRequest().body(null)
     }
+
+    @GetMapping("/week")
+    @ResponseBody
+    fun fetchCurrentWeek(): Long {
+        val now = LocalDate.now()
+        val semesterStart =
+            if (now.month > Month.JUNE) // If it is in first semester
+                now
+                    .withMonth(9)
+                    .withDayOfMonth(1)
+            else
+                now
+                    .withMonth(2)
+                    .withDayOfMonth(1)
+        // Shift Date's day to Monday for correct week calculation
+        fun LocalDate.withMonday()
+            = this.minusDays(this.dayOfWeek.value - 1L)
+        val weekend = if (now.dayOfWeek > DayOfWeek.FRIDAY) 1 else 0
+        // Calculate the week difference between today and semester start
+        return ((ChronoUnit.WEEKS.between(semesterStart.withMonday(), now.withMonday()) + weekend) % 2) + 1
+    }
+
+    @GetMapping("/day")
+    @ResponseBody
+    fun fetchNextWorkingDay(): Int {
+        val currentDay = LocalDate.now().dayOfWeek.value
+        return if (currentDay <= 5) currentDay else 1
+    }
+
 }

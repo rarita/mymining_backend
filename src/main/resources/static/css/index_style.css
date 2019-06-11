@@ -3,6 +3,7 @@
 body {
     margin-top: 25px;
     margin-left: 25px;
+    margin-bottom: 25px;
     padding: 0;
     background-size: cover;
     background: #ffffff center;
@@ -11,16 +12,22 @@ body {
 }
 
 .div-container {
-    width: calc(100% - 355px);
     text-align: center;
     margin: 0 auto;
-    margin-left: 355px;
+}
+
+.doc_container {
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
 }
 
 .group_picker {
     width: 320px;
     height: 260px;
     top: 25px;
+    left: calc((100% - 550px - 320px) / 2);
     position: fixed;
     background: #fff;
     color: #000;
@@ -34,10 +41,7 @@ body {
 }
 
 .group_picker_filler {
-    display: inline-block;
     width: 340px;
-    height: 300px;
-    background: lightblue;
 }
 
 .logo {

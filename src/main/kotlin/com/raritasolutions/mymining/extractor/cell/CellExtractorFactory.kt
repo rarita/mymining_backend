@@ -70,6 +70,9 @@ class CellExtractorFactory(private val contents: String,
                         }
                     }
         }
+        // Override building for military class
+        "ВОЕ?ННАЯПОДГОТОВКА".toRegex().matches(contentsNoSpaces) ->
+            SimpleCellExtractor(contents, pairInstance.apply { buildingID = 1 })
         // "Only subject" case.
         else ->
             SimpleCellExtractor(contents, pairInstance)

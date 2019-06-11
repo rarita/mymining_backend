@@ -20,19 +20,7 @@ class IndexController @Autowired constructor(private val pairRepo: PairRepositor
         println("[${ZonedDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)}]: " +
                 "Got a connection from ${requestParams.remoteAddr} - " +
                 requestParams.getHeader("User-Agent"))
-        val modelAndView = ModelAndView("index")
-
-        val groups = pairRepo.setOfGroups()
-        modelAndView.addObject("groups", groups)
-
-        val teachers = pairRepo
-                .setOfTeachers()
-                .map { if (it.contains(',')) it.split(", ") else listOf(it)  }
-                .flatten()
-                .toSortedSet()
-
-        modelAndView.addObject("teachers", teachers)
-        return modelAndView
+        return ModelAndView("index_ajax")
     }
 
     @GetMapping("/status") fun status(): ModelAndView {

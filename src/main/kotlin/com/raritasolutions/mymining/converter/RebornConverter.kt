@@ -54,9 +54,9 @@ class RebornConverter : BaseConverter {
             val brokenTimes = times.filter { !it.contents.string.matches(timeRegex) }
             for (time in brokenTimes) {
                 val donor = times.firstOrNull { it.contents.string.matches(timeRegex) }
-                    ?: throw IllegalStateException("Bad input: All time records seem to be broken @${day.contents.string}")
+                        ?: throw IllegalStateException("Bad input: All time records seem to be broken @${day.contents.string}")
                 val correctTimeIndex
-                        = times.indexOf(time) - times.indexOf(donor) + TIMES_LIST.indexOf(donor.contents.string)
+                        = times.indexOf(time) - times.indexOf(donor) + TIMES_LIST.indexOf(donor.contents.string.trim())
                 val correctTime = TIMES_LIST[correctTimeIndex]
                 times -= time
                 times += PseudoMergedRange(time, XSSFRichTextString(correctTime))
