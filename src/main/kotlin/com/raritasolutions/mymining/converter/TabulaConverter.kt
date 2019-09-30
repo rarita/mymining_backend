@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 import technology.tabula.ObjectExtractor
 import technology.tabula.Table
 import technology.tabula.extractors.SpreadsheetExtractionAlgorithm
-import java.io.File
+import java.io.InputStream
 
 @Component("tabula")
 class TabulaConverter : BaseConverter {
@@ -19,13 +19,14 @@ class TabulaConverter : BaseConverter {
     override var report: ExtractionReport? = null
 
     // Accepts PDF files
-    override fun convert(localFile: File, defaultBuilding: Int): List<RawPairRecord> {
-        val table = getTabulaTable(localFile)
+    override fun convert(data: InputStream, defaultBuilding: Int): List<RawPairRecord> {
+        val table = getTabulaTable(data)
+        data.close()
         return decompose(table)
     }
 
-    private fun getTabulaTable(file: File): Table {
-        val document = PDDocument.load(file)
+    private fun getTabulaTable(inputStream: InputStream): Table {
+        val document = PDDocument.load(inputStream)
         val objExtractor = ObjectExtractor(document)
         val page = objExtractor.extract(1)
         val table = SpreadsheetExtractionAlgorithm().extract(page)
@@ -33,7 +34,7 @@ class TabulaConverter : BaseConverter {
         objExtractor.close()
         // Very uncanny, but i have nothing to do with randomly spawned subtables
         if (table.size > 1) {
-            report?.addMessage("Dropping excess content on file @${file.toURI().toURL()}")
+            report?.addMessage("Dropping excess content on file @$inputStream")
                     ?: throw IllegalStateException("No Reporter Attached")
             table.drop(1)
                     .flatMap { it.rows }

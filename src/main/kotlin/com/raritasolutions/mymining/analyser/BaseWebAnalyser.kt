@@ -5,5 +5,7 @@ import java.net.URL
 
 @Component
 interface BaseWebAnalyser {
+
     fun analyse(): Map<String, URL>
+
 }

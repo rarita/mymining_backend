@@ -12,12 +12,12 @@ import java.nio.file.Paths
 
 
 @Repository
-class CacheRepository(private val path: String = "cached")
+class CacheRepository(private val path: String = "cached/xls")
 {
     val localFiles
         get() = File(path)
                 .listFiles()
-                .toList()
+                ?.toList() ?: listOf()
 
     val localFilesWithHashes
         get() = localFiles.associateBy {

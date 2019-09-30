@@ -2,7 +2,7 @@ package com.raritasolutions.mymining
 
 import com.raritasolutions.mymining.extractor.ContentsSplitter
 import com.raritasolutions.mymining.utils.ripOneHalfRegex
-import com.raritasolutions.mymining.utils.ripVanillaRegex
+import com.raritasolutions.mymining.utils.ripOneLineRegex
 import org.junit.Test
 
 class ContentsSplitterTest {
@@ -15,7 +15,7 @@ class ContentsSplitterTest {
                 "II Минерально-сырьевая база " +
                 "Российской Федерации " +
                 "Проф. Евдокимов А.Н. No624"
-        val splitter = ContentsSplitter(input, ripVanillaRegex)
+        val splitter = ContentsSplitter(input, ripOneLineRegex)
         val result = splitter.result
         assert(result.contains("I  Культурология Доц. Науменко Н.В. No624"))
         assert(result.contains("II Минерально-сырьевая база Российской Федерации Проф. Евдокимов А.Н. No624"))

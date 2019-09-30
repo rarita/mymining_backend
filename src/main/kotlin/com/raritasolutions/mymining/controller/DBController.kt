@@ -126,4 +126,5 @@ class DBController @Autowired constructor(private val pairRepo: PairRepository,
         // todo might want to pass some params with it
         return RedirectView("/db/list")
     }
+
 }

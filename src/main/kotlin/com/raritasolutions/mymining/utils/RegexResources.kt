@@ -53,8 +53,7 @@ val trailingTokenRegex = "($teacherNoRankRegex|$teacherRank|$singlePairTypeRegex
 val multiweekRoomRegex = "I+.*?-.*?(No|№).*?\\d{2,}.*?I+.*?-.*?(No|№).*?\\d{2,}".toRegex()
 val multiplePairRegexVanilla = "I+.+I+.+".toRegex()
 val roomNumberTokenRegex = "(No|№)".toRegex()
-val ripVanillaRegex = "I.+? (?=I\\s*I)".toRegex()
 val multiplePairRegexOneHalf = "1/[23].+1/[23].+".toRegex()
+val ripOneLineRegex = "I.+?(?=I\\s*I)".toRegex()
 val ripOneHalfRegex = "1/[23].+? (?=1/[23])".toRegex()
 val multiplePairRegexOneLine = "I.*?-?.*?(No|№)?\\d{2,}.*?I\\s*I.*?-?.*?((No|№)?\\d{2,}(а|-\\d)?(,.?)?)+".toRegex() // This regex might be a weak spot. TODO optimise it.
-val ripOneLineRegex = "I.+? (?=I\\s*I)".toRegex()

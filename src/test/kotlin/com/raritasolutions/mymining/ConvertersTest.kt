@@ -14,7 +14,7 @@ class ConvertersTest{
     {
         val parsedTXT = ClassPathResource("/textdata/parsed.txt").file
         val converter = LegacyCSVConverter()
-        val rawList = converter.convert(parsedTXT, 3)
+        val rawList = converter.convert(parsedTXT.inputStream(), 3)
         dummyListAssertions(rawList)
     }
 
@@ -22,7 +22,7 @@ class ConvertersTest{
     fun testTabulaConverter()
     {
         val converter = TabulaConverter()
-        val rawList = converter.convert(FileUtils.getFile("dummy/tablev2.pdf"), 3)
+        val rawList = converter.convert(FileUtils.getFile("dummy/tablev2.pdf").inputStream(), 3)
         dummyListAssertions(rawList)
     }
 

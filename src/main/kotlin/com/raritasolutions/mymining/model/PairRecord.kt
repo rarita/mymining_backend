@@ -8,21 +8,22 @@ import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
 
+// todo: probably map it to application.properties
 const val NO_ROOM = "Нет Аудитории"
 const val NO_TEACHER = "Нет Преподавателя"
 
 // todo: add field validation
 // todo: find a way to bind Lists to fields (maybe custom deserializer)
 @Entity
-@Table(name="schedule_table")
+@Table(name = "schedule_table")
 data class PairRecord(@Id @GeneratedValue var id: Int = 0,
                       @Column (name = "_group") var group: String = "AAA-00",
-                      var teacher: String = "DEFAULT",
+                      var teacher: String = NO_TEACHER,
                       var week: Int = 0,
                       var day: Int = 0,
                       var timeSpan: String = "00:00-01:00",
                       var subject: String = "Default",
-                      var room: String = "0",
+                      var room: String = NO_ROOM,
                       var type: String = "Default",
                       var one_half: String = "0/0",
                       var over_week: Boolean = false,

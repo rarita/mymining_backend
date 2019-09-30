@@ -12,7 +12,7 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.springframework.stereotype.Component
-import java.io.File
+import java.io.InputStream
 
 @Suppress("EXPERIMENTAL_UNSIGNED_LITERALS")
 @Component("reborn")
@@ -135,9 +135,8 @@ class RebornConverter : BaseConverter {
     }
 
     /* XLS-s extracted by SimplePDF are accepted by this method */
-    override fun convert(localFile: File, defaultBuilding: Int): List<RawPairRecord> {
-        val fileInputStream = localFile.inputStream()
-        val workbook = XSSFWorkbook(fileInputStream)
+    override fun convert(data: InputStream, defaultBuilding: Int): List<RawPairRecord> {
+        val workbook = XSSFWorkbook(data)
         val scheduleSheet = workbook.getSheetAt(0)
         // Iterate through table
         // Нормальный код
@@ -189,7 +188,7 @@ class RebornConverter : BaseConverter {
                 }
             }
         }
-        fileInputStream.close()
+        data.close()
         return rawPairList
     }
 }

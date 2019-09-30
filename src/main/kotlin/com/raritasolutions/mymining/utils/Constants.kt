@@ -3,6 +3,7 @@ package com.raritasolutions.mymining.utils
 import com.raritasolutions.mymining.model.reborn.RGBColor
 
 // todo consider java.date or JodaTime to make locale-friendly weekdays
+// todo also consider using enums
 val DAYS_NAMES_MAP = mapOf(
         1 to "Понедельник",
         2 to "Вторник",
@@ -60,3 +61,8 @@ val BUILDINGS_TEXT_COLOR = mapOf(
         RGBColor(255, 204, 0) to 2,
         RGBColor(51, 153, 102) to 3
 )
+
+enum class MimeTypes(val value: String) {
+    EXCEL("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
+    PDF("application/pdf")
+}

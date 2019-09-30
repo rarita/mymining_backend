@@ -7,7 +7,7 @@ import com.raritasolutions.mymining.utils.groupRegex
 import com.raritasolutions.mymining.utils.removeCaretReturns
 import org.apache.commons.csv.CSVFormat
 import org.springframework.stereotype.Component
-import java.io.File
+import java.io.InputStream
 import java.nio.charset.Charset
 
 @Component("legacycsv")
@@ -15,7 +15,7 @@ class LegacyCSVConverter : BaseConverter {
 
     override var report: ExtractionReport? = null
     // Accepts text-based files with parsed CSV contents.
-    override fun convert(localFile: File, defaultBuilding: Int): List<RawPairRecord> {
+    override fun convert(data: InputStream, defaultBuilding: Int): List<RawPairRecord> {
 
         var dayKey: String? = "День недели"
         var timeKey = "Время | Группа"
@@ -27,7 +27,7 @@ class LegacyCSVConverter : BaseConverter {
                 .withTrim()
 
         // Omit first line
-        val reader = localFile
+        val reader = data
                 .bufferedReader((Charset.forName("UTF-8")))
                 .apply { readLine() }
 
@@ -61,6 +61,7 @@ class LegacyCSVConverter : BaseConverter {
                         group,
                         it[group].replace('\r',' ')))
         }
+        data.close()
         return rawList
     }
 }
