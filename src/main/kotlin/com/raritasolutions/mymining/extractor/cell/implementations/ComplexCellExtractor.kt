@@ -37,7 +37,7 @@ open class ComplexCellExtractor(contents: String,
     }
 
     override val extractRoom
-        get() = {
+        = {
             // Adding a character for positive lookahead to stop at the last entry
             _contents += "No" // todo review asap (find better regex for rooms)
             val _result = extractCustomRegexToList(roomRegex,this)
@@ -81,7 +81,7 @@ open class ComplexCellExtractor(contents: String,
         {
             val teacherList
                     = extractCustomRegexToList(teacherRegex,this)
-                        .map { if (it != "Вакансия") it.flavourTeacherString() else NO_TEACHER }
+                        .map { if (vacancyRegex.matches(it)) NO_TEACHER else it.flavourTeacherString() }
             if (teacherList.isEmpty()) raiseParsingException(teacherRegex,this)
             teacherList
                     .joinToString(separator = ", ") { it.replace(",","") }
@@ -119,31 +119,36 @@ open class ComplexCellExtractor(contents: String,
     private fun String.flavourRoomString(): String
         = this.replace("й", "й ").trim()
 
+    /**
+     * Flavours supplied teacher rank string with dots
+     * @return Flavoured teacher rank
+     */
+    private fun String.flavourTeacherRank(): String
+        = when (this) {
+        "Стпр" -> "Ст.пр."
+        else -> "$this."
+    }
+
     // adds required spaces to teacher string
     // probably shouldn't be an extension
     protected fun String.flavourTeacherString(): String
     {
         // Since we extracted teacher without any issues we can be sure we will find these regex's
-        val originalRank = teacherRank
-                .find(this)
+        val normalizedTeacher = this.replace("[.,]".toRegex(), "")
+        val normalizedRank = teacherRankNoDots
+                .find(normalizedTeacher)
                 ?.value
-        // If rank was not found
-        val rankNeedsDot = originalRank?.endsWith('.')?.not() ?: false
-        val normalizedRank = originalRank
                 ?.toLowerCase()
                 ?.capitalize()
-                ?.let { if (rankNeedsDot) "$it." else it } ?: ""
-        val second_space = teacherInitialsNoClosingDot
-                .findAll(this)
-                .last()
-                .range
-                .first + if (rankNeedsDot) 2 else 1
-        val needsClosingDot = teacherInitials.find(this) == null
-        val result = StringBuffer( this.replace(teacherRank, "") )
-                .insert(0, "$normalizedRank ")
-                .insert(second_space," ")
-                .trim()
+                ?.flavourTeacherRank() ?: ""
+
+        val dotLessTeacherNoRank = normalizedTeacher.replaceFirst(teacherRankNoDots, "")
+
+        return StringBuilder()
+                .append("$normalizedRank ")
+                .append(dotLessTeacherNoRank.dropLast(2) + " ")
+                .append(dotLessTeacherNoRank.preLast().toUpperCase() + ".")
+                .append(dotLessTeacherNoRank.last().toUpperCase() + ".")
                 .toString()
-        return result + if (needsClosingDot) "." else ""
     }
 }

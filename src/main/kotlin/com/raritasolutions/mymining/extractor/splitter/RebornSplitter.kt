@@ -11,6 +11,18 @@ class RebornSplitter(override val initialContents: String) : BaseSplitter {
         get() = split()
 
     /**
+     * Checks if specified [MatchResult] is located outside the braces
+     * A way to distinguish fake and legitimate week tokens
+     * @return True if token is located outside the braces
+     */
+    private fun MatchResult.isOutsideBraces(): Boolean {
+        val tokenPrefix = initialContents.substring(0, this.range.first)
+        val openingBraces = tokenPrefix.count { it == '(' }
+        val closingBraces = tokenPrefix.count { it == ')' }
+        return openingBraces == closingBraces
+    }
+
+    /**
      *  Due to differences of searching for trailing and leading tokens it is simpler to write two separate methods
      *  Instead of stacking if-s and passing a damn billion parameters to single function
      *  It might be a little self-copying but it will be much easier to read and understand.
@@ -19,6 +31,7 @@ class RebornSplitter(override val initialContents: String) : BaseSplitter {
         // Run through string and search for possible room NUMBERS
         val tokenPositions = leadingTokenRegex
                 .findAll(initialContents)
+                .filter { it.isOutsideBraces() } // Filter fake week tokens (roman numeral 1 prepended with '(')
                 .toList()
         // If the list is empty do not proceed
         if (tokenPositions.isEmpty())

@@ -219,7 +219,9 @@ class RawConverterTest {
                 "Доц. Гайкович С.В. пр. №3519\n" +
                 "II Профессиональная архитектурная практика Доц. Гайкович С.В. №3519")
         val result = getOutput(input)
-        result.forEach(::println)
+        assert(result.size == 2)
+        assert(result.all { it.subject == "Профессиональная архитектурная практика" })
+        assert(result.all { it.room == "3519" })
     }
 
     @Test
@@ -228,10 +230,40 @@ class RawConverterTest {
                 "Доц. Карасёв М.А. пр. №4401 с 16.04 - №3527")
         val result = getOutput(input)
         assert(result.size == 1)
-        with (result.first()) {
+        with(result.first()) {
             assert(isCorrect())
             assert(subject == "Моделирование физических процессов в горном деле")
             assert(room == "3527, 4401")
+        }
+    }
+
+    @Test
+    fun testTrailingCommasInMultiWeekPairs() {
+        val input = makeFromString("Основы научных исследований Доц. Ковальский Е.Р.\n" +
+                "I №820 , II №347")
+        val result = getOutput(input)
+        assert(result.size == 2)
+        with(result) {
+            assert(all(PairRecord::isCorrect))
+            assert(first().room == "820")
+            assert(last().room == "347")
+        }
+    }
+
+    @Test
+    fun testDoubleMultiWeekRooms() {
+        // In perfect case this should be split to 2 pairs
+        val input = makeFromString("Начертательная геометрия Асс. Кононов П.В. пр.\n" +
+                "I - №719  II - №724\n" +
+                "Доц. Третьякова З.О. пр.\n" +
+                "I -  №729  II - №728")
+        val result = getOutput(input)
+        assert(result.size == 1)
+        with(result.first()) {
+            assert(room == "719, 724, 728, 729")
+            assert(subject == "Начертательная геометрия")
+            assert(week == 0)
+            assert("Асс. Кононов П.В." in teacher && "Доц. Третьякова З.О." in teacher)
         }
     }
 }

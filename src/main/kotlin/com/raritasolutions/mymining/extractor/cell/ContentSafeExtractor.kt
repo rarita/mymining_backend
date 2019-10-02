@@ -26,6 +26,8 @@ abstract class ContentSafeExtractor(private val contents: String,
         val _subject = pairInstance
                 .extract()
                 .removeContentInBraces()
+
+        check(_subject.isNotBlank()) { "Subject appears to be blank for contents = $contents" }
         /* If the space amount in the string is OK finish extracting and register subject string
         found in contents to global DB. If not, wait until correct subject string is found and
         then finish the extraction  */
@@ -46,7 +48,7 @@ abstract class ContentSafeExtractor(private val contents: String,
             SubjectQueue.subscribe(_subject, this@ContentSafeExtractor)
     }
 
-    // Checks if ORIGINAL string has an adequate amount of spaces (not more than 20% of the whole input)
+    // Checks if ORIGINAL string has an adequate amount of spaces (not more than 22.5% of the whole input)
     private fun hasValidSpaceAmount() : Boolean
     {
         val spaceCount = contents
@@ -74,8 +76,7 @@ abstract class ContentSafeExtractor(private val contents: String,
             // Start occurrences doesn't really matter since there is nothing in string
             // Before the subject itself that can be treated as the part of the subject
             endOccurrences = contentsFixed.countRegex(subject.takeLast(greed).mayContainSpaces().toRegex())
-            if (greed > subject.length / 2)
-                throw Exception("Greed is longer than the whole subject")
+            check(greed <= subject.length / 2) { "Greed is longer than the whole subject for contents = $contents" }
         } while (endOccurrences != 1)
         return greed
     }
@@ -104,4 +105,5 @@ abstract class ContentSafeExtractor(private val contents: String,
                 ?: throw Exception("Original subject can't be extracted. Subject is $subject and contents is $contents " +
                         "@ [${this.pairInstance.group},${this.pairInstance.day},${this.pairInstance.timeSpan}]")
     }
+
 }

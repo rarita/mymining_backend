@@ -43,4 +43,13 @@ class CellExtractorFactoryTest {
         // Assert that the field was overridden so _contents doesn't change after extractWeek() call.
         assert(extractor._contents == extractor.apply { extractWeek() }._contents)
     }
+
+    @Test
+    fun testComplexPairFactory() {
+        val input = "1/2 Физика\n" +
+                "Доц. Фицак В.В. л/р  I - №235,236 Доц. Томаев В.В   II -№231"
+        val extractor = CellExtractorFactory(input).produce()
+        assert(extractor is ComplexCellExtractor)
+    }
+
 }

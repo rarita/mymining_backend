@@ -12,6 +12,7 @@ class CellExtractorFactory(private val contents: String,
     private val pairInstance = basePair.copy()
     private val contentsNoSpaces = contents.removeSpecialCharacters()
 
+
     fun produce() = when {
         /* Declare week = 0 for this case to simplify extraction process.
            For example see CellExtractorTest:testMultipleRoomTypesInSingleClass() */
@@ -41,8 +42,15 @@ class CellExtractorFactory(private val contents: String,
             object : ComplexCellExtractor(contents, pairInstance) {
                 override val extractRoom: () -> String
                 get() = {
-                    val roomWithText = extractCustomRegex(roomMiningMuseumRegex, this)!!
-                    "Горный музей, Зал ${roomWithText.substringAfterRegex(roomSearchingRegex)}"
+                    if (roomMiningMuseumWithRoomRegex.containsMatchIn(this._contents)) {
+                        val roomWithText = extractCustomRegex(roomMiningMuseumRegex, this)!!
+                        "Горный музей, Зал ${roomWithText.substringAfterRegex(roomSearchingRegex)}"
+                    }
+                    else {
+                        extractCustomRegex(roomMiningMuseumRegex, this)
+                        "Горный музей"
+                    }
+
                 }
             }
         // Regular case.

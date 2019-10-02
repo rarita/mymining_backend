@@ -88,6 +88,24 @@ class RawConverter(private val rawList: List<RawPairRecord>,
                      timeSpan = this.timeSpan,
                      group = this.group)
 
+    /**
+     * Checks if string (matched with multiplePairRegexOneLine)
+     * can be processed by addEnhancedContents
+     * @return True if string should be delegated to addEnhancedContents
+     */
+    private fun String.hasRegularEnhancedContents(): Boolean {
+        val matches = multiplePairRegexOneLine.findAll(this)
+        if (matches.count() > 1)
+            return false
+
+        val match = matches.firstOrNull()
+                ?: return false
+        val hasTeacherInIt = match.value.contains(teacherRegex)
+        val hasOtherRooms = this.replace(multiplePairRegexOneLine, "")
+                .contains(roomRegex)
+
+        return !hasTeacherInIt && !hasOtherRooms
+    }
 
     private fun addContents(basePair: PairRecord,
                             contentList : List<String>,
@@ -98,8 +116,7 @@ class RawConverter(private val rawList: List<RawPairRecord>,
         if (formatting != null)
             basePair.buildingID = findBuildingId(initialContents, it, formatting)
         // If it contains simple rooms as well as multi-rooms it should be handled by the Extractor implementation
-        if (multiplePairRegexOneLine.containsMatchIn(it)
-                && !it.replace(multiplePairRegexOneLine, "").contains("No"))
+        if (it.hasRegularEnhancedContents())
             addEnhancedContents(basePair,it,ContentsSplitter(it, ripOneLineRegex).result)
         else
             _extractorList.add(CellExtractorFactory(it, basePair).produce())
@@ -110,15 +127,17 @@ class RawConverter(private val rawList: List<RawPairRecord>,
                                     rooms: List<String>)
     {
         if (rooms.size != 2)
-            throw IllegalArgumentException("Rooms size must be exact 2 (now is ${rooms.size}")
+            throw IllegalArgumentException("Rooms size must be exact 2 (received ${rooms.size}")
 
-        for (week in rooms.indices){
+        for (week in rooms.indices) {
             val prefix = if (rooms[week].contains(roomNumberTokenRegex)) roomNumberTokenRegex else "-".toRegex()
             basePair.week = week+1
             basePair.room = rooms[week]
                     .substringAfterRegex(prefix)
                     .replace(roomNumberTokenRegex, "")
+                    .dropLastWhile { it == ' ' || it == ',' }
                     .trim()
+
             _extractorList.add(CellExtractorFactory(originalContents.replace(multiplePairRegexOneLine,""),
                                                     basePair).produce())
         }

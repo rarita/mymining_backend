@@ -113,7 +113,7 @@ class PairSplitterTest {
     }
 
     @Test
-    fun testMultiweekManyPairSplitting() {
+    fun testMultiWeekManyPairSplitting() {
         val input = listOf("1/2 ГИС в экологии и природопользовании Доц. Стриженок А.В. л/р №1307",
                 "1/2 Инженерная геология и гидрогеология Доц. Норова Л.П. л/р I - №3205 II - №3203,3205")
         val contentsSplit = RebornSplitter(input.joinToString(separator = " ")).separatedContents
@@ -207,4 +207,30 @@ class PairSplitterTest {
             assert(last() == "с 10.04 по 5.06 II Культурология Доц. Бондарева О.Н. №832")
         }
     }
+
+    @Test
+    fun testMultiWeekBrokenTeacher() {
+        val input = "1/2 Физика " +
+                "Доц. Фицак В.В. л/р  I - №235,236 Доц. Томаев В.В   II -№231 " +
+                "1/2 Начертательная геометрия Доц. Судариков А.Е. пр. №721"
+        val splitter = RebornSplitter(input)
+        with(splitter.separatedContents) {
+            assert(size == 2)
+            assert(first() == "1/2 Физика Доц. Фицак В.В. л/р  I - №235,236 Доц. Томаев В.В   II -№231")
+            assert(last() == "1/2 Начертательная геометрия Доц. Судариков А.Е. пр. №721")
+        }
+    }
+
+    @Test
+    fun testPseudoTokenInBracesBait() {
+        val input = listOf(
+                "1/2 Архитектурное проектирование (I уровень) Ст.пр. Прокопенко Е.Ю. пр. №3513",
+                "1/2 Основы профессиональных коммуникаций Проф. Петров В.Н. пр. №1228")
+        val contentsSplit = RebornSplitter(input.joinToString(separator = " ")).separatedContents
+        with(contentsSplit) {
+            assert(size == 2)
+            containsAll(input)
+        }
+    }
+
 }

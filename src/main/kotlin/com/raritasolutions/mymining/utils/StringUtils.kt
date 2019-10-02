@@ -50,3 +50,6 @@ fun String.mayContainSpaces(): String{
 
 fun String.matchesSubgroup(group: String)
     = this == group.substringBeforeLast('а') || this == group
+
+fun String.preLast()
+    = this[this.length - 2]

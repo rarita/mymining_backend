@@ -111,6 +111,7 @@ class CellExtractorTest
             assert(subject == "Маркшейдерские и геодезические приборы")
         }
     }
+
     @Test
     fun testMultipleRooms()
     {
@@ -193,7 +194,7 @@ class CellExtractorTest
         val input = "Геология\n" +
                 "Доц. Тутакова А.Я No832"
         val extractor = ComplexCellExtractor(input).apply { make() }
-        with (extractor.result){
+        with (extractor.result) {
             assert(subject == "Геология")
             assert(teacher == "Доц. Тутакова А.Я.")
             assert(type == "лекция")
@@ -281,11 +282,11 @@ class CellExtractorTest
 
     @Test
     fun testVacancyInTeacherField() {
-        val input = "Иностранный язык Вакансия"
-        val extractor = CellExtractorFactory(input).produce().apply { make() }
-        with (extractor.result) {
-            assert(subject == "Иностранный язык")
-            assert(teacher == NO_TEACHER)
+        val input = listOf("Иностранный язык Вакансия", "1/2 Информатика Вакансия 1 л/р №336")
+        val extractors = input
+                .map { CellExtractorFactory(it).produce().apply { make() } }
+        for (pairRecord in extractors.map { it.result }) {
+            assert(pairRecord.teacher == NO_TEACHER)
         }
     }
 
@@ -421,23 +422,33 @@ class CellExtractorTest
 
     @Test
     fun testRoomInMiningMuseumExtraction() {
-        val input = "ч/н 1/2 Ювелирные, поделочные и облицовочные камни Доц. Боровкова Н.В. л/р Горн. музей зал №16"
-        val extractor = CellExtractorFactory(input).produce().apply { make() }
-        with (extractor.result) {
-            assert(isCorrect())
-            assert(subject == "Ювелирные, поделочные и облицовочные камни")
-            assert(room == "Горный музей, Зал 16")
+        val input = listOf(
+                "ч/н 1/2 Ювелирные, поделочные и облицовочные камни Доц. Боровкова Н.В. л/р Горн. музей зал №16",
+                "I 1/2 Общая геология Вакансия л/р №Горн.музей",
+                "Геология Доц. Ляхницкий Ю.С. Асс. Илалова Р.К. л/р №Горный музей")
+        val results = input.map {
+            CellExtractorFactory(it).produce().apply { make() }.result
+        }
+        with (results) {
+            assert(all(PairRecord::isCorrect))
+            assert(all {it.room == "Горный музей, Зал 16" || it.room == "Горный музей"})
         }
     }
 
     @Test
     fun testIgnoringBraces() {
-        val input = "Прикладное программирование Доц. Бойков А.В. пр. №3303 ( 2.04 )"
-        val extractor = CellExtractorFactory(input).produce().apply { make() }
-        with (extractor.result) {
-            assert(isCorrect())
-            assert(room == "3303")
-        }
+        val input = listOf(
+                "Прикладное программирование Доц. Бойков А.В. пр. №3303 ( 2.04 )",
+                "Архитектурное проектирование (I уровень) Доц. Колордина Т.Я. пр. №3519 Ст.пр. Прокопенко Е.Ю. пр. №3513",
+                "1/2 Архитектурное проектирование (I уровень)\n" +
+                        "Ст.пр. Прокопенко Е.Ю. пр. №3513")
+
+        input
+                .map { CellExtractorFactory(it).produce().apply { make() } }
+                .forEach {
+                    println(it.result)
+                    assert(it.result.isCorrect())
+                }
     }
 
     @Test
@@ -479,4 +490,19 @@ class CellExtractorTest
             assert(one_half == "1/2")
         }
     }
+
+    @Test
+    fun testMisspelledTeacher() {
+        val input = "II Иностранный язык Доц.Троицкая мА. пр. No822 Преп. Спиридонова В.А. пр. No803"
+        val extractor = CellExtractorFactory(input).produce().apply { make() }
+        with (extractor.result) {
+            assert(isCorrect())
+            assert(subject == "Иностранный язык")
+            assert(teacher == "Доц. Троицкая М.А., Преп. Спиридонова В.А.")
+            assert(room == "803, 822")
+            assert(type == "практика")
+            assert(week == 2)
+        }
+    }
+
 }

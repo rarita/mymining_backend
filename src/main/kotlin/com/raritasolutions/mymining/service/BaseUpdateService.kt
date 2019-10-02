@@ -14,7 +14,6 @@ import okhttp3.Request
 import okhttp3.Response
 import java.io.File
 import java.net.URL
-import java.nio.file.Path
 
 abstract class BaseUpdateService (private val pairRepo: PairRepository,
                          private val cacheService: CacheService,
@@ -76,8 +75,10 @@ abstract class BaseUpdateService (private val pairRepo: PairRepository,
                 .filterNot { File("cached/new_xls/${it.fileName}").exists() }
                 .forEach {
                     cacheService.updateFileWithAlias(it)
+                    /*
                     println("[I] Saving ${it.fileName}...")
                     it.saveTo(Path.of("cached", "new_xls", it.fileName))
+                     */
                 }
 
 
@@ -104,7 +105,7 @@ abstract class BaseUpdateService (private val pairRepo: PairRepository,
         }
 
         if (processedExtractors.isEmpty())
-            report.addMessage("Nothing was extracted from the ")
+            report.addMessage("Nothing was extracted from ${processedFiles.joinToString()}")
 
         val results = arrayListOf<PairRecord>()
         for (pe in processedExtractors) {
