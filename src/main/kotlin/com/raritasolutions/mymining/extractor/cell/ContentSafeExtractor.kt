@@ -69,15 +69,20 @@ abstract class ContentSafeExtractor(private val contents: String,
         val contentsFixed = contents
                 .replace(lineBreaksRegex," ")
                 .removeContentInBraces()
-        var greed = 1 // It is pointless to start @ 1 (0) b.c 90% of the time it is going to be skipped
+        var greed = 0 // For 3-letter abbreviations to work properly, otherwise it should be 1
         var endOccurrences : Int
         do {
             greed++
             // Start occurrences doesn't really matter since there is nothing in string
             // Before the subject itself that can be treated as the part of the subject
-            endOccurrences = contentsFixed.countRegex(subject.takeLast(greed).mayContainSpaces().toRegex())
+            val regex = subject.takeLast(greed)
+                    .mayContainSpaces()
+                    .shieldSymbols('(', ')', '.')
+                    .toRegex()
+            endOccurrences = contentsFixed.countRegex(regex)
             check(greed <= subject.length / 2) { "Greed is longer than the whole subject for contents = $contents" }
         } while (endOccurrences != 1)
+
         return greed
     }
 
@@ -87,10 +92,10 @@ abstract class ContentSafeExtractor(private val contents: String,
         val greed = findMinimalWorkingGreed(subject)
         // Should match first letter and last letter of Subject
         val prefix = subject.take(greed)
-                                    .shieldSymbol('(')
+                                    .shieldSymbols('(', '.')
                                     .mayContainSpaces()
         val postfix = subject.takeLast(greed)
-                                    .shieldSymbol(')')
+                                    .shieldSymbols(')', '.')
                                     .mayContainSpaces()
 
         val regex = "$prefix.*$postfix".toRegex() // NOTE it was made NOT GREEDY for data between keys

@@ -41,17 +41,18 @@ class CellExtractorFactory(private val contents: String,
         roomMiningMuseumRegex.containsMatchIn(contentsNoSpaces) ->
             object : ComplexCellExtractor(contents, pairInstance) {
                 override val extractRoom: () -> String
-                get() = {
-                    if (roomMiningMuseumWithRoomRegex.containsMatchIn(this._contents)) {
-                        val roomWithText = extractCustomRegex(roomMiningMuseumRegex, this)!!
-                        "Горный музей, Зал ${roomWithText.substringAfterRegex(roomSearchingRegex)}"
-                    }
-                    else {
-                        extractCustomRegex(roomMiningMuseumRegex, this)
-                        "Горный музей"
+                get() =
+                    when {
+                        (roomMiningMuseumWithRoomRegex.containsMatchIn(this._contents)) -> ({
+                            val roomWithText = extractCustomRegex(roomMiningMuseumRegex, this)!!
+                            "Горный музей, Зал ${roomWithText.substringAfterLastRegex(roomSearchingRegex)}"
+                        })
+                        else -> ({
+                            extractCustomRegex(roomMiningMuseumRegex, this)
+                            "Горный музей"
+                        })
                     }
 
-                }
             }
         // Regular case.
         pairRegex.containsMatchIn(contentsNoSpaces) -> // todo review containsMatchIn vs matches

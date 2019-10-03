@@ -266,4 +266,39 @@ class RawConverterTest {
             assert("Асс. Кононов П.В." in teacher && "Доц. Третьякова З.О." in teacher)
         }
     }
+
+    @Test
+    fun testSubjectWithDotsInIt() {
+        val input = makeFromString("I  Методы обоснования нормативов и системы технической эксплуатации АТС.\n" +
+                " Доц. Кацуба Ю.Н. лк, пр. №3306\n" +
+                "II Методы обоснования нормативов и системы технической эксплуатации АТС.\n" +
+                "Доц. Кацуба Ю.Н. пр. №3306")
+        val result = getOutput(input)
+        assert(result.size == 2)
+        with (result) {
+            assert(all { it.isCorrect() })
+            assert(all { it.room == "3306" })
+            assert(all { it.subject == "Методы обоснования нормативов и системы технической эксплуатации АТС." })
+            assert(all { it.teacher == "Доц. Кацуба Ю.Н." })
+        }
+    }
+
+    @Test
+    fun testTrailingTokenSplitsByNewLineCharacter() {
+        val input = makeFromString("Физическая культура Ст.пр. Ларионова М.Н.\n" +
+                "Практика по корпоративной отчётности в горных компаниях\n" +
+                "Проф. Пономаренко Т.В. пр. №4614 (30.12)")
+        val result = getOutput(input)
+        assert(result.size == 2)
+        with (result) {
+            assert(all { it.isCorrect() })
+
+            assert(first().teacher == "Ст.пр. Ларионова М.Н.")
+            assert(first().subject == "Физическая культура")
+
+            assert(last().teacher == "Проф. Пономаренко Т.В.")
+            assert(last().subject == "Практика по корпоративной отчётности в горных компаниях")
+        }
+    }
+
 }

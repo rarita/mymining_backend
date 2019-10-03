@@ -7,6 +7,7 @@ import com.raritasolutions.mymining.model.reborn.DayTimeRecord
 import com.raritasolutions.mymining.model.reborn.PseudoMergedRange
 import com.raritasolutions.mymining.model.reborn.RGBColor
 import com.raritasolutions.mymining.utils.*
+import org.apache.poi.ss.usermodel.BorderStyle
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.xssf.usermodel.XSSFRichTextString
 import org.apache.poi.xssf.usermodel.XSSFSheet
@@ -83,9 +84,9 @@ class RebornConverter : BaseConverter {
                 // First found cell should be top left. Check just in case.
                 if (!borderMask[rowIndex][cellIndex] && this[rowIndex, cellIndex].isStarting()) {
                     var offsetRight = 0
-                    while (this[rowIndex, cellIndex + offsetRight].cellStyle.borderRight < 1) offsetRight++
+                    while (this[rowIndex, cellIndex + offsetRight].cellStyle.borderRight < BorderStyle.valueOf(1)) offsetRight++
                     var offsetBottom = 0
-                    while (this[rowIndex + offsetBottom, cellIndex + offsetRight].cellStyle.borderBottom < 1) offsetBottom++
+                    while (this[rowIndex + offsetBottom, cellIndex + offsetRight].cellStyle.borderBottom < BorderStyle.valueOf(1)) offsetBottom++
                     // Compose merged cell contents
                     val contents
                             = this.composeContents(rowIndex, rowIndex + offsetBottom, cellIndex, cellIndex + offsetRight)
@@ -171,7 +172,7 @@ class RebornConverter : BaseConverter {
                             if (cell.cellStyle.fillForegroundXSSFColor != null && !cell.cellStyle.fillForegroundXSSFColor.isAuto) {
                                 val cellColor = RGBColor(cell.cellStyle.fillForegroundXSSFColor.rgb)
                                 listOf(BuildingData(0, cellColor.findBuildingId(BUILDINGS_CELL_COLOR)
-                                        ?: throw IllegalStateException("Color $this is not present in $BUILDINGS_CELL_COLOR")))
+                                        ?: throw IllegalStateException("Color $cellColor is not present in $BUILDINGS_CELL_COLOR")))
                             }
                             else
                                 cell.richStringCellValue.toBuildingData(defaultBuilding)

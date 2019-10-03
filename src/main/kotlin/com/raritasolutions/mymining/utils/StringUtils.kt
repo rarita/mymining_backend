@@ -32,6 +32,9 @@ fun String.shrink()
 fun String.substringAfterRegex(regex: Regex): String
         = slice((regex.find(this)?.range?.endInclusive?.plus(1) ?: 0) until this.length)
 
+fun String.substringAfterLastRegex(regex: Regex): String?
+        = substring(regex.findAll(this).last().range.last + 1, this.length)
+
 fun String.shieldSymbol(symbol: Char)
         = replace(symbol.toString(),"[$symbol]")
 

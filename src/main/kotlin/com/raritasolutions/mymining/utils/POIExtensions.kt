@@ -72,18 +72,18 @@ fun Cell.toCellRangeAddress(): CellRangeAddress
  *  (top and left borders are present, bottom and right aren't)
  */
 fun Cell.isStarting() : Boolean
-        = with(this.cellStyle) { (borderLeft * borderTop == 1 || borderTop * (this@isStarting.columnIndex + 1) == 1)
-        && borderRight * borderBottom == 0 }
+        = with(this.cellStyle) { (borderLeft.code * borderTop.code == 1 || borderTop.code * (this@isStarting.columnIndex + 1) == 1)
+        && borderRight.code * borderBottom.code == 0 }
 
 /**
  *  Checks whether the cell starts the PseudoMergedRange
  *  The exact opposite of Cell.isStarting()
  */
 fun Cell.isEnding() : Boolean
-        = with(this.cellStyle) { borderRight * borderBottom == 1 && borderLeft * borderTop == 0 }
+        = with(this.cellStyle) { borderRight.code * borderBottom.code == 1 && borderLeft.code * borderTop.code == 0 }
 
 /**
  * Checks if the cell has all of the borders
  */
 fun Cell.isBorderComplete() : Boolean
-        = with(this.cellStyle) { borderBottom * borderTop * borderLeft * borderRight > 0 }
+        = with(this.cellStyle) { borderBottom.code * borderTop.code * borderLeft.code * borderRight.code > 0 }

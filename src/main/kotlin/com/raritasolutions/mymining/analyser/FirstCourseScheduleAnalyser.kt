@@ -11,7 +11,9 @@ import java.nio.charset.Charset
 // todo move parameter to spring properties
 @Component("firstcourseweb")
 class FirstCourseScheduleAnalyser: BaseWebAnalyser {
+
     var baseURL : URL = URL("http://spmi.ru/node/7085/")
+    var course: Int = 4
 
     override fun analyse(): Map<String, URL> {
         // Get page and set UTF-8 Encoding
@@ -20,8 +22,8 @@ class FirstCourseScheduleAnalyser: BaseWebAnalyser {
         val webPage = Jsoup.parse(html)
         val links = webPage.select("a[href]")
         return links
-                .filter { "1\\s?курс".toRegex() in URLDecoder.decode(it.attr("href"),"UTF-8") }
-                .associateBy ({ "1 курс (${it.text()})"}, { URL(baseURL, it.attr("href")) } )
+                .filter { "$course\\s?курс".toRegex() in URLDecoder.decode(it.attr("href"),"UTF-8") }
+                .associateBy ({ "$course курс (${it.text()})"}, { URL(baseURL, it.attr("href")) } )
     }
 
 }

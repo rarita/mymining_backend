@@ -58,7 +58,7 @@ class RebornSplitter(override val initialContents: String) : BaseSplitter {
     }
 
     fun findTrailingTokens() : List<MatchResult> {
-        val tokenPositions = roomNumberRegex
+        val tokenPositions = trailingTokenRegex
                 .findAll(initialContents)
                 .toList()
         if (tokenPositions.isEmpty())

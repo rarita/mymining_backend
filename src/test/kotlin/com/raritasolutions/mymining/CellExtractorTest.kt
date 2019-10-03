@@ -423,12 +423,14 @@ class CellExtractorTest
     @Test
     fun testRoomInMiningMuseumExtraction() {
         val input = listOf(
-                "ч/н 1/2 Ювелирные, поделочные и облицовочные камни Доц. Боровкова Н.В. л/р Горн. музей зал №16",
-                "I 1/2 Общая геология Вакансия л/р №Горн.музей",
-                "Геология Доц. Ляхницкий Ю.С. Асс. Илалова Р.К. л/р №Горный музей")
-        val results = input.map {
-            CellExtractorFactory(it).produce().apply { make() }.result
-        }
+                //"ч/н 1/2 Ювелирные, поделочные и облицовочные камни Доц. Боровкова Н.В. л/р Горн. музей зал №16",
+                //"I 1/2 Общая геология Вакансия л/р №Горн.музей",
+                //"Геология Доц. Ляхницкий Ю.С. Асс. Илалова Р.К. л/р №Горный музей",
+                "I  Основы геммологии Доц. Боровкова Н.В. пр. №Зал №16")
+
+        val results = input
+                .map { CellExtractorFactory(it).produce().apply { make() }.result }
+
         with (results) {
             assert(all(PairRecord::isCorrect))
             assert(all {it.room == "Горный музей, Зал 16" || it.room == "Горный музей"})
@@ -463,9 +465,13 @@ class CellExtractorTest
 
     @Test
     fun testHighlyAbbreviatedSubject() {
-        val input = "НОП, Э и Р металл. машин и оборудования Проф. Болобов В.И. №6208 I - лк. II - пр."
-        val extractor = CellExtractorFactory(input).produce().apply { make() }
-        println(extractor.result)
+        val input = listOf (
+                "НОП, Э и Р металл. машин и оборудования Проф. Болобов В.И. №6208 I - лк. II - пр.",
+                "1/2 ТОЭ Асс. Барданов А.И. л/р №431")
+        val extractors = input.map {
+            CellExtractorFactory(it).produce().apply { make() }
+        }
+        assert(extractors.all { it.result.isCorrect() })
     }
 
     @Test
@@ -494,7 +500,8 @@ class CellExtractorTest
     @Test
     fun testMisspelledTeacher() {
         val input = "II Иностранный язык Доц.Троицкая мА. пр. No822 Преп. Спиридонова В.А. пр. No803"
-        val extractor = CellExtractorFactory(input).produce().apply { make() }
+        val extractor = CellExtractorFactory(input).produce()
+                .apply { make() }
         with (extractor.result) {
             assert(isCorrect())
             assert(subject == "Иностранный язык")
@@ -502,6 +509,40 @@ class CellExtractorTest
             assert(room == "803, 822")
             assert(type == "практика")
             assert(week == 2)
+        }
+    }
+
+    @Test
+    fun testTeacherAndRoomFolding() {
+        val input = "I Электротехнические комплексы повышения производительности нефтепродуктовых пластов Доц. Бельский А.А. №3606 (3.9 - 26.11) " +
+                "Доц. Бельский А.А. пр. №3606 (10.12 и 24.12)"
+        val extractor = CellExtractorFactory(input).produce()
+                .apply { make() }
+        with (extractor.result) {
+            assert(isCorrect())
+            assert(subject == "Электротехнические комплексы повышения производительности нефтепродуктовых пластов")
+            assert(teacher == "Доц. Бельский А.А.")
+            assert(room == "3606")
+            assert(week == 1)
+        }
+    }
+
+    /**
+     * In some case these intelligent people just decide
+     * not to write full teacher name. Teacher pool should help
+     * application to complete teacher name
+     */
+    @Test
+    fun testTeacherPool() {
+        val input = "I Безопасность жизнедеятельности Асс. Фещенко пр. №1110"
+        val extractor = CellExtractorFactory(input).produce()
+                .apply { make() }
+        with (extractor.result) {
+            assert(isCorrect())
+            assert(subject == "Безопасность жизнедеятельности")
+            assert(teacher == "Асс. Фещенко Е.А.")
+            assert(room == "1110")
+            assert(type == "практика")
         }
     }
 

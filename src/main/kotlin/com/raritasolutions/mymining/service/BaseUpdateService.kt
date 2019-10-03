@@ -12,7 +12,6 @@ import com.raritasolutions.mymining.repo.PairRepository
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
-import java.io.File
 import java.net.URL
 
 abstract class BaseUpdateService (private val pairRepo: PairRepository,
@@ -72,13 +71,12 @@ abstract class BaseUpdateService (private val pairRepo: PairRepository,
         // Process the files and store it in the persistent cache
         val processedFiles = process(filesToUpdate)
         processedFiles
-                .filterNot { File("cached/new_xls/${it.fileName}").exists() }
+                //.filterNot { File("cached/new_xls/${it.fileName}").exists() }
                 .forEach {
                     cacheService.updateFileWithAlias(it)
-                    /*
-                    println("[I] Saving ${it.fileName}...")
-                    it.saveTo(Path.of("cached", "new_xls", it.fileName))
-                     */
+
+                    //println("[I] Saving ${it.fileName}...")
+                    //it.saveTo(Path.of("cached", "new_xls", it.fileName))
                 }
 
 

@@ -53,7 +53,8 @@ val BUILDINGS_CELL_COLOR = mapOf(
         RGBColor(197, 217, 240) to 1,
         RGBColor(220, 230, 240) to 1,
         RGBColor(255, 255, 204) to 2,
-        RGBColor(215, 227, 187) to 3
+        RGBColor(215, 227, 187) to 3,
+        RGBColor(235, 240, 222) to 3
 )
 
 val BUILDINGS_TEXT_COLOR = mapOf(

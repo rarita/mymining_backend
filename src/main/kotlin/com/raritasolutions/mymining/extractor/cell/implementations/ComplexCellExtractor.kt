@@ -82,6 +82,7 @@ open class ComplexCellExtractor(contents: String,
             val teacherList
                     = extractCustomRegexToList(teacherRegex,this)
                         .map { if (vacancyRegex.matches(it)) NO_TEACHER else it.flavourTeacherString() }
+                        .distinct()
             if (teacherList.isEmpty()) raiseParsingException(teacherRegex,this)
             teacherList
                     .joinToString(separator = ", ") { it.replace(",","") }
@@ -95,7 +96,7 @@ open class ComplexCellExtractor(contents: String,
             "I" -> 1
             "II" -> 2
             null -> if (pairInstance.week != 0) 0 else pairInstance.week
-            else -> throw Exception("Received unexpected number of weeks.")
+            else -> 0 // & Log unexpected number of weeks
         }
     }
 

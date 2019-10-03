@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component
 @Component("proc_simplyPDF")
 class SimplyPDFProcessor @Autowired constructor(private val okHttpClient: OkHttpClient,
                                                 private val mapper: ObjectMapper,
+                                                @Value("\${info.app.name}") private var appName: String = "MyMiningApplication",
                                                 @Value("\${info.app.version}") private var appVersion: String = "0.9.2-test_build") : BasePDFProcessor {
 
     // Options that should be injected
@@ -23,7 +24,7 @@ class SimplyPDFProcessor @Autowired constructor(private val okHttpClient: OkHttp
 
     private val headers = Headers.Builder()
             .add("Accept", "application/json")
-            .add("User-Agent", "MyMiningApplication/$appVersion")
+            .add("User-Agent", "$appName/$appVersion")
             .build()
 
     private val cacheControl = CacheControl.FORCE_NETWORK
