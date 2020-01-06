@@ -58,7 +58,6 @@ abstract class BaseUpdateService (private val pairRepo: PairRepository,
         val aliasesWereUpdated = isColdBoot || !remoteFiles.all(cacheService::hasAlias)
         val filesToUpdate = if (aliasesWereUpdated) {
             cacheService.clearAll()
-            pairRepo.deleteAll()
             remoteFiles
         }
         else
@@ -68,15 +67,14 @@ abstract class BaseUpdateService (private val pairRepo: PairRepository,
         if (filesToUpdate.isEmpty())
             return
 
+        // Temporary action. Need to figure out what to leave and what to keep in the future
+        pairRepo.deleteAll()
+
         // Process the files and store it in the persistent cache
         val processedFiles = process(filesToUpdate)
         processedFiles
-                //.filterNot { File("cached/new_xls/${it.fileName}").exists() }
                 .forEach {
                     cacheService.updateFileWithAlias(it)
-
-                    //println("[I] Saving ${it.fileName}...")
-                    //it.saveTo(Path.of("cached", "new_xls", it.fileName))
                 }
 
 
@@ -89,7 +87,6 @@ abstract class BaseUpdateService (private val pairRepo: PairRepository,
                 .map { RawConverter(it.second, report, it.first).extractorList }
                 .flatten()
 
-        //val extractors = RawConverter(listOf(), report, 1).extractorList // Заглушка
         // Ugly workaround faulty cases
         val processedExtractors = arrayListOf<ContentSafeExtractor>()
         for (extractor in extractors){
@@ -116,4 +113,5 @@ abstract class BaseUpdateService (private val pairRepo: PairRepository,
         }
         pairRepo.saveAll(results)
     }
+
 }

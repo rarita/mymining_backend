@@ -22,7 +22,7 @@ class RebornUpdateService @Autowired constructor(pairRepo: PairRepository,
 
     override fun process(files: List<CachedFile>)
         = files.map(pdfProcessor::processFile)
-             /* = File("cached/new_xls/").walk()
+            /* = File("cached/new_xls/").walk()
                 .filter(File::isFile)
                 .map { it.toCachedFile(it.name) }
                 .toList() */

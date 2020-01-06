@@ -26,7 +26,7 @@ class DBController @Autowired constructor(private val pairRepo: PairRepository,
                                           private val rebornUpdateService: RebornUpdateService) {
 
     @GetMapping("/extract")
-    fun extract(@RequestParam(value = "type",required = false, defaultValue = "tabula") type: String)
+    fun extract(@RequestParam(value = "type",required = false, defaultValue = "reborn") type: String)
             : ModelAndView {
         val service = when (type) {
             "legacy" -> legacyUpdateService

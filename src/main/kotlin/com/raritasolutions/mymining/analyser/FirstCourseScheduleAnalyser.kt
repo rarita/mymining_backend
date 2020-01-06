@@ -13,7 +13,7 @@ import java.nio.charset.Charset
 class FirstCourseScheduleAnalyser: BaseWebAnalyser {
 
     var baseURL : URL = URL("http://spmi.ru/node/7085/")
-    var course: Int = 4
+    var course: Int = 5
 
     override fun analyse(): Map<String, URL> {
         // Get page and set UTF-8 Encoding

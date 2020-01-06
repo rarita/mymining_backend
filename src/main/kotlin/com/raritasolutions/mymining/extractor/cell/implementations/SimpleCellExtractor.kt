@@ -6,7 +6,7 @@ import com.raritasolutions.mymining.model.NO_TEACHER
 import com.raritasolutions.mymining.model.PairRecord
 
 class SimpleCellExtractor(contents: String,
-                          pairInstance: PairRecord = PairRecord()) : ContentSafeExtractor(contents,pairInstance)
+                          pairInstance: PairRecord = PairRecord()) : ContentSafeExtractor(contents, pairInstance)
 {
 
     override val setUp: Nothing? = null

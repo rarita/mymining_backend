@@ -3,7 +3,6 @@ package com.raritasolutions.mymining.service
 import com.raritasolutions.mymining.model.filesystem.CachedFile
 import com.raritasolutions.mymining.model.filesystem.toCachedFile
 import com.raritasolutions.mymining.repo.DBCacheRepository
-import com.raritasolutions.mymining.utils.removeSpaces
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.io.File
@@ -26,7 +25,7 @@ class CacheService(@Autowired val repo: DBCacheRepository) {
      * @return True if one (or more) entries have matching aliases
      */
     fun hasAlias(alias: String): Boolean
-        = repo.existsByFileAlias(alias.removeSpaces())
+        = repo.existsByFileAlias(alias)
 
     /**
      * Overload of [hasAlias] to accept CachedFile objects

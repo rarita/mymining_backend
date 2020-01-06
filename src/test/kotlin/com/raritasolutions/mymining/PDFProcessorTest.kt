@@ -18,7 +18,7 @@ class PDFProcessorTest {
 
     @Test
     fun testSimplyPDFProcessor() {
-        val spp = SimplyPDFProcessor(okHTTPClient, ObjectMapper(), "0.9.2-test_build")
+        val spp = SimplyPDFProcessor(okHTTPClient, ObjectMapper(), "in-testing")
         val testFile1 = spp.processFile(File("test/test1.pdf").toCachedFile())
         val testFile2 = spp.processFile(File("test/test2.pdf").toCachedFile())
         assert(!testFile1.fileContents.contentEquals(testFile2.fileContents))

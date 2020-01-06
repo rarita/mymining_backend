@@ -9,4 +9,3 @@ class MyminingApplication
 fun main(args: Array<String>) {
     runApplication<MyminingApplication>(*args)
 }
-

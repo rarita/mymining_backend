@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 class SimplyPDFProcessor @Autowired constructor(private val okHttpClient: OkHttpClient,
                                                 private val mapper: ObjectMapper,
                                                 @Value("\${info.app.name}") private var appName: String = "MyMiningApplication",
-                                                @Value("\${info.app.version}") private var appVersion: String = "0.9.2-test_build") : BasePDFProcessor {
+                                                @Value("\${info.app.version}") private var appVersion: String = "in-testing") : BasePDFProcessor {
 
     // Options that should be injected
     private val serviceOrigin = HttpUrl.Builder()

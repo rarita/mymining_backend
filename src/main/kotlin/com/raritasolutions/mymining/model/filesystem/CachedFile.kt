@@ -85,10 +85,6 @@ fun File.toCachedFile(alias: String? = null): CachedFile {
 /**
  * Converts [Response] to the [CachedFile] object
  * Needs parent's fileAlias and MD5 digest to be stored correctly
- * ***
- * !!! Transforms fileAlias, adding first character of the filename
- * to it to avoid unnecessary alias collision !!!
- * ***
  * @param alias Alias retrieved from links analyser
  * @param digest Original file's MD5 digest
  * @return [CachedFile] object ready to be saved in DB
@@ -100,11 +96,10 @@ fun Response.toCachedFile(alias: String, digest: String? = null): CachedFile {
             ?.replace("\"","")
             ?.substringAfter("filename=") ?: this.request.url.pathSegments.last()
 
-    val fileAlias = fileName[0] + alias
     val mimeType = this.headers["Content-Type"] ?: "unknown"
     val fileContents = this.body?.bytes() ?: byteArrayOf()
     val originDigest = digest ?: DigestUtils.md5DigestAsHex(fileContents)
 
-    return CachedFile(fileName = fileName, fileAlias = fileAlias, mimeType = mimeType, originDigest = originDigest, fileContents = fileContents)
+    return CachedFile(fileName = fileName, fileAlias = alias, mimeType = mimeType, originDigest = originDigest, fileContents = fileContents)
 
 }
