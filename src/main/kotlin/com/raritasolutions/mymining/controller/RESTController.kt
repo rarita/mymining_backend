@@ -60,6 +60,7 @@ class RESTController @Autowired constructor(private val pairRepo: PairRepository
     @ResponseBody
     fun fetchCurrentWeek(): Long {
         val now = LocalDate.now()
+
         val semesterStart =
             if (now.month > Month.JUNE) // If it is in first semester
                 now
@@ -68,11 +69,14 @@ class RESTController @Autowired constructor(private val pairRepo: PairRepository
             else
                 now
                     .withMonth(2)
-                    .withDayOfMonth(1)
+                    .withDayOfMonth(3)
+
         // Shift Date's day to Monday for correct week calculation
         fun LocalDate.withMonday()
             = this.minusDays(this.dayOfWeek.value - 1L)
+
         val weekend = if (now.dayOfWeek > DayOfWeek.FRIDAY) 1 else 0
+
         // Calculate the week difference between today and semester start
         return ((ChronoUnit.WEEKS.between(semesterStart.withMonday(), now.withMonday()) + weekend) % 2) + 1
     }

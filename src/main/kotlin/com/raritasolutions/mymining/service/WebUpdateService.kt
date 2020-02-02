@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service
 @Service
 class WebUpdateService @Autowired constructor(pairRepo: PairRepository,
                                               cacheService: CacheService,
-                                              @Qualifier("firstcourseweb") analyser: BaseWebAnalyser,
+                                              @Qualifier("web") analyser: BaseWebAnalyser,
                                               @Qualifier ("tabula") converter: BaseConverter,
                                               okHttpClient: OkHttpClient,
                                               report: ExtractionReport) : BaseUpdateService(pairRepo, cacheService, analyser, converter, okHttpClient, report)

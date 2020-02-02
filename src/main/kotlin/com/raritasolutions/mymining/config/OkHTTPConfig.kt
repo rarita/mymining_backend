@@ -37,6 +37,6 @@ class OkHTTPConfig {
 
     @Bean
     fun interceptor() = HttpLoggingInterceptor()
-            .apply { level = HttpLoggingInterceptor.Level.HEADERS }
+            .apply { level = HttpLoggingInterceptor.Level.NONE }
 
 }

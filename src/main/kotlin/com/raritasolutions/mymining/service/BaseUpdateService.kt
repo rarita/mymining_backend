@@ -12,7 +12,10 @@ import com.raritasolutions.mymining.repo.PairRepository
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import org.slf4j.LoggerFactory
 import java.net.URL
+
+private val logger = LoggerFactory.getLogger(BaseUpdateService::class.java)
 
 abstract class BaseUpdateService (private val pairRepo: PairRepository,
                          private val cacheService: CacheService,
@@ -35,6 +38,7 @@ abstract class BaseUpdateService (private val pairRepo: PairRepository,
                 .get()
                 .build()
 
+        logger.info("GET-Requesting $this...")
         return okHttpClient.newCall(request).execute()
     }
 
@@ -45,17 +49,24 @@ abstract class BaseUpdateService (private val pairRepo: PairRepository,
     // todo: this piece of code is a total abomination and should be refactored ASAP
     fun update() {
 
+        logger.info("Started data update process...")
+
         val isColdBoot = (cacheService.isEmpty() || pairRepo.count() == 0L)
         val linksToLoad = analyser.analyse()
+        logger.info("Got ${linksToLoad.size} links from the links analyzer")
+
         // Find out what files should be updated
         val remoteFiles = linksToLoad
                 .mapValues { it.value.getResponse() }
                 .map { it.value.toCachedFile(it.key) }
+        logger.info("Successfully retrieved ${remoteFiles.size} files from spmi.ru")
 
         // If some aliases were updated, drop entire cache and pairs DB and reload it
         // This should happen only once in a while
         // Also don't evaluate it if it is cold boot (no need)
         val aliasesWereUpdated = isColdBoot || !remoteFiles.all(cacheService::hasAlias)
+        logger.info("Aliases were updated: $aliasesWereUpdated")
+
         val filesToUpdate = if (aliasesWereUpdated) {
             cacheService.clearAll()
             remoteFiles
@@ -63,15 +74,20 @@ abstract class BaseUpdateService (private val pairRepo: PairRepository,
         else
             remoteFiles.filterNot(cacheService::hasFile)
 
+        logger.info("Files to update size: ${filesToUpdate.size}, contents: $filesToUpdate")
         // Bail out if there is nothing to update
         if (filesToUpdate.isEmpty())
             return
 
         // Temporary action. Need to figure out what to leave and what to keep in the future
+        // Probably should keep reference to parent file in the pair records
+        logger.info("Deleting all pair data from the DB...")
         pairRepo.deleteAll()
 
         // Process the files and store it in the persistent cache
+        logger.info("Starting to process raw PDF files...")
         val processedFiles = process(filesToUpdate)
+        logger.info("Updating DB cache with ${processedFiles.size} processed files")
         processedFiles
                 .forEach {
                     cacheService.updateFileWithAlias(it)
@@ -89,7 +105,7 @@ abstract class BaseUpdateService (private val pairRepo: PairRepository,
 
         // Ugly workaround faulty cases
         val processedExtractors = arrayListOf<ContentSafeExtractor>()
-        for (extractor in extractors){
+        for (extractor in extractors) {
             try {
                 extractor.make()
                 processedExtractors += extractor

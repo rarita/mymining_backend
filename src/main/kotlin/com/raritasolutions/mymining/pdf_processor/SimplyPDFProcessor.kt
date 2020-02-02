@@ -87,8 +87,12 @@ class SimplyPDFProcessor @Autowired constructor(private val okHttpClient: OkHttp
                 .build()
 
         val response = okHttpClient.newCall(request).execute()
-        return mapper.readTree(response.body?.bytes())["id"]?.asInt()
-                ?: throw IllegalStateException("Conversion server didn't respond with an id")
+        val jsonTree = mapper.readTree(response.body?.bytes())
+
+        if (jsonTree["id"] == null && jsonTree["status"].textValue() == "error")
+            throw IllegalStateException("Conversion server responded with error: ${jsonTree["error"]}")
+
+        return jsonTree["id"].asInt()
     }
 
     /**

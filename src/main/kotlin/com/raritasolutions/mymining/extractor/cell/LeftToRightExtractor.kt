@@ -3,6 +3,7 @@ package com.raritasolutions.mymining.extractor.cell
 import com.raritasolutions.mymining.extractor.cell.implementations.ComplexCellExtractor
 import com.raritasolutions.mymining.model.PairRecord
 import com.raritasolutions.mymining.utils.*
+import java.util.*
 
 /**
  * Brand new implementation of the cell extractor.
@@ -18,11 +19,6 @@ import com.raritasolutions.mymining.utils.*
  */
 class LeftToRightExtractor(private val contents: String,
                            private val pairRecord: PairRecord): ComplexCellExtractor(contents, pairRecord) {
-
-    enum class States {
-        BEFORE_FIRST_BATCH,
-        LISTEN_TEACHER
-    }
 
     enum class TokenType {
         WEEK, OVER_WEEK, ONE_HALF, TEACHER_RANK, ROOM_TOKEN, VACANCY, END
@@ -40,46 +36,14 @@ class LeftToRightExtractor(private val contents: String,
     }
 
     /**
-     * Parses the contents encountered
+     * Parses passed pair contents by splitting it into tokens separated by spaces
+     * and analysing the semantics of the tokens.
      */
-    private fun handleGlobalTokens() {
-        
-    }
-
-    // Work with contentsNoSpaces
     fun parse() {
-        val contentsNoSpaces = contents
-                .removeSpaces()
-                .removeLineBreaks()
+        val tokenList = contents
+                .split("[\\s\\n\\r]".toRegex())
+                .filter(String::isNotBlank)
+        val tokenQueue: Queue<String> = LinkedList(tokenList)
 
-        // State variables
-        var state = States.BEFORE_FIRST_BATCH
-
-        var buffer = ""
-        for (c: Char in contentsNoSpaces) {
-            buffer += c
-            // Check if token is in buffer
-            val tokenType = buffer.findMeaningfulToken()
-
-            when (state) {
-                States.BEFORE_FIRST_BATCH -> {
-                    if (tokenType == TokenType.TEACHER_RANK || tokenType == TokenType.VACANCY) {
-                        // Get all the data before teacher rank token
-                        val globalData = buffer.substringBeforeLastRegex(teacherRank)
-                                ?: buffer.substringBeforeLastRegex(vacancyRegex)
-                                ?: throw IllegalStateException("")
-                        // ...and extract meaningful tokens from it
-                        
-                        buffer = buffer.substringAfter(globalData)
-                        state = States.LISTEN_TEACHER
-                    }
-                }
-                States.LISTEN_TEACHER -> {
-                    // When another token is met, save the teacher
-
-                    }
-                }
-
-            }
-        }
+    }
 }

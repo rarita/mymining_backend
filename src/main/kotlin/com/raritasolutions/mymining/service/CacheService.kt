@@ -62,6 +62,19 @@ class CacheService(@Autowired val repo: DBCacheRepository) {
     }
 
     /**
+     * Get all files from the DB
+     */
+    fun getAllFiles(): MutableIterable<CachedFile>
+        = repo.findAll()
+
+    /**
+     * Get meta data (every field but fileContents) for every file in the DB
+     * @return [List] of FileMetaData model projection objects
+     */
+    fun getFilesMetaData()
+        = repo.findAllMetadata()
+
+    /**
      * Store specified [CachedFile] in the database
      * @param cachedFile File to store in the database
      */
@@ -75,6 +88,7 @@ class CacheService(@Autowired val repo: DBCacheRepository) {
      * @return True if file was updated; False if file was created.
      */
     fun updateFileWithAlias(target: CachedFile): Boolean {
+        // TODO change this abomination to SQL UPDATE query
         val file = repo.findFirstByFileAliasAndMimeType(target.fileAlias, target.mimeType)
 
         return if (file == null) {
