@@ -1,4 +1,4 @@
-package com.raritasolutions.mymining.model.reborn
+package com.raritasolutions.mymining.model.converter
 
 
 /** Apache POI stores colors in a Byte type, which is understandable because color ranges from 0 to 255

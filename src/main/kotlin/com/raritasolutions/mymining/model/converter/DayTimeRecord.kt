@@ -1,4 +1,4 @@
-package com.raritasolutions.mymining.model.reborn
+package com.raritasolutions.mymining.model.converter
 
 /*
  * TLP stands for Top Left Position of the table cell

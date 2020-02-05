@@ -5,6 +5,7 @@ import org.junit.Test
 import org.springframework.core.io.ClassPathResource
 
 class FullProcessTest {
+
     @Test
     fun testWholeProcessWithSimpleInput()
     {
@@ -12,4 +13,5 @@ class FullProcessTest {
         val testValues = pairsList.filter { it.group == "ГНГ-18-1" && it.day == 4 }
         assert(testValues.size == 6)
     }
+
 }

@@ -1,16 +1,14 @@
-package com.raritasolutions.mymining.model.reborn
+package com.raritasolutions.mymining.model.converter
 
-import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.util.CellRangeAddress
-import org.apache.poi.xssf.usermodel.XSSFRichTextString
 
-class PseudoMergedRange(rowStart: Int, rowEnd: Int, cellStart: Int, cellEnd: Int, val contents: XSSFRichTextString)
+class PseudoMergedRange(rowStart: Int, rowEnd: Int, cellStart: Int, cellEnd: Int, val contents: FormattedString)
     : CellRangeAddress(rowStart, rowEnd, cellStart, cellEnd), Comparable<PseudoMergedRange> {
 
-    constructor(cra: CellRangeAddress, contents: XSSFRichTextString)
+    constructor(cra: CellRangeAddress, contents: FormattedString)
             : this(cra.firstRow, cra.lastRow, cra.firstColumn, cra.lastColumn, contents)
 
-    operator fun contains(cell: Cell): Boolean
+    operator fun contains(cell: TableCell): Boolean
             = (cell.rowIndex in firstRow..lastRow) && (cell.columnIndex in firstColumn..lastColumn)
 
     /** The more cell is close to top-left corner of the sheet

@@ -39,7 +39,7 @@ class WebScheduleAnalyser: BaseWebAnalyser {
             // Parse page with JSoup
             val webPage = Jsoup.parse(html)
             val links = webPage.select("a[href]")
-                    .filter { "\\d\\s?(курс|км)".toRegex() in it.getReferencedFileName() }
+                    .filter { "\\d\\s?курс".toRegex() in it.getReferencedFileName() }
                     .associateBy ({ "${it.getReferencedFileName()[0]} курс (${it.text()})"}, { URL(baseURL, it.attr("href")) } )
 
             logger.info("Successfully fetched ${links.size} links from the $baseURL")

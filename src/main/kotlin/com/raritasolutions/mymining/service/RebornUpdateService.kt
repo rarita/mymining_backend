@@ -29,7 +29,9 @@ class RebornUpdateService @Autowired constructor(pairRepo: PairRepository,
         val processedFiles = mutableListOf<CachedFile>()
         for (file in files) {
             try {
+                logger.info("Starting to process $file...")
                 processedFiles += pdfProcessor.processFile(file)
+                logger.info("$file was processed successfully!")
             }
             catch (e: Exception) {
                 logger.error("There was an error during file processing: ${e.message}")

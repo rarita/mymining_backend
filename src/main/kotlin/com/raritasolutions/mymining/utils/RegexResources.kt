@@ -33,6 +33,9 @@ val lineBreaksRegex = "(\\r\\n|\\n)".toRegex()
 val dayRangeRegex = "\\(?$whiteSpaceRegex?с?$whiteSpaceRegex?\\d{1,2}\\.\\d{1,2}($whiteSpaceRegex?(-|по|и)$whiteSpaceRegex?)?(\\d{1,2}\\.\\d{1,2})?$whiteSpaceRegex?\\)?".toRegex() // That's hell of a very slippery regex. Might cause some errors!
 val timeSpanRegex = "\\d+\\.\\d{2}-\\d+\\.\\d{2}".toRegex()
 
+/* Converter resources */
+val groupRowRegex = "День\\s?недели".toRegex()
+
 /* CSV extractor resources */
 val meaningfulTokensRegex = "($weeksRegex|$singlePairTypeRegex|$oneHalfRegex|$overWeekRegex)".toRegex()
 val pairNoTeacherRegex = ".*$meaningfulTokensRegex*.*$roomSearchingRegex.*$meaningfulTokensRegex*.*".toRegex()

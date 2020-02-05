@@ -1,6 +1,6 @@
 package com.raritasolutions.mymining.utils
 
-import com.raritasolutions.mymining.model.reborn.RGBColor
+import com.raritasolutions.mymining.model.converter.RGBColor
 
 // todo consider java.date or JodaTime to make locale-friendly weekdays
 // todo also consider using enums
