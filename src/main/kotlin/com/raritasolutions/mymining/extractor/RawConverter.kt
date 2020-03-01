@@ -72,8 +72,8 @@ class RawConverter(private val rawList: List<RawPairRecord>,
                     basePairRecord.buildingID = defaultBuilding
                     addContents(basePairRecord, RebornSplitter(_contents).separatedContents, _contents)
                 }
-                this.formatting.size == 1 -> {
-                    basePairRecord.buildingID = this.formatting.first().buildingId
+                this.formatting!!.size == 1 -> { // Formatting is not a shared mutable resource, therefore ignoring null warnings
+                    basePairRecord.buildingID = this.formatting!!.first().buildingId
                     addContents(basePairRecord, RebornSplitter(_contents).separatedContents, _contents)
                 }
                 else -> addContents(basePairRecord, RebornSplitter(_contents).separatedContents, _contents, formatting)

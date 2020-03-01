@@ -1,5 +1,7 @@
-package com.raritasolutions.mymining.model.converter
+package com.raritasolutions.mymining.model.converter.excel
 
+import com.raritasolutions.mymining.model.converter.RGBColor
+import com.raritasolutions.mymining.model.converter.base.FormattedString
 import org.apache.poi.xssf.usermodel.XSSFRichTextString
 
 class ExcelFormattedString(private val source: XSSFRichTextString) : FormattedString {

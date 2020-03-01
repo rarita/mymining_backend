@@ -1,10 +1,14 @@
-package com.raritasolutions.mymining.model.converter
+package com.raritasolutions.mymining.model.converter.base
 
+import com.raritasolutions.mymining.model.converter.RGBColor
 import org.apache.poi.ss.util.CellRangeAddress
 
 /**
  * Universal interface representing both Excel Table Cell & Word Table Cell
  * Built to work with tables independently of their source
+ * !!!
+ * Note that Word and Excel cells do not provide cross-compatibility
+ * and therefore should not be mixed.
  */
 interface TableCell {
 

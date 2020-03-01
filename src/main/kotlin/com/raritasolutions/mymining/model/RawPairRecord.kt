@@ -3,11 +3,11 @@ package com.raritasolutions.mymining.model
 // Since you cant extend data class formatting is contained in base class
 // Formatting is a Map where First means starting index for the color stored in Second
 // Firsts should start from 0 and be in non-descending order
-data class RawPairRecord(val day: Int,
-                         val timeSpan: String,
-                         val group: String,
-                         val contents: String,
-                         val formatting: List<BuildingData>? = null
+data class RawPairRecord(var day: Int,
+                         var timeSpan: String,
+                         var group: String,
+                         var contents: String,
+                         var formatting: List<BuildingData>? = null
 )
 
 fun List<BuildingData>.slice(from: Int, to: Int): List<BuildingData> {

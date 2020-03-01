@@ -1,5 +1,8 @@
-package com.raritasolutions.mymining.model.converter
+package com.raritasolutions.mymining.model.converter.excel
 
+import com.raritasolutions.mymining.model.converter.base.DocumentTable
+import com.raritasolutions.mymining.model.converter.base.FormattedString
+import com.raritasolutions.mymining.model.converter.base.TableCell
 import com.raritasolutions.mymining.utils.groupRowRegex
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.xssf.usermodel.XSSFCell

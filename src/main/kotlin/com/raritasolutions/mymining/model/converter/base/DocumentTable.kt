@@ -1,4 +1,4 @@
-package com.raritasolutions.mymining.model.converter
+package com.raritasolutions.mymining.model.converter.base
 
 /**
  * Universal interface representing either a Word document table

@@ -46,6 +46,10 @@ data class CachedFile(@Id @GeneratedValue var id: Int = 0,
     override fun toString(): String
         = "CachedFile $fileName ($fileAlias), type = $mimeType, digest = $originDigest"
 
+    fun getDefaultBuilding()
+        = if (!fileName.contains("км") && fileName[0] in '1'..'2') 3
+          else 1
+
     /**
      * Saves this [CachedFile] as a regular FS [File]
      * Note that digest and alias are not stored anywhere

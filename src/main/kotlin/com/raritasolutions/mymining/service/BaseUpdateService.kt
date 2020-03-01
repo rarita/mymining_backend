@@ -28,10 +28,6 @@ abstract class BaseUpdateService (private val pairRepo: PairRepository,
         converter.report = report
     }
 
-    private fun CachedFile.getDefaultBuilding()
-        = if (!fileName.contains("км") && fileName[0] in '1'..'2') 3
-          else 1
-
     private fun URL.getResponse(): Response {
         val request = Request.Builder()
                 .url(this)
@@ -59,6 +55,12 @@ abstract class BaseUpdateService (private val pairRepo: PairRepository,
         val remoteFiles = linksToLoad
                 .mapValues { it.value.getResponse() }
                 .map { it.value.toCachedFile(it.key) }
+
+        if (remoteFiles.size <= 10)
+            throw IllegalStateException("Received insufficient amount of remote schedule files: ${remoteFiles.size}")
+
+        // Save files to local FS
+        // remoteFiles.forEach { it.saveTo(Path.of("cached/pdf", it.fileName)) }
         logger.info("Successfully retrieved ${remoteFiles.size} files from spmi.ru")
 
         // If some aliases were updated, drop entire cache and pairs DB and reload it

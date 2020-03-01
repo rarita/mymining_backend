@@ -1,15 +1,16 @@
 .floating_list {
-    width: 550px;
+    max-width: 550px;
+    min-width: 300px;
+    width: 100%;
+    height: fit-content;
+    display: table; /* fuck IE and Edge who can't understand fit-content */
     background: #fff;
     color: #000;
     /* position: fixed; */
     /* transform: translate(-50%, -50%); */
     /* margin: 0 auto; */
     /* box-sizing: border-box; */
-    display: inline-block;
-    -webkit-box-shadow: 0 5px 20px 0 rgba(0,0,0,0.3);
-    -moz-box-shadow: 0 5px 20px 0 rgba(0,0,0,0.3);
-    box-shadow: 0 5px 20px 0 rgba(0,0,0,0.3);
+    /* display: inline-block; */
 }
 
 .header {
@@ -42,10 +43,12 @@ hr {
     background: #ffffff;
     width: 100%;
     display: flex;
+    flex-direction: row;
 }
 
 .pair_item_time_column {
-    width: 8%;
+    width: 10%;
+    min-width: 55px;
     margin-left: 4px;
     margin-right: 4px;
     font-size: 18px;
@@ -62,7 +65,7 @@ hr {
 .pair_item_main_column {
     text-align: left;
     margin-top: 2px;
-    width: 87%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     float: left;
@@ -72,11 +75,14 @@ hr {
     flex-grow: 0;
     font-weight: bold;
     display: flex;
+    flex-wrap: wrap;
 }
 
 .pair_item_token {
+    height: 15px;
     padding: 1px 5px;
     margin-right: 3px;
+    margin-bottom: 3px; /* margin-right: 3px; */
     font-size: 11px;
     background: #23c15a;
     color: #ffffff;
@@ -86,6 +92,8 @@ hr {
 .pair_item_subject {
     flex-grow: 1;
     font-size: 18px;
+    margin-right: 3px;
+    margin-bottom: 3px;
 }
 
 .pair_item_teacher {
@@ -98,6 +106,7 @@ hr {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    min-width: 55px;
     width: 10%;
     margin: 2px 4px 2px 2px;
     float: left;

@@ -2,6 +2,7 @@
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Расписание</title>
 </head>
 <script
@@ -17,6 +18,9 @@
 <link rel="stylesheet" href="../static/css/index_style.css" th:href="@{/css/index_style.css}">
 <body>
 
+
+<div class="doc_container">
+<div class="group_picker_placeholder"></div>
 <div class="group_picker">
     <div align="center">
         <div class="tab">
@@ -34,6 +38,7 @@
                         <option value="1">I неделя</option>
                         <option value="2">II неделя</option>
                     </select>
+
                     <select class="s_day" name="day">
                         <option value="0">Все дни</option>
                         <option value="1">Понедельник</option>
@@ -90,18 +95,15 @@
         </div>
     </div>
 </div>
-<div class="doc_container">
-    <div class="group_picker_filler"></div>
-    <div class="div-container">
-            <div class="floating_list">
-                <div class="pair_item_subject" style="margin-bottom: 5px">Пока что здесь ничего нет...</div>
-                <div class="pair_item_teacher" style="margin-bottom: 5px; font-size: 14px">Введите нужные параметры в окне слева и подтвердите выбор</div>
-            </div>
-    </div>
+<div class="floating_list">
+    <div class="pair_item_subject" style="margin-bottom: 5px">Пока что здесь ничего нет...</div>
+    <div class="pair_item_teacher" style="margin-bottom: 5px; font-size: 14px">Введите нужные параметры в окне слева и подтвердите выбор</div>
 </div>
+</div>
+
 <script>
 
-    const origin = "http://localhost:8443";
+    const origin = "http://192.168.43.29:8443";
     var currentDay;
     var currentWeek;
 
@@ -277,6 +279,9 @@
         // Room column
         var room_holder = jQuery('<div/>', {"class": 'pair_item_room_column'});
         var room_container = jQuery('<div>');
+        room_container.css('text-align', 'right');
+        //room_container.css('margin-top', '15px');
+        room_container.css('margin-right', '3px');
         var rooms = record['room']
             .split(", ")
             .filter(function (item) { return (item != "Нет Аудитории") });
@@ -293,26 +298,27 @@
         room_holder.append(room_container);
         // Building color
         building_view.css('background-color', get_building_color(record['buildingID']));
-        room_holder.append(building_view);
+        building_view.css('float', 'right'); // works?
+
+        // Wrapping building token in div
+        const building_wrapper = jQuery('<div/>', {'overflow' : 'auto'});
+        building_wrapper.append(building_view);
+
+        room_holder.append(building_wrapper);
         container.append(room_holder);
         main_holder.append(container);
         return main_holder;
     }
     
     function get_building_color(buildingID) {
-        var colorCode;
         switch (buildingID) {
             case 1:
-               colorCode = "#428bf0";
-                break;
+                return "#428bf0";
             case 2:
-                colorCode = "#ffce29";
-                break;
+                return "#ffce29";
             default:
-                colorCode = "#23c15a";
-                break;
+                return "#23c15a";
         }
-        return colorCode;
     }
 
     function format_time(time) {

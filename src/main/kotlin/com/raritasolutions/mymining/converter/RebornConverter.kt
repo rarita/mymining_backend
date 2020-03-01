@@ -1,7 +1,12 @@
 package com.raritasolutions.mymining.converter
 
 import com.raritasolutions.mymining.model.BuildingData
-import com.raritasolutions.mymining.model.converter.*
+import com.raritasolutions.mymining.model.converter.DayTimeRecord
+import com.raritasolutions.mymining.model.converter.PseudoMergedRange
+import com.raritasolutions.mymining.model.converter.RGBColor
+import com.raritasolutions.mymining.model.converter.base.DocumentTable
+import com.raritasolutions.mymining.model.converter.base.FormattedString
+import com.raritasolutions.mymining.model.converter.excel.ExcelFormattedString
 import com.raritasolutions.mymining.utils.BUILDINGS_TEXT_COLOR
 import com.raritasolutions.mymining.utils.TIMES_LIST
 import org.apache.poi.xssf.usermodel.XSSFRichTextString

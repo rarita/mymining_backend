@@ -1,4 +1,6 @@
-package com.raritasolutions.mymining.model.converter
+package com.raritasolutions.mymining.model.converter.base
+
+import com.raritasolutions.mymining.model.converter.RGBColor
 
 /**
  * Universal interface to use various formatting storage objects

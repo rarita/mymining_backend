@@ -10,7 +10,7 @@ class WordExtractorTest {
     @Test
     fun testWordManipulation() {
         val rwc = RebornWordConverter()
-        rwc.convert(Files.newInputStream(Path.of("test/1kgpms_m.docx")), 1)
+        rwc.convert(Files.newInputStream(Path.of("test/2kstrek.docx")), 1)
     }
 
 }

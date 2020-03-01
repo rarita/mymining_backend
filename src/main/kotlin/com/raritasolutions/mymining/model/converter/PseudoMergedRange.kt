@@ -1,5 +1,7 @@
 package com.raritasolutions.mymining.model.converter
 
+import com.raritasolutions.mymining.model.converter.base.FormattedString
+import com.raritasolutions.mymining.model.converter.base.TableCell
 import org.apache.poi.ss.util.CellRangeAddress
 
 class PseudoMergedRange(rowStart: Int, rowEnd: Int, cellStart: Int, cellEnd: Int, val contents: FormattedString)

@@ -17,6 +17,8 @@ private val logger = LoggerFactory.getLogger(WebScheduleAnalyser::class.java)
 @Component("web")
 class WebScheduleAnalyser: BaseWebAnalyser {
 
+    private val regexAllFiles = "\\d(\\s?(курс|км)|-(kurs|km))".toRegex()
+    private val regexNoMag = "\\d(\\s?курс|-kurs)".toRegex()
     var baseURL : URL = URL("http://spmi.ru/node/7085/")
 
     /**
@@ -39,7 +41,7 @@ class WebScheduleAnalyser: BaseWebAnalyser {
             // Parse page with JSoup
             val webPage = Jsoup.parse(html)
             val links = webPage.select("a[href]")
-                    .filter { "\\d\\s?курс".toRegex() in it.getReferencedFileName() }
+                    .filter { regexNoMag in it.getReferencedFileName() }
                     .associateBy ({ "${it.getReferencedFileName()[0]} курс (${it.text()})"}, { URL(baseURL, it.attr("href")) } )
 
             logger.info("Successfully fetched ${links.size} links from the $baseURL")

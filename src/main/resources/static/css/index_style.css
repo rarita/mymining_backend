@@ -1,9 +1,13 @@
 @import "feed_style.css";
 
+* {
+    box-sizing: border-box;
+}
+
 body {
-    margin-top: 25px;
-    margin-left: 25px;
-    margin-bottom: 25px;
+    margin-top: 5px;
+    margin-left: 8px;
+    margin-bottom: 20px;
     padding: 0;
     background-size: cover;
     background: #ffffff center;
@@ -11,37 +15,34 @@ body {
     font-family: sans-serif;
 }
 
-.div-container {
-    text-align: center;
-    margin: 0 auto;
-}
-
+/* Element that contains all the divs on the index and centers them */
 .doc_container {
+    max-width: 550px;
     width: 100%;
     margin: 0 auto;
-    display: flex;
     justify-content: center;
 }
 
-.group_picker {
+/* Only present on desktop view so has maxed width */
+.group_picker_placeholder {
+    visibility: hidden;
     width: 320px;
-    height: 260px;
-    top: 25px;
-    left: calc((100% - 550px - 320px) / 2);
-    position: fixed;
-    background: #fff;
-    color: #000;
-    box-sizing: border-box;
-    display: block;
-    float: left;
-    overflow: auto;
-    -webkit-box-shadow: 0 5px 20px 0 rgba(0,0,0,0.3);
-    -moz-box-shadow: 0 5px 20px 0 rgba(0,0,0,0.3);
-    box-shadow: 0 5px 20px 0 rgba(0,0,0,0.3);
+    margin-right: 20px;
 }
 
-.group_picker_filler {
-    width: 340px;
+.group_picker {
+    min-width: 300px;
+    max-width: 550px;
+    width: 100%;
+    height: 260px;
+    margin-bottom: 7px;
+    /* top: 25px;
+    left: calc((100% - 550px - 320px) / 2);
+    position: fixed; */
+    background: #fff;
+    color: #000;
+    float: left;
+    overflow: auto;
 }
 
 .logo {
@@ -64,7 +65,7 @@ body {
 .group_form {
     margin-top: 5px;
     position: center;
-    width: 90%;
+    width: 100%;
 }
 
 .group_form input {
@@ -73,7 +74,6 @@ body {
 }
 
 .group_form input[type="text"] {
-    box-sizing: border-box;
     border: none;
     border-bottom: 1px solid #23c15a;
     background: #ffffff;
@@ -85,14 +85,13 @@ body {
 
 .group_form select {
     width: 49%;
-    margin: 0;
     height: 35px;
     border-top-color: #FFFFFF;
     border-left-color: #FFFFFF;
     border-right-color: #FFFFFF;
     border-bottom: 1px solid #23c15a;
     font-size: 16px;
-    margin-bottom: 10px;
+    margin: 0 0 10px;
 }
 
 .btn-hover:focus {
@@ -179,8 +178,61 @@ body {
     background-color: #e9e9e9;
 }
 
-/*when navigating through the items using the arrow keys:*/
+/* When navigating through the items using the arrow keys: */
 .autocomplete-active {
     background-color: DodgerBlue !important;
     color: #ffffff;
+}
+
+/*
+    Only use group box shadows on the extended (landscape) view.
+    Also limit element's sizes to predefined values.
+
+    ***
+
+    Document container div should be a horizontal flex-row
+    While in the extended state.
+
+    ***
+
+    Added 50 more px to avoid unwanted squishing that was happening
+    due to 25px body margins in the desktop view
+ */
+@media all and (min-width: 950px) {
+    body {
+        margin-top: 25px;
+        margin-left: 25px;
+        margin-right: 25px;
+    }
+    .doc_container {
+        max-width: unset;
+        display: flex;
+        flex-flow: row nowrap;
+    }
+    .group_form {
+        width: 90%;
+    }
+    .group_picker_placeholder {
+        visibility: visible;
+    }
+    .group_picker {
+        width: 320px;
+        margin-right: 20px;
+
+        /* Stick at the top in desktop view */
+        top: 25px;
+        left: calc((100% - 550px - 340px) / 2);
+        position: fixed;
+
+        -webkit-box-shadow: 0 5px 20px 0 rgba(0,0,0,0.3);
+        -moz-box-shadow: 0 5px 20px 0 rgba(0,0,0,0.3);
+        box-shadow: 0 5px 20px 0 rgba(0,0,0,0.3);
+    }
+    .floating_list {
+        width: 550px;
+
+        -webkit-box-shadow: 0 5px 20px 0 rgba(0,0,0,0.3);
+        -moz-box-shadow: 0 5px 20px 0 rgba(0,0,0,0.3);
+        box-shadow: 0 5px 20px 0 rgba(0,0,0,0.3);
+    }
 }

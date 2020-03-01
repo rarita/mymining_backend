@@ -1,5 +1,8 @@
-package com.raritasolutions.mymining.model.converter
+package com.raritasolutions.mymining.model.converter.excel
 
+import com.raritasolutions.mymining.model.converter.RGBColor
+import com.raritasolutions.mymining.model.converter.base.FormattedString
+import com.raritasolutions.mymining.model.converter.base.TableCell
 import org.apache.poi.ss.usermodel.BorderStyle
 import org.apache.poi.xssf.usermodel.XSSFCell
 
@@ -34,6 +37,7 @@ class ExcelTableCell(private val source: XSSFCell) : TableCell {
         = source.cellStyle.fillForegroundXSSFColor == null || source.cellStyle.fillForegroundXSSFColor.isAuto
 
     override fun getColor(): RGBColor
-        = RGBColor(source.cellStyle.fillForegroundXSSFColor.rgb  ?: throw IllegalStateException("Trying to access null color"))
+        = RGBColor(source.cellStyle.fillForegroundXSSFColor.rgb
+            ?: throw IllegalStateException("Trying to access null color"))
 
 }

@@ -3,7 +3,7 @@ package com.raritasolutions.mymining.converter
 import com.raritasolutions.mymining.model.BuildingData
 import com.raritasolutions.mymining.model.ExtractionReport
 import com.raritasolutions.mymining.model.RawPairRecord
-import com.raritasolutions.mymining.model.converter.ExcelDocumentTable
+import com.raritasolutions.mymining.model.converter.excel.ExcelDocumentTable
 import com.raritasolutions.mymining.utils.BUILDINGS_CELL_COLOR
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.springframework.stereotype.Component
