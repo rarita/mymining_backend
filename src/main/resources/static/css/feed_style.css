@@ -111,3 +111,26 @@ hr {
     margin: 2px 4px 2px 2px;
     float: left;
 }
+
+/**
+    Shrinking some fonts when the viewport width
+    is lower than 360px (low-res mobile device).
+
+    Still not sure is it a good thing to do or not.
+ */
+@media all and (max-width: 360px) {
+    .pair_item_time_column {
+        min-width: 42px;
+        font-size: 16px;
+    }
+    .pair_item_token {
+        height: 12px;
+        font-size: 8px;
+    }
+    .pair_item_subject {
+        font-size: 16px;
+    }
+    .pair_item_teacher {
+        font-size: 14px;
+    }
+}

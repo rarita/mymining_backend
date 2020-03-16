@@ -289,6 +289,7 @@ class RawConverterTest {
                 "Практика по корпоративной отчётности в горных компаниях\n" +
                 "Проф. Пономаренко Т.В. пр. №4614 (30.12)")
         val result = getOutput(input)
+
         assert(result.size == 2)
         with (result) {
             assert(all { it.isCorrect() })

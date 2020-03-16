@@ -104,6 +104,10 @@ fun Response.toCachedFile(alias: String, digest: String? = null): CachedFile {
     val fileContents = this.body?.bytes() ?: byteArrayOf()
     val originDigest = digest ?: DigestUtils.md5DigestAsHex(fileContents)
 
-    return CachedFile(fileName = fileName, fileAlias = alias, mimeType = mimeType, originDigest = originDigest, fileContents = fileContents)
+    return CachedFile(fileName = fileName,
+            fileAlias = alias,
+            mimeType = mimeType,
+            originDigest = originDigest,
+            fileContents = fileContents)
 
 }

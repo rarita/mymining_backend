@@ -537,6 +537,7 @@ class CellExtractorTest
         val input = "I Безопасность жизнедеятельности Асс. Фещенко пр. №1110"
         val extractor = CellExtractorFactory(input).produce()
                 .apply { make() }
+
         with (extractor.result) {
             assert(isCorrect())
             assert(subject == "Безопасность жизнедеятельности")

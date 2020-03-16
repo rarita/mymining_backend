@@ -19,7 +19,7 @@ class WebScheduleAnalyser: BaseWebAnalyser {
 
     private val regexAllFiles = "\\d(\\s?(курс|км)|-(kurs|km))".toRegex()
     private val regexNoMag = "\\d(\\s?курс|-kurs)".toRegex()
-    var baseURL : URL = URL("http://spmi.ru/node/7085/")
+    var baseURL : URL = URL("https://spmi.ru/raspisanie-zanyatiy")
 
     /**
      * Get the portion of text in "href" attribute after last slash of given JSoup [Element]
