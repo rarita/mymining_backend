@@ -1,23 +1,30 @@
 buildscript {
     ext {
-        kotlinVersion = '1.3.50'
-        springBootVersion = '2.0.4.RELEASE'
+        kotlinVersion = '1.3.70'
+        springBootVersion = '2.2.0.RELEASE'
     }
     repositories {
         mavenCentral()
+        gradlePluginPortal()
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
+        classpath("org.jetbrains.kotlin:kotlin-noarg:${kotlinVersion}")
         classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
     }
 }
 
+apply plugin: 'java'
 apply plugin: 'kotlin'
+apply plugin: 'kotlin-jpa'
 apply plugin: 'kotlin-spring'
-apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+
+allOpen {
+    annotation("javax.persistence.Entity")
+}
 
 group = 'com.raritasolutions'
 version = 'E1-0.9.9.3'
