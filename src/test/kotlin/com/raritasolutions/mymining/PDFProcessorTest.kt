@@ -11,9 +11,11 @@ class PDFProcessorTest {
 
     // Fields that should be autowired by Spring
     private val okHTTPConfig = OkHTTPConfig()
-    private val cookieJar = okHTTPConfig.cookieJar()
-    private val interceptor = okHTTPConfig.interceptor()
-    private val okHTTPClient = okHTTPConfig.okHttpClient(cookieJar, interceptor)
+    private val okHTTPClient
+            = okHTTPConfig.okHttpClient(okHTTPConfig.cookieJar(),
+                                        okHTTPConfig.interceptor(),
+                                        okHTTPConfig.unsafeSSLSocketFactory(okHTTPConfig.unsafeTrustManager()),
+                                        okHTTPConfig.unsafeHostNameVerifier())
 
 
     @Test

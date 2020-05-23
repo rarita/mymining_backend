@@ -1,5 +1,6 @@
 package com.raritasolutions.mymining.utils
 
+import java.time.LocalDate
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
 
@@ -22,5 +23,8 @@ fun <T> Iterable<T>.filterDestructuring(predicate: (T) -> Boolean)
 
 fun Char.isCyrillicLetter()
     = (this in 'а'..'я') || (this in 'А'..'Я') || (this == 'ё') || (this == 'Ё')
+
+fun LocalDate.withMonday()
+        = this.minusDays(this.dayOfWeek.value - 1L)
 
 

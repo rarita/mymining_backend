@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        kotlinVersion = '1.3.70'
+        kotlinVersion = '1.3.72'
         springBootVersion = '2.2.0.RELEASE'
     }
     repositories {
@@ -58,8 +58,8 @@ dependencies {
     compile('com.fasterxml.jackson.module:jackson-module-kotlin')
     compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     compile("org.jetbrains.kotlin:kotlin-reflect")
-    compile("com.squareup.okhttp3:okhttp:4.2.0")
-    compile("com.squareup.okhttp3:logging-interceptor:4.2.0") // do not compile to production!
+    compile("com.squareup.okhttp3:okhttp:4.4.0")
+    compile("com.squareup.okhttp3:logging-interceptor:4.4.0") // do not compile to production!
     compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.2.4'
     runtime('org.springframework.boot:spring-boot-devtools')
     // https://mvnrepository.com/artifact/org.postgresql/postgresql
@@ -71,5 +71,9 @@ dependencies {
     compile group: 'technology.tabula', name: 'tabula', version: '1.0.2'
     compile group: 'org.apache.poi', name: 'poi', version: '4.0.0'
     compile group: 'org.apache.poi', name: 'poi-ooxml', version: '4.0.0'
+    // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+
     testCompile('org.springframework.boot:spring-boot-starter-test')
+
 }

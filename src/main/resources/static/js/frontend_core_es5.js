@@ -1,6 +1,6 @@
 "use strict";
 
-var origin = "https://raspisanie-mining.ru";
+var origin = "http://localhost:8443";
 var currentDay;
 var currentWeek;
 $(document).ready(function() {

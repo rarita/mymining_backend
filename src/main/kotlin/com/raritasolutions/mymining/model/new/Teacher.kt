@@ -4,23 +4,20 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "teachers")
-class Teacher(@Id @GeneratedValue @Column(name = "teacher_id") var id: Int,
-              @Column(name = "alias") var alias: String,
-              @Column(name = "last_name") var lastName: String?,
-              @Column(name = "name") var name: String?,
-              @Column(name = "middle_name") var middleName: String?,
+class Teacher(@Id @GeneratedValue @Column(name = "teacherId") var id: Int,
+              @Column(name = "teacherAlias") var alias: String,
+              @Column(name = "teacherFullName") var name: String,
 
-              @Column(name = "rank")
+              @Column(name = "teacherRank")
               @Enumerated(EnumType.ORDINAL)
               var rank: TeacherRank?,
 
               @Lob
-              @Column(name = "photo")
-              var photo: ByteArray?,
+              @Column(name = "teacherPhoto")
+              var teacherPhoto: ByteArray?,
 
-              @OneToOne(cascade = [CascadeType.ALL])
-              @JoinColumn(name = "dept_id", referencedColumnName = "dept_id")
-              var department: Department?) {
+              @Column(name = "teacherLink")
+              var link: String) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

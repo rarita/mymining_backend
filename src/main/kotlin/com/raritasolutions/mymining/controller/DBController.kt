@@ -10,6 +10,9 @@ import com.raritasolutions.mymining.repo.PairRepository
 import com.raritasolutions.mymining.service.LegacyUpdateService
 import com.raritasolutions.mymining.service.RebornUpdateService
 import com.raritasolutions.mymining.service.WebUpdateService
+import com.raritasolutions.mymining.service.base.BaseUpdateService
+import com.raritasolutions.mymining.service.base.UpdateSource
+import com.raritasolutions.mymining.service.ruz.RUZUpdateService
 import com.raritasolutions.mymining.utils.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
@@ -23,21 +26,29 @@ class DBController @Autowired constructor(private val pairRepo: PairRepository,
                                           private val dtsc : DayTimeScheduleComposer,
                                           private val updateService: WebUpdateService,
                                           private val legacyUpdateService : LegacyUpdateService,
-                                          private val rebornUpdateService: RebornUpdateService) {
+                                          private val rebornUpdateService: RebornUpdateService,
+                                          private val ruzUpdateService: RUZUpdateService) {
 
     @GetMapping("/extract")
-    fun extract(@RequestParam(value = "type",required = false, defaultValue = "reborn") type: String)
+    fun extract(@RequestParam(value = "type",required = false, defaultValue = "ruz") type: String)
             : ModelAndView {
-        val service = when (type) {
+        val service : UpdateSource = when (type) {
             "legacy" -> legacyUpdateService
             "tabula" -> updateService
             "reborn" -> rebornUpdateService
+            "ruz" -> ruzUpdateService
             else -> throw IllegalArgumentException("Supplied type parameter is illegal")
         }
+
         service.update()
+
         return ModelAndView("job_result", mapOf(
                 "caller" to "Remote Extractor",
-                "message" to "List of errors occurred while extracting\n" + service.report.toString()))
+                "message" to "List of errors occurred while extracting\n" +
+                        if (service is BaseUpdateService)
+                            service.report.toString()
+                        else
+                            "can be found in application logs"))
     }
 
     @GetMapping("/check")

@@ -37,6 +37,11 @@ data class PairRecord(@Id @GeneratedValue var id: Int = 0,
         else -> equalsExcluding(other, listOf(PairRecord::id,PairRecord::locked))
     }
 
+    /**
+     * This implementation of hashCode() ignores ID since
+     * it is a generated value that makes all the elements
+     * distinct.
+     */
     override fun hashCode(): Int {
         return Objects.hash(group,teacher,week,day,timeSpan,subject,room,type,one_half,buildingID,locked)
     }

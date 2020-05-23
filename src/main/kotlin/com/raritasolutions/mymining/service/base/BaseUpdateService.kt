@@ -1,4 +1,4 @@
-package com.raritasolutions.mymining.service
+package com.raritasolutions.mymining.service.base
 
 import com.raritasolutions.mymining.analyser.BaseWebAnalyser
 import com.raritasolutions.mymining.converter.BaseConverter
@@ -9,6 +9,7 @@ import com.raritasolutions.mymining.model.PairRecord
 import com.raritasolutions.mymining.model.filesystem.CachedFile
 import com.raritasolutions.mymining.model.filesystem.toCachedFile
 import com.raritasolutions.mymining.repo.PairRepository
+import com.raritasolutions.mymining.service.CacheService
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -18,11 +19,11 @@ import java.net.URL
 private val logger = LoggerFactory.getLogger(BaseUpdateService::class.java)
 
 abstract class BaseUpdateService (private val pairRepo: PairRepository,
-                         private val cacheService: CacheService,
-                         private val analyser: BaseWebAnalyser,
-                         private val converter: BaseConverter,
-                         private val okHttpClient: OkHttpClient,
-                         val report: ExtractionReport) {
+                                  private val cacheService: CacheService,
+                                  private val analyser: BaseWebAnalyser,
+                                  private val converter: BaseConverter,
+                                  private val okHttpClient: OkHttpClient,
+                                  val report: ExtractionReport) : UpdateSource {
 
     init {
         converter.report = report
@@ -43,7 +44,7 @@ abstract class BaseUpdateService (private val pairRepo: PairRepository,
 
     // todo: make the following code as failsafe as possible
     // todo: this piece of code is a total abomination and should be refactored ASAP
-    fun update() {
+    override fun update() {
 
         logger.info("Started data update process...")
 

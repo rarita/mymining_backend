@@ -4,12 +4,9 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "rooms")
-class Room(@Id @GeneratedValue @Column(name = "room_id") var id: Int,
-           @Column(name = "room_name") var name: String,
-
-           @OneToOne(cascade = [CascadeType.ALL])
-           @JoinColumn(name = "building_id", referencedColumnName = "building_id")
-           var building: Building) {
+class Room(@Id @GeneratedValue @Column(name = "roomId") var id: Int,
+           @Column(name = "roomName") var name: String,
+           @Column(name = "buildingId") var building: Int) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

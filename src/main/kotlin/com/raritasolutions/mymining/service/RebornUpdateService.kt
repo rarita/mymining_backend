@@ -6,6 +6,7 @@ import com.raritasolutions.mymining.model.ExtractionReport
 import com.raritasolutions.mymining.model.filesystem.CachedFile
 import com.raritasolutions.mymining.pdf_processor.BasePDFProcessor
 import com.raritasolutions.mymining.repo.PairRepository
+import com.raritasolutions.mymining.service.base.BaseUpdateService
 import okhttp3.OkHttpClient
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired

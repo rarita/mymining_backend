@@ -5,26 +5,37 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "lessons")
-class Lesson(@Id @GeneratedValue @Column(name = "lesson_id") var id: Int,
+class Lesson(@Id @GeneratedValue @Column(name = "classId") var id: Int,
              @Column(name = "subject") var subject: String,
              @Column(name = "day") var day: Short,
-             @Column(name = "time") var time: LocalTime,
+             @Column(name = "timeStart") var timeStart: LocalTime,
+             @Column(name = "week") var week: Int,
+             @Column(name = "oneHalf") var oneHalf: String,
+             @Column(name = "overWeek") var overWeek: Boolean,
 
-             @ManyToMany
-             @JoinTable(
-                     name = "lessons_groups",
-                     joinColumns = [JoinColumn(name = "lesson_id")],
-                     inverseJoinColumns = [JoinColumn(name = "group_id")]
-             )
-             var groups: MutableSet<Group> = mutableSetOf(),
+             @Column(name = "type")
+             @Enumerated(EnumType.ORDINAL)
+             var type: LessonType = LessonType.DEFAULT,
 
-             @ManyToMany
+             @ManyToOne
+             @JoinColumn(name = "groupId", nullable = false)
+             var group: Group,
+
+             @ManyToMany(cascade = [ CascadeType.ALL ] )
              @JoinTable(
-                     name = "lessons_batches",
-                     joinColumns = [JoinColumn(name = "lesson_id")],
-                     inverseJoinColumns = [JoinColumn(name = "batch_id")]
+                     name = "Lesson_Teacher",
+                     joinColumns = [ JoinColumn(name = "lessonId") ],
+                     inverseJoinColumns = [ JoinColumn(name = "teacherId") ]
              )
-             var batches: MutableSet<Batch> = mutableSetOf()) {
+             var teachers: MutableSet<Teacher> = mutableSetOf(),
+
+             @ManyToMany(cascade = [ CascadeType.ALL ] )
+             @JoinTable(
+                     name = "Lesson_Room",
+                     joinColumns = [ JoinColumn(name = "lessonId") ],
+                     inverseJoinColumns = [ JoinColumn(name = "roomId") ]
+             )
+             var rooms: MutableSet<Room> = mutableSetOf()) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -34,7 +45,12 @@ class Lesson(@Id @GeneratedValue @Column(name = "lesson_id") var id: Int,
 
         if (subject != other.subject) return false
         if (day != other.day) return false
-        if (time != other.time) return false
+        if (timeStart != other.timeStart) return false
+        if (week != other.week) return false
+        if (oneHalf != other.oneHalf) return false
+        if (overWeek != other.overWeek) return false
+        if (type != other.type) return false
+        if (group != other.group) return false
 
         return true
     }
@@ -42,8 +58,21 @@ class Lesson(@Id @GeneratedValue @Column(name = "lesson_id") var id: Int,
     override fun hashCode(): Int {
         var result = subject.hashCode()
         result = 31 * result + day
-        result = 31 * result + time.hashCode()
+        result = 31 * result + timeStart.hashCode()
+        result = 31 * result + week
+        result = 31 * result + oneHalf.hashCode()
+        result = 31 * result + overWeek.hashCode()
+        result = 31 * result + type.hashCode()
+        result = 31 * result + group.hashCode()
         return result
     }
+}
+
+enum class LessonType(val repr: String) {
+
+    LECTURE("лекция"),
+    PRACTICE("практика"),
+    LAB("лабораторная работа"),
+    DEFAULT("занятие")
 
 }
