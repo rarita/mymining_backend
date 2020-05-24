@@ -20,14 +20,7 @@ class RUZWebFetcher(private val okHttpClient: OkHttpClient,
             .scheme("https")
             .host("raspisanie.spmi.ru")
 
-    private val baseScheduleURL
-            = getBaseURLBuilder().addEncodedPathSegments("api/schedule/group")
-
-    private val baseGroupURL
-            = getBaseURLBuilder().addEncodedPathSegments("api/search")
-
     private val timeFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
-
 
     private fun HttpUrl.toGETRequest(): Request
         = Request.Builder()
@@ -46,7 +39,7 @@ class RUZWebFetcher(private val okHttpClient: OkHttpClient,
     fun getGroupIdFromName(group: String): Int {
         // todo cache responses since ids aren't changing much
 
-        val completeURL = baseGroupURL
+        val completeURL = getBaseURLBuilder().addEncodedPathSegments("api/search")
                 .addQueryParameter("term", group)
                 .addQueryParameter("type", "group")
                 .build()
@@ -80,7 +73,8 @@ class RUZWebFetcher(private val okHttpClient: OkHttpClient,
                         group: String): String {
 
         val groupID = getGroupIdFromName(group)
-        val completeURL = baseScheduleURL.addPathSegment(groupID.toString())
+        val completeURL = getBaseURLBuilder().addEncodedPathSegments("api/schedule/group")
+                .addPathSegment(groupID.toString())
                 .addEncodedQueryParameter("start", start.format(timeFormatter))
                 .addEncodedQueryParameter("finish", end.format(timeFormatter))
                 .build()
@@ -98,19 +92,23 @@ class RUZWebFetcher(private val okHttpClient: OkHttpClient,
      * is either this week or the next week depending on the params.
      * @param week Integer representation of odd/even week. Must be 1 or 2.
      * @param group String representation of the target student group.
+     * @param baseDate Date to perform the search from
      * @return List of [PairRecord] that meets specified requirements
      */
-    fun getScheduleForGroupAndWeek(week: Int, group: String): List<PairRecord> {
-        val tDate = if (scheduleTimeService.getCurrentWeek() == week.toLong())
-            LocalDate.now().withMonday()
-        else
-            LocalDate.now().plusWeeks(1).withMonday()
+    fun getScheduleForGroupAndWeek(week: Int,
+                                   group: String,
+                                   baseDate: LocalDate): List<PairRecord> {
 
+        val tDate = if (scheduleTimeService.getCurrentWeek() == week.toLong())
+            baseDate.withMonday()
+        else
+            baseDate.plusWeeks(1).withMonday()
 
         val responseString
                 = getDataFromREST(tDate,
                                   tDate.plusDays(6),
                                   group)
+
         return objectMapper.readValue(responseString, Array<PairRecord>::class.java).toList()
     }
 
@@ -119,12 +117,13 @@ class RUZWebFetcher(private val okHttpClient: OkHttpClient,
      * Fetches pairs for two weeks separately, then
      * merges it and returns the result.
      * @param group String representation of the target student group.
+     * @param date Date of schedule to get (only calendar week matters)
      * @return Set of [PairRecord] for the target student group
      */
-    fun getScheduleForGroup(group: String): Set<PairRecord> {
+    fun getScheduleForGroup(group: String, date: LocalDate): Set<PairRecord> {
         val rawWeekSchedule
-                = Pair(getScheduleForGroupAndWeek(1, group),
-                       getScheduleForGroupAndWeek(2, group))
+                = Pair(getScheduleForGroupAndWeek(1, group, date),
+                       getScheduleForGroupAndWeek(2, group, date))
 
         // An intersection means that the week is equal to zero
         val intersection = rawWeekSchedule.first.intersect(rawWeekSchedule.second)

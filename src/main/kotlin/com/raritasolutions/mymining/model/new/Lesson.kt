@@ -4,21 +4,28 @@ import java.time.LocalTime
 import javax.persistence.*
 
 @Entity
-@Table(name = "lessons")
-class Lesson(@Id @GeneratedValue @Column(name = "classId") var id: Int,
+@Table(name = "lessons",
+       uniqueConstraints = [ UniqueConstraint(
+               name = "lesson_identity_c",
+               columnNames = [ "subject", "day", "time_start", "week", "one_half", "over_week", "type", "group_id" ])
+       ])
+class Lesson(@Id
+             @GeneratedValue(strategy = GenerationType.IDENTITY)
+             @Column(name = "class_id") var id: Int,
+
              @Column(name = "subject") var subject: String,
              @Column(name = "day") var day: Short,
-             @Column(name = "timeStart") var timeStart: LocalTime,
+             @Column(name = "time_start") var timeStart: LocalTime,
              @Column(name = "week") var week: Int,
-             @Column(name = "oneHalf") var oneHalf: String,
-             @Column(name = "overWeek") var overWeek: Boolean,
+             @Column(name = "one_half") var oneHalf: String,
+             @Column(name = "over_week") var overWeek: Boolean,
 
              @Column(name = "type")
              @Enumerated(EnumType.ORDINAL)
              var type: LessonType = LessonType.DEFAULT,
 
              @ManyToOne
-             @JoinColumn(name = "groupId", nullable = false)
+             @JoinColumn(name = "group_id", nullable = false)
              var group: Group,
 
              @ManyToMany(cascade = [ CascadeType.ALL ] )
@@ -73,6 +80,7 @@ enum class LessonType(val repr: String) {
     LECTURE("лекция"),
     PRACTICE("практика"),
     LAB("лабораторная работа"),
+    EXAM("экзамен"),
     DEFAULT("занятие")
 
 }

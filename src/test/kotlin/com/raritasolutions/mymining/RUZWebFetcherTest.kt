@@ -8,6 +8,7 @@ import com.raritasolutions.mymining.service.ScheduleTimeService
 import com.raritasolutions.mymining.service.ruz.RUZPairRecordDeserializer
 import com.raritasolutions.mymining.service.ruz.RUZWebFetcher
 import org.junit.Test
+import java.time.LocalDate
 
 
 class RUZWebFetcherTest {
@@ -27,7 +28,8 @@ class RUZWebFetcherTest {
 
     @Test
     fun testWebFetcher() {
-        val res = rwf.getScheduleForGroup("ИАС-16")
+        val res = rwf.getScheduleForGroup("АПММ-19",
+                LocalDate.of(2020, 2, 20))
         println(res)
     }
 

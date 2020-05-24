@@ -4,9 +4,12 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "teachers")
-class Teacher(@Id @GeneratedValue @Column(name = "teacherId") var id: Int,
-              @Column(name = "teacherAlias") var alias: String,
-              @Column(name = "teacherFullName") var name: String,
+class Teacher(@Id
+              @GeneratedValue(strategy = GenerationType.IDENTITY)
+              @Column(name = "teacherId") var id: Int,
+
+              @Column(name = "teacherAlias", unique = true) var alias: String,
+              @Column(name = "teacherFullName") var name: String?,
 
               @Column(name = "teacherRank")
               @Enumerated(EnumType.ORDINAL)
@@ -17,7 +20,7 @@ class Teacher(@Id @GeneratedValue @Column(name = "teacherId") var id: Int,
               var teacherPhoto: ByteArray?,
 
               @Column(name = "teacherLink")
-              var link: String) {
+              var link: String?) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

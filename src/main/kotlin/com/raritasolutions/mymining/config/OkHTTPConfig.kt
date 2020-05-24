@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
+import java.util.concurrent.TimeUnit
 import javax.net.ssl.*
 
 @Configuration
@@ -26,6 +27,8 @@ class OkHTTPConfig {
 
         val clientBuilder
                 = OkHttpClient.Builder()
+                    .readTimeout(90, TimeUnit.SECONDS)
+                    .writeTimeout(90, TimeUnit.SECONDS)
                     .cookieJar(cookieJar)
                     .addInterceptor(interceptor)
 

@@ -3,10 +3,15 @@ package com.raritasolutions.mymining.model.new
 import javax.persistence.*
 
 @Entity
-@Table(name = "rooms")
-class Room(@Id @GeneratedValue @Column(name = "roomId") var id: Int,
-           @Column(name = "roomName") var name: String,
-           @Column(name = "buildingId") var building: Int) {
+@Table(name = "rooms",
+       uniqueConstraints = [ UniqueConstraint(name = "ident",
+                                              columnNames = [ "room_name", "building_id" ]) ])
+class Room(@Id
+           @GeneratedValue(strategy = GenerationType.IDENTITY)
+           @Column(name = "room_id") var id: Int,
+
+           @Column(name = "room_name") var name: String,
+           @Column(name = "building_id") var building: Int) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -12,6 +12,8 @@ import com.raritasolutions.mymining.service.RebornUpdateService
 import com.raritasolutions.mymining.service.WebUpdateService
 import com.raritasolutions.mymining.service.base.BaseUpdateService
 import com.raritasolutions.mymining.service.base.UpdateSource
+import com.raritasolutions.mymining.service.ruz.LKAuthService
+import com.raritasolutions.mymining.service.ruz.LKGroupFetcher
 import com.raritasolutions.mymining.service.ruz.RUZUpdateService
 import com.raritasolutions.mymining.utils.*
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,7 +29,9 @@ class DBController @Autowired constructor(private val pairRepo: PairRepository,
                                           private val updateService: WebUpdateService,
                                           private val legacyUpdateService : LegacyUpdateService,
                                           private val rebornUpdateService: RebornUpdateService,
-                                          private val ruzUpdateService: RUZUpdateService) {
+                                          private val ruzUpdateService: RUZUpdateService,
+                                          private val lkGroupFetcher: LKGroupFetcher,
+                                          private val lkAuthService: LKAuthService) {
 
     @GetMapping("/extract")
     fun extract(@RequestParam(value = "type",required = false, defaultValue = "ruz") type: String)
@@ -37,7 +41,8 @@ class DBController @Autowired constructor(private val pairRepo: PairRepository,
             "tabula" -> updateService
             "reborn" -> rebornUpdateService
             "ruz" -> ruzUpdateService
-            else -> throw IllegalArgumentException("Supplied type parameter is illegal")
+            else -> throw IllegalArgumentException("Supplied type parameter is illegal. " +
+                    "No extractors matching $type")
         }
 
         service.update()
@@ -61,6 +66,19 @@ class DBController @Autowired constructor(private val pairRepo: PairRepository,
         return ModelAndView("job_result", mapOf("caller" to "Error Checker",
                 "message" to "List of extraction errors found in DB\n$errors"))
     }
+
+    @GetMapping("fetch_groups")
+    @ResponseBody
+    fun fetchGroups(@RequestParam(value = "sessionId", required = true)
+                    sessionId: String): String {
+        lkGroupFetcher.loadGroups(sessionId)
+        return "OK"
+    }
+
+    @GetMapping("authenticate")
+    @ResponseBody
+    fun lkAuthenticate()
+        = lkAuthService.authenticate()
 
     @GetMapping("list")
     fun getListInTable(@RequestParam(value = "group",required = false,defaultValue = "") group: String,
