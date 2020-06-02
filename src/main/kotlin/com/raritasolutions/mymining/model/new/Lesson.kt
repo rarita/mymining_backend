@@ -81,6 +81,14 @@ enum class LessonType(val repr: String) {
     PRACTICE("практика"),
     LAB("лабораторная работа"),
     EXAM("экзамен"),
-    DEFAULT("занятие")
+    DEFAULT("занятие");
 
+    companion object {
+        fun fromString(stringType: String)
+                = LessonType.values()
+                .firstOrNull { it.repr.startsWith(stringType.toLowerCase().substring(0, 3)) }
+                ?: throw IllegalStateException("Invalid PairRecord type: $stringType")
+    }
 }
+
+

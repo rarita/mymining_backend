@@ -1,10 +1,9 @@
 package com.raritasolutions.mymining.repo
 
 import com.raritasolutions.mymining.model.PairRecord
+import com.raritasolutions.mymining.repo.new.GroupName
+import com.raritasolutions.mymining.repo.new.Teacher
 import org.springframework.data.repository.CrudRepository
-
-interface GroupName { var group: String }
-interface Teacher {var teacher: String }
 
 interface PairRepository: CrudRepository<PairRecord,Int> {
     fun findByGroupAndDay(group: String, day: Int): List<PairRecord>

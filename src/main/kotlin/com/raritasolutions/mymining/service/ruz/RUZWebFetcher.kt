@@ -56,7 +56,7 @@ class RUZWebFetcher(private val okHttpClient: OkHttpClient,
             throw IllegalStateException("Server responded with an error: ${jsonNode["error"].textValue()}")
 
         if (jsonNode.size() == 0)
-            throw IllegalStateException("No matches for the $group query")
+            throw NoSuchElementException("No matches for the $group query")
 
         return jsonNode[0]["id"].intValue()
     }
@@ -121,19 +121,27 @@ class RUZWebFetcher(private val okHttpClient: OkHttpClient,
      * @return Set of [PairRecord] for the target student group
      */
     fun getScheduleForGroup(group: String, date: LocalDate): Set<PairRecord> {
-        val rawWeekSchedule
-                = Pair(getScheduleForGroupAndWeek(1, group, date),
-                       getScheduleForGroupAndWeek(2, group, date))
+        try {
+            val rawWeekSchedule = Pair(
+                    getScheduleForGroupAndWeek(1, group, date),
+                    getScheduleForGroupAndWeek(2, group, date)
+            )
 
-        // An intersection means that the week is equal to zero
-        val intersection = rawWeekSchedule.first.intersect(rawWeekSchedule.second)
+            // An intersection means that the week is equal to zero
+            val intersection = rawWeekSchedule.first.intersect(rawWeekSchedule.second)
 
-        val sortedWeekSchedule
-                = Pair(rawWeekSchedule.first.minus(intersection).apply { forEach{it.week = 1 }},
-                       rawWeekSchedule.second.minus(intersection).apply { forEach{it.week = 2 }})
+            val sortedWeekSchedule
+                    = Pair(rawWeekSchedule.first.minus(intersection).apply { forEach{it.week = 1 }},
+                    rawWeekSchedule.second.minus(intersection).apply { forEach{it.week = 2 }})
 
 
-        return (sortedWeekSchedule.first + sortedWeekSchedule.second + intersection).toSet()
+            return (sortedWeekSchedule.first + sortedWeekSchedule.second + intersection).toSet()
+
+        }
+        catch (e: NoSuchElementException) {
+            return emptySet()
+        }
+
     }
 
 }

@@ -2,7 +2,6 @@ package com.raritasolutions.mymining.service.ruz
 
 import com.raritasolutions.mymining.model.PairRecord
 import com.raritasolutions.mymining.model.new.LessonType
-import com.raritasolutions.mymining.repo.PairRepository
 import com.raritasolutions.mymining.repo.new.NormalizedRepository
 import com.raritasolutions.mymining.service.base.UpdateSource
 import org.slf4j.LoggerFactory
@@ -11,14 +10,13 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 @Service
-class RUZUpdateService(private val pairRepository: PairRepository,
-                       private val normalizedRepository: NormalizedRepository,
+class RUZUpdateService(private val normalizedRepository: NormalizedRepository,
                        private val ruzWebFetcher: RUZWebFetcher) : UpdateSource {
 
     private val logger = LoggerFactory.getLogger(RUZUpdateService::class.java)
 
-    fun getTargetGroups(): List<String>
-        = listOf("ИСТ-16", "ИАС-16")
+    val targetGroups
+        get() = normalizedRepository.findAllGroups()
 
     /**
      * Persists intermediate PairRecord classes
@@ -36,7 +34,7 @@ class RUZUpdateService(private val pairRepository: PairRepository,
                 .map {
                     normalizedRepository.mergeRoom(it,  this.buildingID)
                     normalizedRepository.getRoomId(it, this.buildingID)
-                }
+                }.toSet()
 
         logger.info("Merged room ids: $roomIds")
 
@@ -45,7 +43,7 @@ class RUZUpdateService(private val pairRepository: PairRepository,
                 .map {
                     normalizedRepository.mergeTeacher(it)
                     normalizedRepository.getTeacherId(it)
-                }
+                }.toSet()
 
         logger.info("Merged teacher ids: $roomIds")
 
@@ -56,30 +54,46 @@ class RUZUpdateService(private val pairRepository: PairRepository,
 
         val timeStart = LocalTime.of(timeComponents[0], timeComponents[1])
 
-        val lessonTypeOrdinal = LessonType.values()
-                .firstOrNull { it.repr == this.type }?.ordinal
-                    ?: throw IllegalStateException("Invalid PairRecord type: ${this.type}")
+        // If it has more than 1 type create identical records with different types
+        this.type.split(",\\s?".toRegex()).forEach { _type ->
+
+            val lessonTypeOrdinal = LessonType.fromString(_type).ordinal
+            storeLessonInDB(this, timeStart, lessonTypeOrdinal, groupId, roomIds, teacherIds)
+
+        }
+
+    }
+
+    /**
+     * A service should probably be created to do INSERT-SELECT-RETURN ID
+     * sequence in the future. This method would be moved there too.
+     */
+    fun storeLessonInDB(basePair: PairRecord,
+                        timeStart: LocalTime,
+                        lessonTypeOrdinal: Int,
+                        groupId: Int,
+                        roomIds: Set<Int>,
+                        teacherIds: Set<Int>) {
 
         normalizedRepository.mergeLesson(
-                this.day,
-                this.one_half,
-                this.over_week,
-                this.subject,
+                basePair.day,
+                basePair.one_half,
+                basePair.over_week,
+                basePair.subject,
                 timeStart,
                 lessonTypeOrdinal,
-                this.week,
+                basePair.week,
                 groupId)
 
         val lessonId = normalizedRepository.getLessonId(
-                this.day,
-                this.one_half,
-                this.over_week,
-                this.subject,
+                basePair.day,
+                basePair.one_half,
+                basePair.over_week,
+                basePair.subject,
                 timeStart,
                 lessonTypeOrdinal,
-                this.week,
-                groupId
-        )
+                basePair.week,
+                groupId)
 
         logger.info("Lesson id: $lessonId")
 
@@ -95,10 +109,13 @@ class RUZUpdateService(private val pairRepository: PairRepository,
 
     override fun update() {
 
+        logger.info("Querying RUZ update for ${targetGroups.size} groups...")
         val date = LocalDate.of(2020, 2, 20)
 
-        getTargetGroups().forEach {
+        targetGroups.forEach {
+            logger.info("Requesting RUZ schedule for group $it")
             val sch = ruzWebFetcher.getScheduleForGroup(it, date) // todo delet this
+            logger.info("Got ${sch.size} pairs for group $it, saving...")
             sch.forEach { it.persistAsNormalizedModel() }
         }
 

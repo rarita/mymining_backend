@@ -10,8 +10,11 @@ import com.fasterxml.jackson.databind.node.ValueNode
 import com.raritasolutions.mymining.model.PairRecord
 import com.raritasolutions.mymining.utils.EMPTY
 import com.raritasolutions.mymining.utils.preLast
+import org.slf4j.LoggerFactory
 
 class RUZPairRecordDeserializer : StdDeserializer<PairRecord>(PairRecord::class.java) {
+
+    private val logger = LoggerFactory.getLogger(RUZPairRecordDeserializer::class.java)
 
     private fun TreeNode.string()
         = (this as TextNode).textValue()
@@ -28,12 +31,17 @@ class RUZPairRecordDeserializer : StdDeserializer<PairRecord>(PairRecord::class.
             3
     }
 
-    private fun TreeNode.toPairType()
-        = with (this.string()) {
-        if (this.startsWith("лаб"))
-            "лабораторная работа"
-        else
-            this.toLowerCase()
+    private fun TreeNode.toPairType(): String {
+        return with (this.string()) {
+            when {
+                this.contains(',') -> {
+                    logger.info("Pair type $this has an ',' in it!")
+                    this.toLowerCase()
+                }
+                this.startsWith("лаб") && !this.contains(',') -> "лабораторная работа"
+                else -> this.toLowerCase()
+            }
+        }
     }
 
     private fun TreeNode.toOneHalf()

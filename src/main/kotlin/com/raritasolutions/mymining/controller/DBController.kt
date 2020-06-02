@@ -7,6 +7,7 @@ import com.raritasolutions.mymining.model.toPairViewModel
 import com.raritasolutions.mymining.model.viewmodel.BaseViewModel
 import com.raritasolutions.mymining.model.viewmodel.DayHeaderModel
 import com.raritasolutions.mymining.repo.PairRepository
+import com.raritasolutions.mymining.repo.new.IntermediateRepository
 import com.raritasolutions.mymining.service.LegacyUpdateService
 import com.raritasolutions.mymining.service.RebornUpdateService
 import com.raritasolutions.mymining.service.WebUpdateService
@@ -25,6 +26,7 @@ import org.springframework.web.servlet.view.RedirectView
 @Controller
 @RequestMapping("/db")
 class DBController @Autowired constructor(private val pairRepo: PairRepository,
+                                          private val intermediateRepository: IntermediateRepository,
                                           private val dtsc : DayTimeScheduleComposer,
                                           private val updateService: WebUpdateService,
                                           private val legacyUpdateService : LegacyUpdateService,
@@ -57,14 +59,19 @@ class DBController @Autowired constructor(private val pairRepo: PairRepository,
     }
 
     @GetMapping("/check")
-    fun checkCorrectness(): ModelAndView {
-        val errors = pairRepo
-                .findAll()
+    fun checkCorrectness(@RequestParam(name = "datasource", required = false, defaultValue = "legacy") dataSource: String)
+            : ModelAndView {
+        val source = when (dataSource) {
+            "legacy" -> pairRepo.findAll()
+            "normalized" -> intermediateRepository.findAllPairRecords()
+            else -> throw IllegalArgumentException("No such data source: $dataSource")
+        }
+        val errors = source
                 .filterNot { it.isCorrect() }
                 .withIndex()
                 .joinToString(separator = "\n") { "[${it.index + 1}]: ${it.value} might be faulty." }
         return ModelAndView("job_result", mapOf("caller" to "Error Checker",
-                "message" to "List of extraction errors found in DB\n$errors"))
+                "message" to "List of extraction errors found in DB\n$errors\nTotal pairs processed: ${source.count()}"))
     }
 
     @GetMapping("fetch_groups")
@@ -82,13 +89,24 @@ class DBController @Autowired constructor(private val pairRepo: PairRepository,
 
     @GetMapping("list")
     fun getListInTable(@RequestParam(value = "group",required = false,defaultValue = "") group: String,
-                       @RequestParam(value = "day", required = false, defaultValue = "0") day: Int): ModelAndView {
+                       @RequestParam(value = "day", required = false, defaultValue = "0") day: Int,
+                       @RequestParam(value = "datasource", required = false, defaultValue = "normalized")
+                       dataSource: String): ModelAndView {
+
         val model = HashMap<String,Iterable<PairRecord>>()
-        model["data"] = if ((day != 0) and (group.isNotBlank()))
-            pairRepo.findByGroupAndDay(group,day)
-        else
-            pairRepo.findAll()
-        return ModelAndView("pair_list",model)
+        model["data"] =
+                when(dataSource) {
+                    "legacy" -> if ((day != 0) and (group.isNotBlank()))
+                                    pairRepo.findByGroupAndDay(group, day)
+                                else
+                                    pairRepo.findAll()
+                    "normalized" -> if ((day != 0) and (group.isNotBlank()))
+                                        intermediateRepository.findAllPairRecordsByGroupAndDay(group, day)
+                                    else
+                                        intermediateRepository.findAllPairRecords()
+                    else -> listOf()
+                }
+        return ModelAndView("pair_list", model)
     }
 
     // Should output the same as controller above
